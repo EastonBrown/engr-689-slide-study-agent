@@ -1,0 +1,19 @@
+# Local planning notes, not part of the deliverable
+2026-08-19-project-repo-handoff.md
+*.handoff.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Generated run artifacts
+out/
+runs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
