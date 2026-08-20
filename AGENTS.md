@@ -17,4 +17,5 @@ The five canonical triage roles, each label string equal to its name. See
 ### Domain docs
 
 Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See
-`docs/agents/domain.md`.
+`docs/agents/domain.md`. The stage-by-stage build contract assembled from both
+is `docs/spec.md`; read it before implementing a stage.

@@ -2,7 +2,8 @@
 
 The slide-deck-to-study-guide agent for ENGR 689. This file holds the shared
 vocabulary and the locked data contracts. Decisions and their reasoning live in
-`docs/adr/`; this file states what the terms mean and what the shapes are.
+`docs/adr/`; this file states what the terms mean and what the shapes are. The
+buildable form, stage by stage, is [`docs/spec.md`](docs/spec.md).
 
 ## Glossary
 
@@ -30,9 +31,11 @@ model. It exists so the results table can isolate the input modality.
 **Slide note.** What the page reader returns for one slide. The system's
 load-bearing interface. See the schema below and ADR 0002.
 
-**Visual.** One figure on a slide: a diagram, chart, equation, comparison,
-screenshot, or a decorative image. Carries what the figure asserts, separately
-from the prose reading of the page.
+**Visual.** One figure on a slide: a diagram, chart, table, equation,
+comparison, screenshot, photograph, or a decorative image. Carries what the
+figure asserts, separately from the prose reading of the page. The taxonomy is
+discipline-neutral and deliberately coarse, so a domain-specific figure lands in
+the nearest kind and states its content in `assertion`.
 
 **Concept.** Something the slide names, along with whether the slide explains
 it. A concept the deck names but does not explain is what the research stage
@@ -71,14 +74,31 @@ subject's topic list. For each topic the deck covers it either reuses an
 existing topic name verbatim or declares a new one with a reason. The page
 reader takes no part in this.
 
-**Covered slide.** A slide whose `page_role` is `content`. Covered slides are
-the only ones that belong to a topic, count toward exposure, or are cited in the
-review. Coverage is computed in code from `page_role` alone, never by a model.
-See ADR 0007.
+**Covered slide.** A slide whose `page_role` is `content` and which is not a
+superseded build-up frame. Covered slides are the only ones that belong to a
+topic, count toward exposure, or are cited in the review. Coverage is computed
+in code, never by a model. See ADR 0007 and `docs/spec.md`.
 
 **Skipped slide.** A slide whose `page_role` is anything other than `content`.
 Named in the outline with its role rather than dropped, so the covered count is
 auditable against the deck length.
+
+**Build-up frame.** One of several consecutive pages showing the same slide
+with progressively more content revealed, produced by presentation software
+exporting animation steps. The course decks contain none, which is why slide
+numbers equal PDF page numbers. Another class's deck will contain them.
+
+**Superseded frame.** A build-up frame that a later page contains entirely.
+Detected at render time from extracted text alone, with no model call, and
+excluded from topic assignment, exposure, the question budget, and bridged-fact
+candidates. Still rendered, still read, and still writes its slide note, because
+slide numbers must keep equaling PDF page numbers. A citation resolving to one
+is rewritten in code to the surviving frame.
+
+**Image-only deck.** A deck where fewer than half the pages yield 40 characters
+of extracted text. The text path still runs and still writes its artifacts, but
+it is reported as not applicable rather than as a score of zero, since a
+baseline that had nothing to read never entered the comparison.
 
 **Degraded slide.** A covered slide whose `reader_note` is non-null. Keeps its
 topic and its exposure, is flagged in the outline, and is never cited by a quiz
@@ -156,18 +176,23 @@ JSON throughout; no database. `runs/` and `memory/` are gitignored,
 
 ```
 runs/<subject-slug>/<deck-slug>/<utc-timestamp>/
-  manifest.json          schema_version, deck sha256 and slug, subject, UTC
+  manifest.json          schema_version, deck sha256 and slug, subject,
+                         preflight (text-native fraction, page geometry,
+                         superseded frame count), UTC
                          start and end, model id, prompt version, DPI,
                          per-path slides attempted and succeeded, count of
                          non-null reader_note, research lookups and cache
                          hits, token and cost totals per stage
+  pages-render/NNNN.png  the rendered page at 150 DPI
+  pages-render/NNNN.txt  that page's extracted text
   pages-image/NNNN.json  one SlideNote per slide
   pages-text/NNNN.json   one SlideNote per slide
   outline-image.json
   outline-text.json
   research/              copies of the cache entries this run used
-  review.md
-  quiz.json
+  review-image.md
+  review-text.md
+  quiz.json              image path only
 runs/<subject-slug>/<deck-slug>/latest    names the newest timestamp
 
 memory/subjects.json                              slug, display name, created
@@ -193,6 +218,10 @@ eval/score_spans.py                               verbatim_spans substring check
 
 - A run holds both paths under one manifest, so the results table reads one
   directory instead of pairing two runs and trusting they matched.
+- Both paths write a review; only the image path writes a quiz and a
+  contribution. The text path's pipeline ends at `review-text.md`. This amends
+  ADR 0004's single `review.md`, which predates the interface decision putting
+  the two reviews side by side. See `docs/spec.md`.
 - Only the image path writes a deck contribution. The text path is a
   measurement, and letting it contribute would double every topic's exposure.
 - A failed or degraded slide still writes its file, with `reader_note` set.
@@ -224,8 +253,9 @@ SlideNote
   reader_note     str | null   set only when the read failed or degraded
 
 Visual
-  kind              VisualKind   diagram | chart | equation | comparison
-                                 | screenshot | decorative
+  kind              VisualKind   diagram | chart | table | equation
+                                 | comparison | screenshot | photo
+                                 | decorative
   description       str
   assertion         str | null   what the figure claims; null when decorative
   relates_to_slides [int]        possibly empty
@@ -267,6 +297,7 @@ Outline
   path                 PathKind       image | text
   topics               [OutlineTopic]
   skipped              [SkippedSlide]
+  superseded           [int]          build-up frames excluded from the partition
   unassigned           [int]          covered slides no topic claimed
   bridged_facts        [BridgedFact]
   candidates_proposed  int
@@ -298,7 +329,11 @@ BridgedFact
   `exposure` is the length of its slide list.
 - A topic's slides need not be contiguous. The same material recurring twenty
   slides later is one topic, not two.
-- Coverage is `page_role == content`, decided in code.
+- Coverage is `page_role == content` minus superseded build-up frames, decided
+  in code. On the course decks the superseded list is always empty.
+- Non-course decks carry their own intake rules: preflight, build-up detection,
+  page-geometry clamping, and eval labels keyed by deck slug. See
+  `docs/spec.md`.
 - Bridged-fact candidates come from three code-side signals: an edge in
   `Visual.relates_to_slides`, an adjacent slide with a null or repeated
   `title`, and adjacent slides sharing a `Concept.name`. The model confirms or
