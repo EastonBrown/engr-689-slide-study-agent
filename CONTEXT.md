@@ -84,6 +84,17 @@ auditable against the deck length.
 topic and its exposure, is flagged in the outline, and is never cited by a quiz
 question.
 
+**Confident-and-wrong read.** A read that sets no `reader_note` and is still
+wrong, detected only where instrumentation already exists: a `verbatim_spans`
+entry absent from that page's extracted text, or a quiz `slide_citations` entry
+the cited slide does not support. Anything outside those two checks is reported
+as unmeasured rather than judged by eye.
+
+**Structural failure.** Content the modality cannot recover at all, as opposed
+to a read that went wrong. Day 3 slide 10 is the case: its labels extract, so
+the text path looks like it succeeded, while the spatial relation that is the
+slide's actual content is lost on both paths.
+
 **Bridged fact.** A fact that exists only across two or more slides and is
 present on none of them alone. Assembled by the outline stage from candidate
 pairs the code proposes; the model may compose or reject a candidate but may not
