@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "deck_slug": "day3-principle",
+  "deck_file": "data/course/slides/Day3 Principle.pdf",
+  "hit_rule": "A hit is the fact appearing anywhere in that slide's SlideNote, in any field. Record which field it landed in. See docs/adr/0006-eval-protocol-and-results-table.md.",
+  "facts": [
+    {
+      "id": "f1-sensors-actuators",
+      "slides": [61],
+      "in_headline": true,
+      "fact": "The Russell and Norvig definition: an agent perceives its environment through sensors and acts on it through actuators.",
+      "text_extraction_returns": "Only 'Agentic AI' and the follow-on line 'This definition holds for embodied and digital agents'. The definition itself is inside the figure. Nothing of environment, sensors, or actuators survives.",
+      "note": null
+    },
+    {
+      "id": "f2-clip-dominance",
+      "slides": [28, 48],
+      "in_headline": true,
+      "fact": "CLIP-style multimodal learning is by far the most used vision encoder in real multimodal LLMs, far above DINOv2 and VQ-VAE.",
+      "text_extraction_returns": "The axis label 'Popularity of different vision encoders in Multimodal LLMs' and the five family names. The ranking lives entirely in the bar heights.",
+      "note": "Slide 48 repeats slide 28. Score slide 28; slide 48 is not a second sample."
+    },
+    {
+      "id": "f3-generation-composes",
+      "slides": [55, 56],
+      "in_headline": true,
+      "fact": "Generation composes concepts and retrieval cannot: DALL-E 2 renders 'a cup of cat', while an image search for the same phrase returns cats sitting in cups.",
+      "text_extraction_returns": "Slide 55 gives the three captions with no images to compare. Slide 56, the retrieval side of the comparison, extracts to zero characters.",
+      "note": "The fact exists only across the pair. A hit requires the comparison, not one side of it."
+    },
+    {
+      "id": "f4-pinhole-geometry",
+      "slides": [10],
+      "in_headline": false,
+      "fact": "The three directions form a pinhole-camera geometry: recognition and generation are inverses across the projection surface, reconstruction runs from projection back to scene.",
+      "text_extraction_returns": "The labels do extract. What is lost is the spatial relation between them, which is the entire content of the slide.",
+      "note": "The known-weak case. Reported on its own line, outside the headline denominator, because the labels extract and both paths handle it poorly."
+    }
+  ],
+  "repeatability_probe": {
+    "path": "image",
+    "slides": [61, 28, 55, 56, 10],
+    "reads_per_slide": 5
+  }
+}

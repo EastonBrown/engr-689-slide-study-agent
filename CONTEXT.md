@@ -35,7 +35,23 @@ looks up.
 
 **Figure-only fact.** A fact present in a slide's image that survives poorly or
 not at all through text extraction. Four are hand-labeled in the Day 3 deck; see
-`data/course/README.md`. These are the ground truth for the headline metric.
+`data/course/README.md` for why each was chosen and
+`eval/figure-only-facts.json` for the machine-readable labels. These are the
+ground truth for the headline metric.
+
+**Recovery hit.** The unit of the headline metric: one labeled figure-only fact
+appearing anywhere in that slide's slide note, in any field, on one path. Scored
+by hand, eight judgments in total. The field it landed in is recorded but does
+not change the hit. See ADR 0006.
+
+**Known-weak case.** The fourth figure-only fact, on Day 3 slide 10, whose
+labels do extract even though the spatial relation between them does not. It is
+reported on its own line and sits outside the headline denominator, which is
+therefore three rather than four.
+
+**Repeatability probe.** Five re-reads of each labeled slide on the image path,
+reported as hits out of five per fact. It stands in for a variance estimate at
+25 page reads rather than at the cost of three full runs.
 
 **Subject.** The namespace for memory. A topic mastery profile accumulates
 across every deck in a subject; a different class gets its own profile.
@@ -96,7 +112,7 @@ hash of the normalized query. Shared across every run and every subject.
 
 Locked by [ADR 0004](docs/adr/0004-artifact-layout-and-memory-schema.md). Flat
 JSON throughout; no database. `runs/` and `memory/` are gitignored,
-`examples/golden/` and `cache/research/` are committed.
+`examples/golden/`, `cache/research/`, and `eval/` are committed.
 
 ```
 runs/<subject-slug>/<deck-slug>/<utc-timestamp>/
@@ -125,6 +141,12 @@ memory/<subject-slug>/retakes/<retake-id>.json    a quiz built from the profile
 cache/research/<sha256-of-normalized-query>.json  query, timestamp, results
 examples/golden/                                  one committed run plus the
                                                   memory state it produced
+
+eval/figure-only-facts.json                       the four labeled facts and
+                                                  the repeatability probe
+eval/results.md                                   the results table, filled by
+                                                  hand from the golden run
+eval/score_spans.py                               verbatim_spans substring check
 ```
 
 ### Rules that travel with the layout
@@ -291,3 +313,9 @@ Response
 - [ADR 0005](docs/adr/0005-quiz-answer-key-and-retake-schema.md): the quiz,
   attempt, and retake schemas above, a deterministic grader, and performance as
   a derived (correct, seen) pair.
+- [ADR 0006](docs/adr/0006-eval-protocol-and-results-table.md): two metrics
+  rather than three, figure-only fact recovery primary over a headline
+  denominator of three with slide 10 called out separately, citation accuracy
+  as an image-path-only check, one golden run plus a repeatability probe, the
+  empty results table, a committed `eval/` directory, and a Thursday-noon abort
+  rule.
