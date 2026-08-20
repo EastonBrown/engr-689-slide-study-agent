@@ -6,7 +6,7 @@ import base64
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Callable, Protocol
 
 from pydantic import ValidationError
 
@@ -227,6 +227,17 @@ def _write_one_note(
     return request.path_kind, note, usage
 
 
+def _log_line(note: SlideNote) -> str:
+    """The concise, path-neutral line shown in a live page-reader box."""
+
+    if note.reader_note:
+        return f"slide {note.slide_number}: DEGRADED, {note.reader_note}"
+    return (
+        f"slide {note.slide_number}: {len(note.visuals)} visual(s), "
+        f"{len(note.concepts)} concept(s)"
+    )
+
+
 def _load_manifest(run_dir: Path) -> Manifest | None:
     payload = paths.read_json(paths.manifest_file(run_dir))
     return Manifest.model_validate(payload) if payload is not None else None
@@ -286,8 +297,16 @@ def read_run_pages(
     slide_numbers: range | list[int] | None = None,
     resume: bool = False,
     max_concurrency: int = config.READER_CONCURRENCY,
+    log: Callable[[PathKind, str], None] | None = None,
 ) -> None:
-    """Read rendered pages into per-slide notes and update the manifest."""
+    """Read rendered pages into per-slide notes and update the manifest.
+
+    `log` is called once per finished slide, with the path it belongs to. The
+    interface (issue #25) has one stage box per path and routes on that value
+    rather than parsing the message, and the stage keeps emitting in completion
+    order because the reads run concurrently and pretending otherwise would
+    mean holding lines back to sort them.
+    """
 
     run_dir = Path(run_dir)
     reader = reader or AnthropicPageReader()
@@ -323,6 +342,8 @@ def read_run_pages(
             else:
                 counts[path_kind][2] += 1
             usage = _add_usage(usage, item_usage)
+            if log:
+                log(path_kind, _log_line(note))
 
     _update_manifest(
         run_dir,

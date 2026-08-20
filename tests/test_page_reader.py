@@ -459,3 +459,40 @@ class TestAMissingRenderArtifactDegradesRatherThanAborting:
         )
         assert "page_reader" not in image.completed_stages
         assert image.completed_stages == ["render"]
+
+
+def test_the_log_callback_reports_each_slide_with_the_path_it_belongs_to(tmp_path):
+    """The interface routes a live line into the right stage box by its path.
+
+    Issue #25 has one box per path, so a log line carrying only text would have
+    to be parsed to be placed. The callback is handed the `PathKind` instead.
+    """
+
+    run_dir = tmp_path / "run"
+    for slide in (1, 2):
+        write_rendered_page(run_dir, slide)
+    paths.write_model(paths.manifest_file(run_dir), a_manifest(2))
+    degraded = draft("Slide 2").model_copy(update={"reader_note": "unreadable"})
+    reader = FakeReader(
+        {
+            ("image", 1): draft("Slide 1"),
+            ("image", 2): degraded,
+            ("text", 1): draft("Slide 1"),
+            ("text", 2): draft("Slide 2"),
+        }
+    )
+    lines: list[tuple[str, str]] = []
+
+    page_reader.read_run_pages(
+        run_dir,
+        reader=reader,
+        log=lambda path_kind, message: lines.append((path_kind.value, message)),
+        max_concurrency=1,
+    )
+
+    image_lines = [message for kind, message in lines if kind == "image"]
+    text_lines = [message for kind, message in lines if kind == "text"]
+    assert len(image_lines) == 2
+    assert len(text_lines) == 2
+    assert any("slide 1" in message for message in image_lines)
+    assert any("DEGRADED" in message and "slide 2" in message for message in image_lines)
