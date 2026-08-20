@@ -79,6 +79,7 @@ OUTLINE = {
     "candidate_cap": 30,
     "topic_cap_exceeded": False,
     "question_budget": [["Retrieval", 10]],
+    "untested_topics": [],
     "repair_attempted": False,
 }
 
@@ -217,6 +218,7 @@ MANIFEST = {
             "reader_notes": 1,
             "research_lookups": 12,
             "research_cache_hits": 3,
+            "research_cap_hit": False,
             "completed_stages": ["render", "page_reader"],
         }
     ],
@@ -307,6 +309,14 @@ class TestStrictness:
                     "candidate_signal": "relates_to_slides",
                 }
             )
+
+    def test_research_artifacts_require_at_least_one_citation(self):
+        with pytest.raises(ValidationError):
+            schemas.ResearchDraft.model_validate(
+                {"answer": "No source.", "citations": []}
+            )
+        with pytest.raises(ValidationError):
+            schemas.CacheEntry.model_validate({**CACHE_ENTRY, "citations": []})
 
 
 class TestTheLockedShapes:

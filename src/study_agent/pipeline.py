@@ -17,7 +17,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import outline, page_reader
+from .stages import outline, page_reader, research
 
 
 class PipelineError(RuntimeError):
@@ -63,6 +63,8 @@ def run_render_pipeline(
     reader: page_reader.PageReader | None = None,
     outline_pages: bool = False,
     outliner: outline.Outliner | None = None,
+    research_pages: bool = False,
+    researcher: research.Researcher | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
 
@@ -120,7 +122,10 @@ def run_render_pipeline(
     paths.write_model(paths.manifest_file(run_dir), manifest)
     layout.write_latest(subject_slug, deck_slug, run_timestamp)
 
-    if read_pages:
+    should_outline_pages = outline_pages or research_pages
+    should_read_pages = read_pages or should_outline_pages
+
+    if should_read_pages:
         page_reader.read_run_pages(
             run_dir,
             reader=reader,
@@ -129,7 +134,7 @@ def run_render_pipeline(
         )
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
-    if outline_pages:
+    if should_outline_pages:
         outline.outline_run(
             run_dir,
             deck_slug=deck_slug,
@@ -138,6 +143,10 @@ def run_render_pipeline(
             layout=layout,
             outliner=outliner,
         )
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
+    if research_pages:
+        research.research_run(run_dir, layout=layout, researcher=researcher)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
     if log:
@@ -207,6 +216,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Continue after page reading and write outline-image/text.json.",
     )
+    parser.add_argument(
+        "--research",
+        action="store_true",
+        help="Continue after page reading and write cached research entries.",
+    )
     return parser
 
 
@@ -223,6 +237,7 @@ def main(argv: list[str] | None = None) -> int:
             resume=args.resume,
             slide_numbers=slide_numbers,
             outline_pages=args.outline,
+            research_pages=args.research,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

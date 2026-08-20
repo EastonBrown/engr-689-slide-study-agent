@@ -350,11 +350,12 @@ class CacheEntry(Strict):
     prompt_version: str
     concept: str
     answer: str
-    citations: list[Citation] = Field(default_factory=list)
+    citations: list[Citation] = Field(min_length=1)
 
 
 class ResearchDraft(Strict):
     answer: str = Field(description="A short synthesis, three sentences at most.")
+    citations: list[Citation] = Field(min_length=1)
 
 
 # --- The manifest, ADR 0004 -------------------------------------------------
@@ -392,6 +393,7 @@ class PathStats(Strict):
     reader_notes: int = Field(default=0, description="Count of non-null reader_note.")
     research_lookups: int = 0
     research_cache_hits: int = 0
+    research_cap_hit: bool = False
     completed_stages: list[str] = Field(default_factory=list)
 
 

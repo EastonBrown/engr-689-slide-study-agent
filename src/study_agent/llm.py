@@ -32,6 +32,7 @@ class StructuredCallError(RuntimeError):
 class StructuredResult(Generic[T]):
     output: T
     usage: schemas.StageUsage
+    citations: list[schemas.Citation] | None = None
 
 
 def load_api_key(root: Path | None = None) -> str:
@@ -102,6 +103,30 @@ def _usage_from_message(message: Any, stage: str, calls: int) -> schemas.StageUs
     )
 
 
+def _citations_from_message(message: Any) -> list[schemas.Citation]:
+    content = getattr(message, "content", message)
+    citations: list[schemas.Citation] = []
+    for block in content if not isinstance(content, str) else []:
+        for item in getattr(block, "citations", []) or []:
+            title = getattr(item, "title", None)
+            url = getattr(item, "url", None)
+            if title and url:
+                citations.append(schemas.Citation(title=str(title), url=str(url)))
+        for item in getattr(block, "annotations", []) or []:
+            title = getattr(item, "title", None)
+            url = getattr(item, "url", None)
+            if title and url:
+                citations.append(schemas.Citation(title=str(title), url=str(url)))
+    seen: set[tuple[str, str]] = set()
+    deduped: list[schemas.Citation] = []
+    for citation in citations:
+        key = (citation.title, citation.url)
+        if key not in seen:
+            seen.add(key)
+            deduped.append(citation)
+    return deduped
+
+
 def _add_usage(first: schemas.StageUsage, second: schemas.StageUsage) -> schemas.StageUsage:
     return schemas.StageUsage(
         stage=first.stage,
@@ -159,6 +184,7 @@ def structured_call(
             return StructuredResult(
                 output=response_model.model_validate(payload),
                 usage=accumulated,
+                citations=_citations_from_message(message),
             )
         except (ValidationError, json.JSONDecodeError) as error:
             last_error = error
