@@ -214,8 +214,10 @@ class Layout:
         """Every deck slug already used in this subject, mapped to its sha256.
 
         Read from each deck's newest manifest, since that is where the hash is
-        recorded. A deck directory with no readable manifest is skipped rather
-        than treated as a collision.
+        recorded. A deck directory with no manifest, or whose manifests are all
+        corrupt, is skipped rather than treated as a collision. An unreadable
+        manifest is not skipped: `read_json` raises, because a dropped hash here
+        hands a different PDF the same slug.
         """
 
         found: dict[str, str] = {}
@@ -296,20 +298,28 @@ def write_model(target: Path, model: Any) -> None:
 
 
 def read_json(target: Path) -> Any | None:
-    """Parse one JSON file. Missing or unparseable reads as None.
+    """Parse one JSON file. Missing or corrupt reads as None; unreadable raises.
 
-    Unparseable covers more than bad JSON. ADR 0004 anticipates a run dying
+    Corrupt covers more than bad JSON. ADR 0004 anticipates a run dying
     mid-write, which leaves a file that is both truncated and not valid UTF-8,
     and this is the reader every manifest on disk goes through. A caller like
     `deck_slugs_with_hashes` walks every manifest under a subject, so one
     corrupt file has to be skipped rather than take the whole walk down.
+
+    An OSError is deliberately not swallowed. A manifest that exists but cannot
+    be opened (no read permission, a bad mount) is not the same fact as a
+    manifest that is absent, and collapsing the two is unsafe here: it would
+    drop that deck's sha256 from `deck_slugs_with_hashes`, letting a different
+    PDF claim the same base slug and overwrite the deck the hash suffix exists
+    to protect. Failing loudly is the better trade for an IO fault the caller
+    cannot repair by skipping.
     """
 
     if not target.is_file():
         return None
     try:
         return json.loads(target.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return None
 
 
