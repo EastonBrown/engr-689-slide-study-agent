@@ -64,6 +64,70 @@ kept apart from exposure. Its contents are fixed by the quiz schema, not here.
 separately so profile totals are derived. Re-running a deck replaces its
 contribution, which makes a re-run idempotent.
 
+**Run.** One pass of the pipeline over one deck, producing both paths together.
+Identified on disk by a UTC timestamp and identified for the purpose of
+replacing a contribution by the deck's content hash.
+
+**Attempt.** One quiz sitting. Append-only, tagged with the subject, deck, run,
+and the topics it touched. Performance is derived from attempts and is never
+stored as a number.
+
+**Golden run.** The one run committed to the repo, so collaborators and the
+demo have real artifacts without spending tokens or needing a network.
+
+**Research cache.** The global, committed store of research lookups, keyed by a
+hash of the normalized query. Shared across every run and every subject.
+
+## The on-disk layout
+
+Locked by [ADR 0004](docs/adr/0004-artifact-layout-and-memory-schema.md). Flat
+JSON throughout; no database. `runs/` and `memory/` are gitignored,
+`examples/golden/` and `cache/research/` are committed.
+
+```
+runs/<subject-slug>/<deck-slug>/<utc-timestamp>/
+  manifest.json          schema_version, deck sha256 and slug, subject, UTC
+                         start and end, model id, prompt version, DPI,
+                         per-path slides attempted and succeeded, count of
+                         non-null reader_note, research lookups and cache
+                         hits, token and cost totals per stage
+  pages-image/NNNN.json  one SlideNote per slide
+  pages-text/NNNN.json   one SlideNote per slide
+  outline-image.json
+  outline-text.json
+  research/              copies of the cache entries this run used
+  review.md
+  quiz.json
+runs/<subject-slug>/<deck-slug>/latest    names the newest timestamp
+
+memory/subjects.json                              slug, display name, created
+memory/<subject-slug>/profile.json                schema_version, topic list,
+                                                  exposure
+memory/<subject-slug>/contributions/<deck-slug>.json
+memory/<subject-slug>/attempts/<attempt-id>.json
+
+cache/research/<sha256-of-normalized-query>.json  query, timestamp, results
+examples/golden/                                  one committed run plus the
+                                                  memory state it produced
+```
+
+### Rules that travel with the layout
+
+- A run holds both paths under one manifest, so the results table reads one
+  directory instead of pairing two runs and trusting they matched.
+- Only the image path writes a deck contribution. The text path is a
+  measurement, and letting it contribute would double every topic's exposure.
+- A failed or degraded slide still writes its file, with `reader_note` set.
+  Resume is "retry every slide whose `reader_note` is non-null"; a missing file
+  never means anything.
+- A re-run writes a new timestamped directory. Idempotency happens in `memory/`,
+  by replacing the contribution, never by overwriting a run.
+- `memory/subjects.json` is the authority on which subjects exist. A directory
+  with no registry entry is an error, not a subject.
+- Memory is local to a machine and never merged or committed.
+- `schema_version` appears in `manifest.json` and `profile.json` and nowhere
+  else. A mismatch is a refusal to load, not a migration.
+
 ## The slide note schema
 
 Locked by [ADR 0002](docs/adr/0002-per-slide-note-schema.md). Strict JSON,
@@ -149,3 +213,6 @@ Topic
   above.
 - [ADR 0003](docs/adr/0003-cross-deck-topic-taxonomy.md): the cross-deck topic
   taxonomy and the topic record above.
+- [ADR 0004](docs/adr/0004-artifact-layout-and-memory-schema.md): the on-disk
+  layout above, flat JSON with no database, one committed golden run, and
+  memory that stays local to a machine.
