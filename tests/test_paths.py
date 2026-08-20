@@ -233,6 +233,33 @@ class TestTimestampIsActuallyUtc:
         assert paths.utc_timestamp(west) == paths.utc_timestamp(instant)
 
 
+class TestUtcIso:
+    """The in-file stamp. Same instant as `utc_timestamp`, readable form."""
+
+    def test_is_iso_8601_with_a_z(self):
+        from datetime import datetime, timezone
+
+        noon = datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc)
+        assert paths.utc_iso(noon) == "2026-08-20T12:00:00Z"
+
+    def test_converts_an_aware_non_utc_datetime(self):
+        from datetime import datetime, timedelta, timezone
+
+        noon_utc = datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc)
+        tokyo = noon_utc.astimezone(timezone(timedelta(hours=9)))
+        assert paths.utc_iso(tokyo) == "2026-08-20T12:00:00Z"
+
+    def test_a_naive_datetime_is_taken_as_utc_rather_than_local(self):
+        from datetime import datetime
+
+        assert paths.utc_iso(datetime(2026, 8, 20, 12, 0, 0)) == "2026-08-20T12:00:00Z"
+
+    def test_defaults_to_now_and_is_not_a_directory_name(self):
+        stamp = paths.utc_iso()
+        assert stamp.endswith("Z")
+        assert ":" in stamp
+
+
 # A manifest whose write died partway through: unterminated, and carrying bytes
 # that are not valid UTF-8. Built rather than written as a literal so the file
 # itself stays ASCII.
@@ -249,9 +276,42 @@ class TestReadJsonSurvivesACrashedWrite:
         assert paths.read_json(target) is None
 
     def test_a_directory_where_a_file_was_expected_reads_as_none(self, tmp_path):
+        """Caught by the `is_file` guard, before the read is ever attempted."""
+
         target = tmp_path / "manifest.json"
         target.mkdir()
         assert paths.read_json(target) is None
+
+    def test_a_manifest_that_cannot_be_read_raises_rather_than_reading_as_none(
+        self, tmp_path, monkeypatch
+    ):
+        """Unreadable is not absent. Swallowing the OSError here would drop the
+        deck's sha256 and let a different PDF claim its slug, so it propagates."""
+
+        target = tmp_path / "manifest.json"
+        paths.write_json(target, {"deck_sha256": "a" * 64})
+
+        def deny(self, *args, **kwargs):
+            raise PermissionError(13, "Permission denied")
+
+        monkeypatch.setattr(paths.Path, "read_text", deny)
+        with pytest.raises(PermissionError):
+            paths.read_json(target)
+
+    def test_an_unreadable_manifest_aborts_deck_discovery(self, tmp_path, monkeypatch):
+        """The counterpart to the corrupt-manifest walk below: a walk that hits
+        an IO fault must stop, not return a map missing that deck's hash."""
+
+        layout = paths.Layout(tmp_path)
+        run = layout.run_dir("engr-689", "day3-principle", "2026-08-20T12-00-00Z")
+        paths.write_json(paths.manifest_file(run), {"deck_sha256": "a" * 64})
+
+        def deny(self, *args, **kwargs):
+            raise PermissionError(13, "Permission denied")
+
+        monkeypatch.setattr(paths.Path, "read_text", deny)
+        with pytest.raises(PermissionError):
+            layout.deck_slugs_with_hashes("engr-689")
 
     def test_one_corrupt_manifest_does_not_abort_deck_discovery(self, tmp_path):
         """The failure that motivated this: `deck_slugs_with_hashes` walks every
