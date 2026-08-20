@@ -233,6 +233,7 @@ class Response(Strict):
     topic: str
     chosen_index: int
     correct: bool
+    unanswered: bool = False
 
 
 class Attempt(Strict):
@@ -240,6 +241,7 @@ class Attempt(Strict):
     subject_slug: str
     deck_slug: str | None
     run_timestamp: str | None
+    topics_touched: list[str]
     quiz_sha256: str
     kind: AttemptKind
     taken_at: str
@@ -252,7 +254,7 @@ class GradedQuestion(Strict):
     question_id: str
     topic: str
     stem: str
-    chosen_index: int
+    chosen_index: int | None
     correct_index: int
     correct: bool
     explanation: str

@@ -117,6 +117,7 @@ ATTEMPT = {
     "subject_slug": "engr-689",
     "deck_slug": "day3-principle",
     "run_timestamp": "2026-08-20T12-00-00Z",
+    "topics_touched": ["Retrieval"],
     "quiz_sha256": "f" * 64,
     "kind": "first_pass",
     "taken_at": "2026-08-20T12-05-00Z",
