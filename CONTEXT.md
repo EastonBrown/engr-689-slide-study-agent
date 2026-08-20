@@ -300,8 +300,9 @@ Outline
   superseded           [int]          build-up frames excluded from the partition
   unassigned           [int]          covered slides no topic claimed
   bridged_facts        [BridgedFact]
-  candidates_proposed  int
+  candidates_proposed  int            pairs found before the cap, not after
   candidate_cap        int
+  unreadable_notes     [int]          note files on disk that would not parse
   topic_cap_exceeded   bool
   question_budget      [(str, int)]   topic name to question count
 
@@ -320,7 +321,7 @@ BridgedFact
   slides            [int]   at least 2
   statement         str     the fact as it reads once joined
   from_visuals      [(int, int)]   slide number and index into its visuals
-  candidate_signal  str     which rule proposed the pair
+  candidate_signals [str]   every rule that proposed the pair
 ```
 
 ### Rules that travel with the outline
@@ -338,6 +339,14 @@ BridgedFact
   `Visual.relates_to_slides`, an adjacent slide with a null or repeated
   `title`, and adjacent slides sharing a `Concept.name`. The model confirms or
   rejects; it never proposes.
+- One slide pair is one candidate however many signals proposed it, and the
+  signals are merged onto it. A full-length deck proposes more pairs than the
+  cap of 30, so the cap keeps a visual edge over two agreeing adjacency signals
+  over one, and samples evenly across the deck inside whichever rank overflows.
+  Taking the first 30 would confine every candidate to the opening of the deck.
+- A note file on disk that will not parse is recorded in `unreadable_notes`
+  rather than dropped, so the covered count stays auditable against deck
+  length.
 - Both paths run the same code and the same prompt, so a bridged fact the text
   path cannot compose is a measurement.
 - The stage is two model calls over the whole deck: grouping with topic

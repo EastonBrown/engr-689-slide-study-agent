@@ -72,10 +72,11 @@ OUTLINE = {
             "slides": [55, 56],
             "statement": "The pipeline retrieves before it generates.",
             "from_visuals": [[55, 0], [56, 0]],
-            "candidate_signal": "relates_to_slides",
+            "candidate_signals": ["relates_to_slides", "shared_concept"],
         }
     ],
     "candidates_proposed": 4,
+    "unreadable_notes": [],
     "candidate_cap": 30,
     "topic_cap_exceeded": False,
     "question_budget": [["Retrieval", 10]],
@@ -304,7 +305,7 @@ class TestStrictness:
                     "slides": [55],
                     "statement": "Half a bridge.",
                     "from_visuals": [],
-                    "candidate_signal": "relates_to_slides",
+                    "candidate_signals": ["relates_to_slides"],
                 }
             )
 

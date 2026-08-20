@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+from pydantic import ValidationError
+
 from .. import config, llm, paths
 from ..prompts import outline as outline_prompts
 from ..schemas import (
@@ -28,11 +30,25 @@ from ..schemas import (
 BRIDGED_FACT_BUDGET_TOPIC = "bridged_fact"
 
 
+SIGNAL_VISUAL = "relates_to_slides"
+SIGNAL_TITLE = "adjacent_title"
+SIGNAL_CONCEPT = "shared_concept"
+SIGNAL_ORDER = (SIGNAL_VISUAL, SIGNAL_TITLE, SIGNAL_CONCEPT)
+
+
 @dataclass(frozen=True)
 class BridgeCandidate:
     index: int
     slides: tuple[int, int]
-    signal: str
+    signals: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class BridgeProposal:
+    """Candidates that survived the cap, and how many pairs existed before it."""
+
+    candidates: list[BridgeCandidate]
+    proposed: int
 
 
 class Outliner(Protocol):
@@ -91,7 +107,7 @@ class AnthropicOutliner:
             {
                 "index": candidate.index,
                 "slides": candidate.slides,
-                "signal": candidate.signal,
+                "signals": list(candidate.signals),
                 "notes": [notes_by_slide[slide].model_dump() for slide in candidate.slides],
             }
             for candidate in candidates
@@ -176,46 +192,103 @@ def _compact_notes(notes: list[SlideNote]) -> list[dict[str, Any]]:
     ]
 
 
+def _tier(signals: set[str]) -> int:
+    """Rank a pair so the cap keeps the strongest proposals, not the earliest.
+
+    A visual edge is a deliberate cross-slide reference the reader recorded, and
+    it is the only signal that can propose a non-adjacent pair, so it outranks
+    adjacency. A pair two adjacency signals agree on outranks one they do not.
+    """
+
+    if SIGNAL_VISUAL in signals:
+        return 0
+    if len(signals) > 1:
+        return 1
+    return 2
+
+
+def _even_sample(items: list[Any], keep: int) -> list[Any]:
+    """Take `keep` items spread across `items` rather than the first `keep`.
+
+    Taking a prefix is what confined candidates to the opening of a deck: a
+    sixty-slide deck proposes roughly sixty adjacency pairs against a cap of
+    thirty, so a prefix can never reach the back of the deck at all.
+    """
+
+    if keep <= 0:
+        return []
+    if keep >= len(items):
+        return list(items)
+    # Take the centre of each bucket, not its start. Sampling at bucket starts
+    # leaves the last bucket's tail unreachable, which at a small `keep` is the
+    # prefix bias this function exists to remove: two slots over sixty pairs
+    # would return pairs 0 and 30 and never look at the second half at all.
+    step = len(items) / keep
+    return [items[int((index + 0.5) * step)] for index in range(keep)]
+
+
 def propose_bridge_candidates(
     notes: list[SlideNote], cap: int = config.CANDIDATE_CAP
-) -> list[BridgeCandidate]:
-    """Propose bridge candidates from ADR 0007's three code-side signals."""
+) -> BridgeProposal:
+    """Propose bridge candidates from ADR 0007's three code-side signals.
+
+    A slide pair is one candidate however many signals proposed it; the signals
+    are merged onto it. `proposed` is the pre-cap total, so a truncated deck is
+    distinguishable from one that fit.
+    """
 
     by_slide = {note.slide_number: note for note in notes}
-    pairs: list[tuple[tuple[int, int], str]] = []
+    signals_by_pair: dict[tuple[int, int], set[str]] = {}
+
+    def record(pair: tuple[int, int], signal: str) -> None:
+        signals_by_pair.setdefault(pair, set()).add(signal)
 
     for note in notes:
         for visual in note.visuals:
             for target in visual.relates_to_slides:
                 first_slide, second_slide = sorted((note.slide_number, target))
-                pair = (first_slide, second_slide)
-                if pair[0] != pair[1] and pair[0] in by_slide and pair[1] in by_slide:
-                    pairs.append((pair, "relates_to_slides"))
+                if first_slide == second_slide:
+                    continue
+                if first_slide in by_slide and second_slide in by_slide:
+                    record((first_slide, second_slide), SIGNAL_VISUAL)
 
     ordered = sorted(notes, key=lambda note: note.slide_number)
     for first, second in zip(ordered, ordered[1:]):
         if second.slide_number != first.slide_number + 1:
             continue
+        pair = (first.slide_number, second.slide_number)
         if second.title is None or second.title == first.title:
-            pairs.append(((first.slide_number, second.slide_number), "adjacent_title"))
+            record(pair, SIGNAL_TITLE)
         first_concepts = {concept.name for concept in first.concepts}
         second_concepts = {concept.name for concept in second.concepts}
         if first_concepts & second_concepts:
-            pairs.append(((first.slide_number, second.slide_number), "shared_concept"))
+            record(pair, SIGNAL_CONCEPT)
 
-    candidates: list[BridgeCandidate] = []
-    seen: set[tuple[tuple[int, int], str]] = set()
-    for pair, signal in pairs:
-        key = (pair, signal)
-        if key in seen:
-            continue
-        seen.add(key)
-        candidates.append(
-            BridgeCandidate(index=len(candidates), slides=pair, signal=signal)
-        )
-        if len(candidates) >= cap:
+    ordered_pairs = sorted(signals_by_pair)
+    selected: list[tuple[int, int]] = []
+    remaining = cap
+    for tier in (0, 1, 2):
+        if remaining <= 0:
             break
-    return candidates
+        in_tier = [
+            pair for pair in ordered_pairs if _tier(signals_by_pair[pair]) == tier
+        ]
+        kept = _even_sample(in_tier, remaining)
+        selected.extend(kept)
+        remaining -= len(kept)
+
+    selected.sort()
+    candidates = [
+        BridgeCandidate(
+            index=index,
+            slides=pair,
+            signals=tuple(
+                signal for signal in SIGNAL_ORDER if signal in signals_by_pair[pair]
+            ),
+        )
+        for index, pair in enumerate(selected)
+    ]
+    return BridgeProposal(candidates=candidates, proposed=len(ordered_pairs))
 
 
 def _covered_notes(notes: list[SlideNote], superseded: set[int]) -> list[SlideNote]:
@@ -291,6 +364,7 @@ def _topics_from_grouping(
                 if slide in covered_slides and slide not in assigned:
                     slides.append(slide)
                     assigned.add(slide)
+        slides.sort()
         topics.append(
             OutlineTopic(
                 name=draft.name,
@@ -302,6 +376,11 @@ def _topics_from_grouping(
                 ],
             )
         )
+    # ADR 0007 orders topics by their first slide, which is the first slide the
+    # topic was actually assigned. Ordering the drafts is only a tie-break for
+    # who claims a doubly-claimed slide; a draft that loses its opening slides
+    # that way belongs later than the draft that took them.
+    topics.sort(key=lambda item: item.slides[0] if item.slides else 10**9)
     unassigned = sorted(covered_slides - assigned)
     return topics, unassigned, len(grouping.topics) > config.TOPIC_CAP
 
@@ -329,7 +408,7 @@ def _bridged_facts_from(
                     for item in confirmation.from_visuals
                     if item[0] in candidate_slides
                 ],
-                candidate_signal=candidate.signal,
+                candidate_signals=list(candidate.signals),
             )
         )
     return facts
@@ -394,11 +473,27 @@ def build_outline(
     existing_topics: list[str],
     superseded: list[int],
     outliner: Outliner,
+    unreadable_notes: list[int] | None = None,
 ) -> Outline:
     superseded_set = set(superseded)
     covered = _covered_notes(notes, superseded_set)
     exposed = _exposed_notes(notes, superseded_set)
     covered_slides = {note.slide_number for note in covered}
+    unreadable = sorted(unreadable_notes or [])
+
+    if not exposed:
+        # Nothing to group and nothing to bridge. Both calls are high effort at
+        # 16k tokens, so running them over an empty deck bills twice for a
+        # result that is fixed in advance.
+        return Outline(
+            deck_slug=deck_slug,
+            path=path_kind,
+            topics=[],
+            skipped=_skipped(notes),
+            superseded=superseded,
+            candidate_cap=config.CANDIDATE_CAP,
+            unreadable_notes=unreadable,
+        )
 
     grouping = outliner.group(exposed, existing_topics)
     violations = _violations(grouping, covered_slides, existing_topics)
@@ -414,10 +509,13 @@ def build_outline(
     topics, unassigned, topic_cap_exceeded = _topics_from_grouping(
         grouping, covered, existing_topics
     )
-    candidates = propose_bridge_candidates(covered, cap=config.CANDIDATE_CAP)
-    notes_by_slide = {note.slide_number: note for note in covered}
-    bridge_draft = outliner.confirm_bridges(notes_by_slide, candidates)
-    bridged_facts = _bridged_facts_from(bridge_draft, candidates)
+    proposal = propose_bridge_candidates(covered, cap=config.CANDIDATE_CAP)
+    candidates = proposal.candidates
+    bridged_facts: list[BridgedFact] = []
+    if candidates:
+        notes_by_slide = {note.slide_number: note for note in covered}
+        bridge_draft = outliner.confirm_bridges(notes_by_slide, candidates)
+        bridged_facts = _bridged_facts_from(bridge_draft, candidates)
     question_budget, untested_topics = allocate_question_budget(
         topics, has_bridged_facts=bool(bridged_facts)
     )
@@ -430,8 +528,9 @@ def build_outline(
         superseded=superseded,
         unassigned=unassigned,
         bridged_facts=bridged_facts,
-        candidates_proposed=len(candidates),
+        candidates_proposed=proposal.proposed,
         candidate_cap=config.CANDIDATE_CAP,
+        unreadable_notes=unreadable,
         topic_cap_exceeded=topic_cap_exceeded,
         question_budget=question_budget,
         untested_topics=untested_topics,
@@ -439,13 +538,37 @@ def build_outline(
     )
 
 
-def _load_notes(run_dir: Path, path_kind: PathKind) -> list[SlideNote]:
+def _load_notes(
+    run_dir: Path, path_kind: PathKind
+) -> tuple[list[SlideNote], list[int]]:
+    """Load one path's notes, keeping the slides that would not parse.
+
+    `paths.read_json` returns None for a file left truncated by a run that died
+    mid-write. Dropping those silently shrinks the deck: the slide enters no
+    topic, no `skipped` list and no `unassigned` list, so the covered count
+    stops being auditable against deck length. It is recorded instead.
+    """
+
     notes: list[SlideNote] = []
+    unreadable: list[int] = []
     for target in sorted(paths.notes_dir(run_dir, path_kind.value).glob("*.json")):
+        # Note files are written by `paths.page_note`, so the stem is the slide
+        # number. A file whose name is not a slide number was not written by the
+        # page reader and is not a lost slide, so skipping it costs the covered
+        # count nothing; crashing the stage over it after the page reads are
+        # already paid for costs the run everything.
+        if not target.stem.isdigit():
+            continue
+        slide_number = int(target.stem)
         payload = paths.read_json(target)
-        if payload is not None:
+        if payload is None:
+            unreadable.append(slide_number)
+            continue
+        try:
             notes.append(SlideNote.model_validate(payload))
-    return notes
+        except ValidationError:
+            unreadable.append(slide_number)
+    return notes, unreadable
 
 
 def _load_existing_topic_names(layout: paths.Layout, subject_slug: str) -> list[str]:
@@ -511,13 +634,15 @@ def outline_run(
     else:
         topics = []
     for path_kind in (PathKind.image, PathKind.text):
+        notes, unreadable = _load_notes(Path(run_dir), path_kind)
         result = build_outline(
             deck_slug=deck_slug,
             path_kind=path_kind,
-            notes=_load_notes(Path(run_dir), path_kind),
+            notes=notes,
             existing_topics=topics,
             superseded=superseded,
             outliner=outliner,
+            unreadable_notes=unreadable,
         )
         paths.write_model(paths.outline_file(Path(run_dir), path_kind.value), result)
     usage = getattr(outliner, "usage", StageUsage(stage="outline"))
