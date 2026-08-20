@@ -206,3 +206,65 @@ def test_read_json_on_a_corrupt_file_reads_as_none(tmp_path):
     target = tmp_path / "broken.json"
     target.write_text("{not json", encoding="utf-8")
     assert paths.read_json(target) is None
+
+class TestTimestampIsActuallyUtc:
+    """The stamp names the run directory and sorts `latest`, so a mislabeled
+    one can make an older run sort as newer."""
+
+    def test_an_aware_non_utc_datetime_is_converted_not_just_suffixed(self):
+        from datetime import datetime, timedelta, timezone
+
+        noon_utc = datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc)
+        tokyo = noon_utc.astimezone(timezone(timedelta(hours=9)))
+        assert paths.utc_timestamp(tokyo) == paths.utc_timestamp(noon_utc)
+        assert paths.utc_timestamp(tokyo) == "2026-08-20T12-00-00Z"
+
+    def test_a_naive_datetime_is_taken_as_utc_rather_than_local(self):
+        from datetime import datetime
+
+        naive = datetime(2026, 8, 20, 12, 0, 0)
+        assert paths.utc_timestamp(naive) == "2026-08-20T12-00-00Z"
+
+    def test_two_stamps_of_one_instant_sort_identically(self):
+        from datetime import datetime, timedelta, timezone
+
+        instant = datetime(2026, 8, 20, 23, 30, 0, tzinfo=timezone.utc)
+        west = instant.astimezone(timezone(timedelta(hours=-8)))
+        assert paths.utc_timestamp(west) == paths.utc_timestamp(instant)
+
+
+# A manifest whose write died partway through: unterminated, and carrying bytes
+# that are not valid UTF-8. Built rather than written as a literal so the file
+# itself stays ASCII.
+TRUNCATED_MANIFEST = b'{"deck_sha256": "' + bytes([0xFF, 0xFE]) + b" truncated"
+
+
+class TestReadJsonSurvivesACrashedWrite:
+    """ADR 0004 anticipates a run dying mid-write. `read_json` is the reader for
+    every manifest on disk, so it has to degrade rather than raise."""
+
+    def test_invalid_utf8_reads_as_none(self, tmp_path):
+        target = tmp_path / "manifest.json"
+        target.write_bytes(TRUNCATED_MANIFEST)
+        assert paths.read_json(target) is None
+
+    def test_a_directory_where_a_file_was_expected_reads_as_none(self, tmp_path):
+        target = tmp_path / "manifest.json"
+        target.mkdir()
+        assert paths.read_json(target) is None
+
+    def test_one_corrupt_manifest_does_not_abort_deck_discovery(self, tmp_path):
+        """The failure that motivated this: `deck_slugs_with_hashes` walks every
+        manifest under a subject, so one bad file must not take the rest down."""
+
+        layout = paths.Layout(tmp_path)
+
+        good = layout.run_dir("engr-689", "day3-principle", "2026-08-20T12-00-00Z")
+        paths.write_json(paths.manifest_file(good), {"deck_sha256": "a" * 64})
+
+        broken = layout.run_dir("engr-689", "day1-tool", "2026-08-20T12-00-00Z")
+        broken.mkdir(parents=True)
+        paths.manifest_file(broken).write_bytes(TRUNCATED_MANIFEST)
+
+        found = layout.deck_slugs_with_hashes("engr-689")
+        assert found == {"day3-principle": "a" * 64}

@@ -60,10 +60,20 @@ def deck_slug(filename: str, sha256: str, existing: dict[str, str]) -> str:
 
 
 def utc_timestamp(moment: datetime | None = None) -> str:
-    """A filename-safe, sortable UTC stamp. This is a run's identity on disk."""
+    """A filename-safe, sortable UTC stamp. This is a run's identity on disk.
 
-    moment = moment or datetime.now(timezone.utc)
-    return moment.strftime(TIMESTAMP_FORMAT)
+    The stamp names the run directory, is the value of the `latest` pointer,
+    and is the sort key behind "newest run wins", so it has to be genuinely
+    UTC and not merely suffixed with a Z. An aware datetime is converted; a
+    naive one is taken as already UTC, since every producer in this codebase
+    is UTC and shifting it by the machine's offset would be the worse guess.
+    """
+
+    if moment is None:
+        moment = datetime.now(timezone.utc)
+    elif moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(timezone.utc).strftime(TIMESTAMP_FORMAT)
 
 
 def new_attempt_id() -> str:
@@ -271,13 +281,20 @@ def write_model(target: Path, model: Any) -> None:
 
 
 def read_json(target: Path) -> Any | None:
-    """Parse one JSON file. Missing or unparseable reads as None."""
+    """Parse one JSON file. Missing or unparseable reads as None.
+
+    Unparseable covers more than bad JSON. ADR 0004 anticipates a run dying
+    mid-write, which leaves a file that is both truncated and not valid UTF-8,
+    and this is the reader every manifest on disk goes through. A caller like
+    `deck_slugs_with_hashes` walks every manifest under a subject, so one
+    corrupt file has to be skipped rather than take the whole walk down.
+    """
 
     if not target.is_file():
         return None
     try:
         return json.loads(target.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
         return None
 
 
