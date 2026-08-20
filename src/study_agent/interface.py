@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
-from study_agent import config, paths, schemas
+from study_agent import config, memory, paths, schemas
+from study_agent.stages import grade
+
+_SLIDE_CITATION = re.compile(r"\[slide(?:s)? ([0-9,\\s]+)\]", re.IGNORECASE)
 
 STAGES: tuple[tuple[str, str], ...] = (
     ("render", "Render"),
@@ -59,6 +63,36 @@ class DegradedRead:
     reader_note: str
     image_path: Path
     note: schemas.SlideNote
+
+
+@dataclass(frozen=True)
+class ReviewCitation:
+    slide_number: int
+    image_path: Path
+    note: schemas.SlideNote
+
+
+@dataclass(frozen=True)
+class ReviewDocument:
+    markdown: str
+    citations: list[ReviewCitation]
+
+
+@dataclass(frozen=True)
+class PathComparison:
+    path_kind: str
+    slides_read: int | None
+    visuals_found: int | None
+    not_applicable: bool = False
+    note: str | None = None
+
+
+@dataclass(frozen=True)
+class ComparisonScoreboard:
+    image: PathComparison
+    text: PathComparison
+    figure_only_label: str
+    slide_10_label: str
 
 
 def subject_options(layout: paths.Layout) -> list[SubjectOption]:
@@ -185,6 +219,128 @@ def degraded_reads(run_dir: Path) -> list[DegradedRead]:
     return items
 
 
+def review_document(run_dir: Path, path_kind: str) -> ReviewDocument | None:
+    target = paths.review_file(run_dir, path_kind)
+    if not target.is_file():
+        return None
+    markdown = target.read_text(encoding="utf-8")
+    citations: list[ReviewCitation] = []
+    seen: set[int] = set()
+    for slide_number in _citation_numbers(markdown):
+        if slide_number in seen:
+            continue
+        seen.add(slide_number)
+        payload = paths.read_json(paths.page_note(run_dir, path_kind, slide_number))
+        if payload is None:
+            continue
+        citations.append(
+            ReviewCitation(
+                slide_number=slide_number,
+                image_path=paths.page_render_png(run_dir, slide_number),
+                note=schemas.SlideNote.model_validate(payload),
+            )
+        )
+    return ReviewDocument(markdown=markdown, citations=citations)
+
+
+def comparison_scoreboard(
+    run_dir: Path,
+    *,
+    eval_file: Path | None = None,
+) -> ComparisonScoreboard:
+    manifest = _load_manifest(run_dir)
+    if manifest is None:
+        raise ValueError(f"Run has no readable manifest: {run_dir}")
+    image = _comparison_path(run_dir, manifest, schemas.PathKind.image)
+    if manifest.preflight.image_only:
+        text = PathComparison(
+            path_kind=schemas.PathKind.text.value,
+            slides_read=None,
+            visuals_found=None,
+            not_applicable=True,
+            note="text path not applicable, this deck is image-only",
+        )
+    else:
+        text = _comparison_path(run_dir, manifest, schemas.PathKind.text)
+    figure_only, slide_10 = _figure_only_labels(run_dir, manifest, eval_file or paths.Layout().figure_only_facts_file())
+    return ComparisonScoreboard(
+        image=image,
+        text=text,
+        figure_only_label=figure_only,
+        slide_10_label=slide_10,
+    )
+
+
+def submit_quiz_answers(
+    layout: paths.Layout,
+    run_dir: Path,
+    choices_by_question: dict[str, int | None],
+    *,
+    attempt_id: str | None = None,
+    taken_at: str | None = None,
+) -> schemas.GradeResult:
+    quiz_payload = paths.read_json(paths.quiz_file(run_dir))
+    if quiz_payload is None:
+        raise ValueError(f"Run has no readable quiz: {run_dir}")
+    quiz = schemas.Quiz.model_validate(quiz_payload)
+    choices = [choices_by_question.get(question.question_id) for question in quiz.questions]
+    return grade.grade_quiz_file(
+        paths.quiz_file(run_dir),
+        choices,
+        layout=layout,
+        attempt_id=attempt_id,
+        taken_at=taken_at,
+    )
+
+
+def latest_grade_result(layout: paths.Layout, run_dir: Path) -> schemas.GradeResult | None:
+    quiz_payload = paths.read_json(paths.quiz_file(run_dir))
+    manifest = _load_manifest(run_dir)
+    if quiz_payload is None or manifest is None:
+        return None
+    quiz = schemas.Quiz.model_validate(quiz_payload)
+    attempts = [
+        attempt
+        for attempt in memory.read_attempts(layout, manifest.subject_slug)
+        if attempt.quiz_sha256 == paths.sha256_file(paths.quiz_file(run_dir))
+    ]
+    if not attempts:
+        return None
+    latest = sorted(attempts, key=lambda item: item.taken_at)[-1]
+    choices = [
+        None if response.unanswered else response.chosen_index
+        for response in latest.responses
+    ]
+    return grade.grade_quiz(
+        quiz,
+        choices,
+        quiz_sha256=latest.quiz_sha256,
+        attempt_id=latest.attempt_id,
+        taken_at=latest.taken_at,
+    )
+
+
+def generate_retake_for_subject(layout: paths.Layout, subject_slug: str) -> schemas.Quiz | str:
+    result = memory.generate_retake(layout, subject_slug)
+    if isinstance(result, memory.RetakeRefusal):
+        return result.message
+    return result
+
+
+def latest_retake(layout: paths.Layout, subject_slug: str) -> schemas.Quiz | None:
+    retakes_dir = layout.retakes_dir(subject_slug)
+    if not retakes_dir.is_dir():
+        return None
+    retakes: list[schemas.Quiz] = []
+    for target in sorted(retakes_dir.glob("*.json")):
+        payload = paths.read_json(target)
+        if payload is not None:
+            retakes.append(schemas.Quiz.model_validate(payload))
+    if not retakes:
+        return None
+    return sorted(retakes, key=lambda item: item.generated_at)[-1]
+
+
 def _latest_run_for_subject(layout: paths.Layout, subject_slug: str) -> Path | None:
     subject_dir = layout.runs_dir() / subject_slug
     if not subject_dir.is_dir():
@@ -229,6 +385,92 @@ def _topic_counts(run_dir: Path) -> tuple[int, int]:
     matched = sum(1 for topic in outline.topics if not topic.is_new)
     new = sum(1 for topic in outline.topics if topic.is_new)
     return matched, new
+
+
+def _citation_numbers(markdown: str) -> list[int]:
+    numbers: list[int] = []
+    for match in _SLIDE_CITATION.finditer(markdown):
+        for raw in match.group(1).split(","):
+            raw = raw.strip()
+            if raw.isdigit():
+                numbers.append(int(raw))
+    return numbers
+
+
+def _comparison_path(
+    run_dir: Path,
+    manifest: schemas.Manifest,
+    path_kind: schemas.PathKind,
+) -> PathComparison:
+    stat = _path_stat(manifest, path_kind)
+    notes = _notes(run_dir, path_kind)
+    return PathComparison(
+        path_kind=path_kind.value,
+        slides_read=stat.slides_succeeded,
+        visuals_found=sum(len(note.visuals) for note in notes),
+    )
+
+
+def _notes(run_dir: Path, path_kind: schemas.PathKind) -> list[schemas.SlideNote]:
+    notes: list[schemas.SlideNote] = []
+    for target in sorted(paths.notes_dir(run_dir, path_kind.value).glob("*.json")):
+        payload = paths.read_json(target)
+        if payload is not None:
+            notes.append(schemas.SlideNote.model_validate(payload))
+    return notes
+
+
+def _figure_only_labels(
+    run_dir: Path,
+    manifest: schemas.Manifest,
+    eval_file: Path,
+) -> tuple[str, str]:
+    payload = paths.read_json(eval_file)
+    facts = _facts_for_deck(payload, manifest.deck_slug)
+    if facts is None:
+        return "not labeled for this deck", "not labeled for this deck"
+    headline = [fact for fact in facts if fact.get("in_headline")]
+    weak = [fact for fact in facts if not fact.get("in_headline") and 10 in _fact_slides(fact)]
+    image_hits = sum(1 for fact in headline if _fact_hit(run_dir, schemas.PathKind.image, fact))
+    text_hits = sum(1 for fact in headline if _fact_hit(run_dir, schemas.PathKind.text, fact))
+    slide_10 = "partial on both sides" if weak else "not labeled for this deck"
+    return f"{image_hits}/{len(headline)} vs {text_hits}/{len(headline)}", slide_10
+
+
+def _facts_for_deck(payload: object, deck_slug: str) -> list[dict[str, object]] | None:
+    if not isinstance(payload, dict):
+        return None
+    decks = payload.get("decks")
+    if isinstance(decks, dict):
+        deck_payload = decks.get(deck_slug)
+        if isinstance(deck_payload, dict):
+            facts = deck_payload.get("facts")
+            if isinstance(facts, list):
+                return [fact for fact in facts if isinstance(fact, dict)]
+        return None
+    if payload.get("deck_slug") == deck_slug:
+        facts = payload.get("facts")
+        if isinstance(facts, list):
+            return [fact for fact in facts if isinstance(fact, dict)]
+    return None
+
+
+def _fact_hit(run_dir: Path, path_kind: schemas.PathKind, fact: dict[str, object]) -> bool:
+    fact_text = str(fact.get("fact", "")).lower()
+    for slide in _fact_slides(fact):
+        payload = paths.read_json(paths.page_note(run_dir, path_kind.value, slide))
+        if payload is None:
+            continue
+        note = schemas.SlideNote.model_validate(payload)
+        if fact_text and fact_text in note.model_dump_json().lower():
+            return True
+    return False
+
+
+def _fact_slides(fact: dict[str, object]) -> list[int]:
+    raw_slides = fact.get("slides", [])
+    slides = raw_slides if isinstance(raw_slides, list) else []
+    return [slide for slide in slides if isinstance(slide, int)]
 
 
 def _stage_state(

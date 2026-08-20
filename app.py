@@ -8,7 +8,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from study_agent import interface, paths, pipeline
+from study_agent import interface, paths, pipeline, schemas
 
 
 def main() -> None:
@@ -61,6 +61,8 @@ def main() -> None:
     if summary is not None:
         _render_summary(summary)
         _render_degraded(summary.run_dir)
+        _render_review_and_comparison(summary.run_dir)
+        _render_quiz_grade_retake(layout, summary)
 
 
 def _run_with_live_boxes(
@@ -139,6 +141,95 @@ def _render_degraded(run_dir: Path) -> None:
         right.subheader(f"{item.path_kind} slide {item.slide_number}")
         right.write(item.reader_note)
         right.json(item.note.model_dump(mode="json"))
+
+
+def _render_review_and_comparison(run_dir: Path) -> None:
+    st.header("Lesson review")
+    image_review = interface.review_document(run_dir, "image")
+    if image_review is None:
+        st.write("Review pending.")
+    else:
+        st.markdown(image_review.markdown)
+        selected_slide = st.selectbox(
+            "Citation",
+            [citation.slide_number for citation in image_review.citations],
+            index=0 if image_review.citations else None,
+            placeholder="Choose a cited slide",
+        )
+        selected = next(
+            (citation for citation in image_review.citations if citation.slide_number == selected_slide),
+            None,
+        )
+        if selected is not None:
+            left, right = st.columns([1, 2])
+            if selected.image_path.is_file():
+                left.image(str(selected.image_path), caption=f"Slide {selected.slide_number}")
+            right.json(selected.note.model_dump(mode="json"))
+
+    st.header("Image path vs text path")
+    comparison = interface.comparison_scoreboard(run_dir)
+    columns = st.columns(4)
+    columns[0].metric("Image slides read", comparison.image.slides_read or 0)
+    columns[1].metric("Image visuals found", comparison.image.visuals_found or 0)
+    if comparison.text.not_applicable:
+        columns[2].write(comparison.text.note)
+    else:
+        columns[2].metric("Text slides read", comparison.text.slides_read or 0)
+    columns[3].metric("Text visuals found", comparison.text.visuals_found or 0)
+    st.write(f"Figure-only recovery: {comparison.figure_only_label}")
+    st.write(f"Slide 10: {comparison.slide_10_label}")
+
+    left, right = st.columns(2)
+    left.subheader("Image review")
+    left.markdown(image_review.markdown if image_review else "Pending.")
+    text_review = interface.review_document(run_dir, "text")
+    right.subheader("Text review")
+    right.markdown(text_review.markdown if text_review else "Pending.")
+
+
+def _render_quiz_grade_retake(layout: paths.Layout, summary: interface.RunSummary) -> None:
+    st.header("Quiz")
+    quiz_payload = paths.read_json(paths.quiz_file(summary.run_dir))
+    if quiz_payload is None:
+        st.write("Quiz pending.")
+    else:
+        parsed = schemas.Quiz.model_validate(quiz_payload)
+        choices: dict[str, int | None] = {}
+        with st.form("quiz"):
+            for question in parsed.questions:
+                choice = st.radio(
+                    question.stem,
+                    question.options,
+                    index=None,
+                    key=question.question_id,
+                )
+                choices[question.question_id] = (
+                    question.options.index(choice) if choice is not None else None
+                )
+            submitted = st.form_submit_button("Submit quiz")
+        if submitted:
+            interface.submit_quiz_answers(layout, summary.run_dir, choices)
+            st.rerun()
+        result = interface.latest_grade_result(layout, summary.run_dir)
+        if result is not None:
+            st.subheader("Grade")
+            for item in result.questions:
+                verdict = "correct" if item.correct else "incorrect"
+                st.write(f"{item.question_id}: {verdict}")
+                st.write(item.explanation)
+                st.write(item.chosen_rationale)
+            st.write({item.topic: (item.correct, item.seen) for item in result.rollup})
+
+    st.header("Retake")
+    if st.button("Generate retake"):
+        result = interface.generate_retake_for_subject(layout, summary.subject_slug)
+        if isinstance(result, str):
+            st.write(result)
+        else:
+            st.write(f"Retake written: {result.quiz_id}")
+    retake = interface.latest_retake(layout, summary.subject_slug)
+    if retake is not None:
+        st.write(f"Latest retake: {retake.quiz_id}")
 
 
 if __name__ == "__main__":

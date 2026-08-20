@@ -96,8 +96,39 @@ def write_run(layout: paths.Layout) -> Path:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(b"png")
     paths.write_model(paths.page_note(run_dir, "image", 1), note(1, reader_note="blurred"))
+    paths.write_model(paths.page_note(run_dir, "text", 1), note(1))
     paths.write_model(paths.page_note(run_dir, "text", 2), note(2, reader_note="missing text"))
     return run_dir
+
+
+def write_review_and_quiz(run_dir: Path) -> None:
+    paths.write_text(paths.review_file(run_dir, "image"), "# Retrieval\nClaim [slide 1]\n")
+    paths.write_text(paths.review_file(run_dir, "text"), "# Retrieval\nText claim [slide 2]\n")
+    paths.write_model(
+        paths.quiz_file(run_dir),
+        schemas.Quiz(
+            quiz_id="deck-2026-08-20T12-00-00Z",
+            subject_slug="engr-689",
+            deck_slug="deck",
+            run_timestamp="2026-08-20T12-00-00Z",
+            kind=schemas.AttemptKind.first_pass,
+            generated_at="2026-08-20T12:10:00Z",
+            covered_slide_count=4,
+            questions=[
+                schemas.Question(
+                    question_id="deck-q01",
+                    stem="What follows from retrieval?",
+                    options=["correct option", "near miss", "wrong option", "also wrong"],
+                    correct_index=0,
+                    explanation="The slide says so.",
+                    distractor_rationale=[None, "Near miss.", "Wrong.", "Also wrong."],
+                    slide_citations=[1],
+                    topic="Retrieval",
+                    source=schemas.Source.prose,
+                )
+            ],
+        ),
+    )
 
 
 def test_subject_options_come_from_registry(tmp_path):
@@ -203,3 +234,133 @@ def test_degraded_reads_include_page_images(tmp_path):
         ("image", 1, "blurred", paths.page_render_png(run_dir, 1)),
         ("text", 2, "missing text", paths.page_render_png(run_dir, 2)),
     ]
+
+
+def test_review_provenance_resolves_citations_to_image_and_note(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    run_dir = write_run(layout)
+    write_review_and_quiz(run_dir)
+
+    review_doc = interface.review_document(run_dir, "image")
+
+    assert review_doc is not None
+    assert review_doc.markdown.startswith("# Retrieval")
+    assert [(item.slide_number, item.image_path, item.note.title) for item in review_doc.citations] == [
+        (1, paths.page_render_png(run_dir, 1), "Slide 1")
+    ]
+
+
+def test_comparison_metrics_are_computed_from_run_and_eval_labels(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    run_dir = write_run(layout)
+    eval_file = tmp_path / "eval" / "figure-only-facts.json"
+    paths.write_json(
+        eval_file,
+        {
+            "schema_version": 1,
+            "decks": {
+                "deck": {
+                    "facts": [
+                        {"id": "headline", "slides": [1], "in_headline": True, "fact": "Reading 1."},
+                        {"id": "weak", "slides": [10], "in_headline": False, "fact": "Reading 10."},
+                    ]
+                }
+            },
+        },
+    )
+
+    comparison = interface.comparison_scoreboard(run_dir, eval_file=eval_file)
+
+    assert comparison.image.slides_read == 3
+    assert comparison.text.slides_read == 4
+    assert comparison.image.visuals_found == 0
+    assert comparison.figure_only_label == "1/1 vs 1/1"
+    assert comparison.slide_10_label == "partial on both sides"
+
+
+def test_unlabeled_deck_and_image_only_text_baseline_are_explicit(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    run_dir = write_run(layout)
+    updated = manifest().model_copy(update={"preflight": preflight().model_copy(update={"image_only": True})})
+    paths.write_model(paths.manifest_file(run_dir), updated)
+
+    comparison = interface.comparison_scoreboard(run_dir, eval_file=tmp_path / "missing.json")
+
+    assert comparison.figure_only_label == "not labeled for this deck"
+    assert comparison.text.not_applicable is True
+    assert comparison.text.note == "text path not applicable, this deck is image-only"
+
+
+def test_quiz_submission_grades_and_appends_attempt(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    run_dir = write_run(layout)
+    write_review_and_quiz(run_dir)
+
+    result = interface.submit_quiz_answers(
+        layout,
+        run_dir,
+        {"deck-q01": 1},
+        attempt_id="2026-08-20T12-20-00Z-aaaaaa",
+        taken_at="2026-08-20T12:20:00Z",
+    )
+
+    assert result.questions[0].correct is False
+    assert result.questions[0].chosen_rationale == "Near miss."
+    assert [(item.topic, item.correct, item.seen) for item in result.rollup] == [("Retrieval", 0, 1)]
+
+
+def test_latest_grade_result_rehydrates_from_attempt_file(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    run_dir = write_run(layout)
+    write_review_and_quiz(run_dir)
+    interface.submit_quiz_answers(
+        layout,
+        run_dir,
+        {"deck-q01": 1},
+        attempt_id="2026-08-20T12-20-00Z-aaaaaa",
+        taken_at="2026-08-20T12:20:00Z",
+    )
+
+    result = interface.latest_grade_result(layout, run_dir)
+
+    assert result is not None
+    assert result.questions[0].chosen_rationale == "Near miss."
+    assert result.rollup[0].seen == 1
+
+
+def test_latest_retake_reads_newest_retake_from_disk(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+    paths.write_model(
+        layout.retake_file("engr-689", "2026-08-20T12-30-00Z-aaaaaa"),
+        schemas.Quiz(
+            quiz_id="2026-08-20T12-30-00Z-aaaaaa",
+            subject_slug="engr-689",
+            deck_slug=None,
+            run_timestamp=None,
+            kind=schemas.AttemptKind.retake,
+            generated_at="2026-08-20T12:30:00Z",
+            covered_slide_count=1,
+            questions=[],
+        ),
+    )
+
+    retake = interface.latest_retake(layout, "engr-689")
+
+    assert retake is not None
+    assert retake.quiz_id == "2026-08-20T12-30-00Z-aaaaaa"
+
+
+def test_retake_refusal_is_returned_for_empty_attempt_history(tmp_path):
+    layout = paths.Layout(tmp_path)
+    register_subject(layout)
+
+    message = interface.generate_retake_for_subject(layout, "engr-689")
+
+    assert isinstance(message, str)
+    assert "no attempts" in message.lower()
