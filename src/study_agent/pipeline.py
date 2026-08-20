@@ -17,6 +17,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
+from .stages import page_reader
 
 
 class PipelineError(RuntimeError):
@@ -56,8 +57,12 @@ def run_render_pipeline(
     layout: paths.Layout | None = None,
     started_at: datetime | None = None,
     log: Callable[[str], None] | None = None,
+    read_pages: bool = False,
+    resume: bool = False,
+    slide_numbers: list[int] | None = None,
+    reader: page_reader.PageReader | None = None,
 ) -> PipelineResult:
-    """Run the render/preflight stage and persist its manifest."""
+    """Run render/preflight, and optionally the page-reader stage."""
 
     deck_path = Path(deck_path)
     if not deck_path.is_file():
@@ -113,10 +118,44 @@ def run_render_pipeline(
     paths.write_model(paths.manifest_file(run_dir), manifest)
     layout.write_latest(subject_slug, deck_slug, run_timestamp)
 
+    if read_pages:
+        page_reader.read_run_pages(
+            run_dir,
+            reader=reader,
+            slide_numbers=slide_numbers,
+            resume=resume,
+        )
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
     if log:
         log(f"wrote {paths.manifest_file(run_dir)}")
         log(f"latest -> {run_timestamp}")
     return PipelineResult(run_dir=run_dir, manifest=manifest)
+
+
+def parse_slide_numbers(raw: str) -> list[int]:
+    """Parse `55-61,70` into sorted slide numbers."""
+
+    slides: set[int] = set()
+    for part in raw.split(","):
+        piece = part.strip()
+        if not piece:
+            continue
+        if "-" in piece:
+            start_raw, end_raw = piece.split("-", 1)
+            try:
+                start, end = int(start_raw), int(end_raw)
+            except ValueError as error:
+                raise PipelineError(f"invalid slide range: {piece}") from error
+            if end < start:
+                raise PipelineError(f"slide range ends before it starts: {piece}")
+            slides.update(range(start, end + 1))
+        else:
+            try:
+                slides.add(int(piece))
+            except ValueError as error:
+                raise PipelineError(f"invalid slide number: {piece}") from error
+    return sorted(slides)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -136,6 +175,20 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        "--read-pages",
+        action="store_true",
+        help="Continue after render and read pages into SlideNote files.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="With --read-pages, retry only notes whose reader_note is non-null.",
+    )
+    parser.add_argument(
+        "--slides",
+        help="Optional slide list for page reads, for example 55-61 or 1,3,5.",
+    )
     return parser
 
 
@@ -143,10 +196,14 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     layout = paths.Layout(args.root) if args.root is not None else paths.Layout()
     try:
+        slide_numbers = parse_slide_numbers(args.slides) if args.slides else None
         result = run_render_pipeline(
             args.deck_pdf,
             args.subject,
             layout=layout,
+            read_pages=args.read_pages,
+            resume=args.resume,
+            slide_numbers=slide_numbers,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

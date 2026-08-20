@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from study_agent import paths, pipeline, render, schemas
+from study_agent.stages import page_reader
 
 
 def preflight(page_count: int = 2) -> schemas.Preflight:
@@ -151,3 +152,44 @@ def test_cli_returns_failure_for_a_missing_deck(tmp_path, capsys):
     captured = capsys.readouterr()
     assert code == 1
     assert "deck not found" in captured.err
+
+
+def test_slide_number_parser_accepts_ranges_and_singletons():
+    assert pipeline.parse_slide_numbers("55-57,61") == [55, 56, 57, 61]
+
+
+class Reader:
+    def read(self, request: page_reader.PageReadRequest) -> page_reader.PageReadResult:
+        return page_reader.PageReadResult(
+            note=schemas.SlideNoteDraft(
+                page_role=schemas.PageRole.content,
+                title=f"{request.path_kind.value}-{request.slide_number}",
+                reading="ok",
+                visuals=[],
+                concepts=[],
+                verbatim_spans=[],
+                reader_note=None,
+            ),
+            usage=schemas.StageUsage(stage="page_reader", calls=1),
+        )
+
+
+def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monkeypatch):
+    monkeypatch.setattr(render, "render_deck", fake_render)
+    deck = tmp_path / "Day3 Principle.pdf"
+    deck.write_bytes(b"pdf bytes")
+
+    result = pipeline.run_render_pipeline(
+        deck,
+        "engr-689",
+        layout=paths.Layout(tmp_path),
+        started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+        read_pages=True,
+        slide_numbers=[1, 2],
+        reader=Reader(),
+    )
+
+    assert paths.page_note(result.run_dir, "image", 1).is_file()
+    assert paths.page_note(result.run_dir, "text", 2).is_file()
+    image = next(stat for stat in result.manifest.paths if stat.path == schemas.PathKind.image)
+    assert "page_reader" in image.completed_stages
