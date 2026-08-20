@@ -26,6 +26,5 @@ is `docs/spec.md`; read it before implementing a stage.
 be clean before a commit. `src/` typechecks strictly; `tests/` is exempted from
 the annotation requirements only.
 
-There is no dependency manifest yet: the venv was assembled by hand, so a
-collaborator cannot currently reproduce it. See `docs/spec.md` for the package
-list in the meantime.
+Dependencies are pinned in `requirements.txt` (runtime) and
+`requirements-dev.txt` (those plus `pytest` and `mypy`).

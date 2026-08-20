@@ -1,0 +1,15 @@
+# Everything in requirements.txt, plus the checks. Nothing here is imported by
+# the pipeline, and none of it is needed to replay the golden run.
+#
+#   .venv/Scripts/pip install -r requirements-dev.txt    (Windows)
+#   .venv/bin/pip install -r requirements-dev.txt        (macOS, Linux)
+#
+# Then, from the repo root:
+#
+#   python -m pytest        pytest.ini
+#   python -m mypy          mypy.ini
+
+-r requirements.txt
+
+pytest==9.1.1
+mypy==2.3.1

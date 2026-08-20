@@ -59,6 +59,7 @@ contact with later decisions. Each is recorded here and applied to `CONTEXT.md`.
   | `pydantic` | strict validation of every schema in `CONTEXT.md` |
   | `streamlit` | the interface, per #8 |
   | `pypdfium2` | PDF page rendering and text extraction |
+  | `pillow` | `pypdfium2.to_pil()`, which is how a page becomes a PNG |
 
   Development only, not imported by the pipeline:
 
@@ -66,6 +67,11 @@ contact with later decisions. Each is recorded here and applied to `CONTEXT.md`.
   | --- | --- |
   | `pytest` | the test suite, configured in `pytest.ini` |
   | `mypy` | typechecking, configured in `mypy.ini` |
+
+  Both lists are pinned in `requirements.txt` and `requirements-dev.txt`.
+  Pinned rather than floored, because a transitive release breaking the run on
+  Friday morning costs more than staying current is worth. Direct dependencies
+  only; neither file is a lockfile.
 
   `pypdfium2` is spec-level and does both jobs with no external binary and a
   permissive license. PyMuPDF is the fallback if extraction quality
