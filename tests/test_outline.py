@@ -56,6 +56,8 @@ class FakeOutliner:
         self.compacted_slides: list[int] = []
         self.candidates: list[outline.BridgeCandidate] = []
         self.repair_called = False
+        self.group_calls = 0
+        self.confirm_calls = 0
 
     def group(
         self,
@@ -63,6 +65,7 @@ class FakeOutliner:
         existing_topics: list[str],
     ) -> schemas.GroupingDraft:
         del existing_topics
+        self.group_calls += 1
         self.compacted_slides = [item.slide_number for item in notes]
         return self.grouping
 
@@ -72,6 +75,7 @@ class FakeOutliner:
         candidates: list[outline.BridgeCandidate],
     ) -> schemas.BridgeDraft:
         del notes_by_slide
+        self.confirm_calls += 1
         self.candidates = candidates
         return self.bridges
 
@@ -150,13 +154,15 @@ def test_candidates_come_from_the_three_code_side_signals():
         note(57, title="Generation", concepts=["Other"]),
     ]
 
-    candidates = outline.propose_bridge_candidates(notes, cap=10)
+    proposal = outline.propose_bridge_candidates(notes, cap=10)
 
-    signals = {(candidate.slides, candidate.signal) for candidate in candidates}
-    assert ((55, 56), "relates_to_slides") in signals
-    assert ((55, 56), "adjacent_title") in signals
-    assert ((55, 56), "shared_concept") in signals
-    assert all(candidate.slides != (56, 57) for candidate in candidates)
+    by_pair = {candidate.slides: candidate for candidate in proposal.candidates}
+    assert set(by_pair[(55, 56)].signals) == {
+        "relates_to_slides",
+        "adjacent_title",
+        "shared_concept",
+    }
+    assert (56, 57) not in by_pair
 
 
 def test_bridge_confirmation_cannot_introduce_unproposed_candidates():
@@ -472,3 +478,232 @@ def test_run_loads_existing_topics_from_subject_profile_and_updates_manifest(tmp
     )
     assert outliner.seen_existing_topics == [["Existing"], ["Existing"]]
     assert all("outline" in stat.completed_stages for stat in manifest_after.paths)
+
+
+def test_one_slide_pair_consumes_one_candidate_slot_whatever_proposed_it():
+    notes = [
+        note(slide, title="Same", concepts=["A"])
+        for slide in range(1, 5)
+    ]
+
+    proposal = outline.propose_bridge_candidates(notes, cap=30)
+
+    pairs = [candidate.slides for candidate in proposal.candidates]
+    assert len(pairs) == len(set(pairs))
+    assert proposal.proposed == len(set(pairs))
+    assert [candidate.index for candidate in proposal.candidates] == list(
+        range(len(proposal.candidates))
+    )
+
+
+def test_candidates_are_proposed_from_the_back_of_a_full_length_deck():
+    notes = [
+        note(slide, title="Same", concepts=["A"])
+        for slide in range(1, 67)
+    ]
+
+    proposal = outline.propose_bridge_candidates(notes, cap=30)
+
+    assert len(proposal.candidates) == 30
+    assert proposal.proposed == 65
+    last_third = [
+        candidate for candidate in proposal.candidates if candidate.slides[0] > 44
+    ]
+    assert last_third, "the cap truncated the back two thirds of the deck away"
+
+
+def test_candidates_proposed_records_the_pre_cap_total():
+    notes = [
+        note(slide, title="Same", concepts=["A"])
+        for slide in range(1, 20)
+    ]
+
+    proposal = outline.propose_bridge_candidates(notes, cap=5)
+
+    assert len(proposal.candidates) == 5
+    assert proposal.proposed == 18
+
+
+def test_outline_records_the_pre_cap_candidate_total(monkeypatch):
+    monkeypatch.setattr(outline.config, "CANDIDATE_CAP", 3)
+    notes = [note(slide, title="Same", concepts=["A"]) for slide in range(1, 12)]
+    outliner = FakeOutliner(
+        schemas.GroupingDraft(topics=[topic("A", list(range(1, 12)))])
+    )
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert result.candidate_cap == 3
+    assert result.candidates_proposed == 10
+
+
+def test_topic_slides_and_degraded_slides_are_sorted_ascending():
+    notes = [
+        note(1, reader_note="low confidence"),
+        note(3),
+        note(5, reader_note="low confidence"),
+    ]
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [5, 1, 3])]))
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert result.topics[0].slides == [1, 3, 5]
+    assert result.topics[0].degraded_slides == [1, 5]
+
+
+def test_topics_are_ordered_by_first_assigned_slide_not_first_drafted_slide():
+    notes = [note(1), note(2), note(3), note(20)]
+    outliner = FakeOutliner(
+        schemas.GroupingDraft(
+            topics=[
+                topic("Opening", [1]),
+                topic("Late", [1, 20]),
+                topic("Middle", [2, 3]),
+            ]
+        )
+    )
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert outliner.repair_called is True
+    assert [item.name for item in result.topics] == ["Opening", "Middle", "Late"]
+    assert [item.slides for item in result.topics] == [[1], [2, 3], [20]]
+
+
+def test_a_note_that_will_not_parse_is_recorded_rather_than_shrinking_the_deck(tmp_path):
+    run_dir = tmp_path / "run"
+    for path_kind in ("image", "text"):
+        paths.write_model(paths.page_note(run_dir, path_kind, 1), note(1))
+        paths.write_model(paths.page_note(run_dir, path_kind, 2), note(2))
+        paths.page_note(run_dir, path_kind, 3).write_text(
+            '{"slide_number": 3, "page_ro', encoding="utf-8"
+        )
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1, 2])]))
+
+    outline.outline_run(run_dir, deck_slug="deck", superseded=[], outliner=outliner)
+
+    result = schemas.Outline.model_validate(
+        paths.read_json(paths.outline_file(run_dir, "image"))
+    )
+    assert result.unreadable_notes == [3]
+
+
+def test_a_note_that_violates_the_schema_is_recorded_as_unreadable(tmp_path):
+    run_dir = tmp_path / "run"
+    for path_kind in ("image", "text"):
+        paths.write_model(paths.page_note(run_dir, path_kind, 1), note(1))
+        paths.page_note(run_dir, path_kind, 4).write_text(
+            '{"slide_number": 4}', encoding="utf-8"
+        )
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1])]))
+
+    outline.outline_run(run_dir, deck_slug="deck", superseded=[], outliner=outliner)
+
+    result = schemas.Outline.model_validate(
+        paths.read_json(paths.outline_file(run_dir, "image"))
+    )
+    assert result.unreadable_notes == [4]
+
+
+def test_an_outline_over_zero_notes_makes_no_model_call():
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[]))
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=[],
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert outliner.group_calls == 0
+    assert outliner.confirm_calls == 0
+    assert result.topics == []
+    assert result.question_budget == []
+
+
+def test_bridge_confirmation_is_skipped_when_no_candidate_was_proposed():
+    notes = [note(1, title="One"), note(3, title="Three")]
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1, 3])]))
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert outliner.group_calls == 1
+    assert outliner.confirm_calls == 0
+    assert result.candidates_proposed == 0
+    assert result.bridged_facts == []
+
+
+def test_even_sampling_reaches_the_back_of_the_list():
+    """A prefix bias reintroduced inside the sampler is the same defect again."""
+
+    assert outline._even_sample(list(range(60)), 2) == [15, 45]
+    assert outline._even_sample(list(range(65)), 30)[-1] > 60
+    assert outline._even_sample(list(range(4)), 4) == [0, 1, 2, 3]
+    assert outline._even_sample(list(range(4)), 0) == []
+
+
+def test_a_deck_whose_visual_edges_nearly_fill_the_cap_still_reaches_its_back():
+    notes = [note(slide, title="Same", concepts=["A"]) for slide in range(1, 61)]
+    for index in range(0, 28):
+        notes[index] = note(
+            index + 1, title="Same", concepts=["A"], relates_to=[index + 31]
+        )
+
+    proposal = outline.propose_bridge_candidates(notes, cap=30)
+
+    assert len(proposal.candidates) == 30
+    adjacency_only = [
+        candidate
+        for candidate in proposal.candidates
+        if outline.SIGNAL_VISUAL not in candidate.signals
+    ]
+    assert adjacency_only
+    assert max(candidate.slides[0] for candidate in adjacency_only) > 30
+
+
+def test_a_note_file_that_is_not_a_slide_note_does_not_abort_the_stage(tmp_path):
+    run_dir = tmp_path / "run"
+    for path_kind in ("image", "text"):
+        paths.write_model(paths.page_note(run_dir, path_kind, 1), note(1))
+        (paths.notes_dir(run_dir, path_kind) / "notes.backup.json").write_text(
+            "{}", encoding="utf-8"
+        )
+    outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1])]))
+
+    outline.outline_run(run_dir, deck_slug="deck", superseded=[], outliner=outliner)
+
+    result = schemas.Outline.model_validate(
+        paths.read_json(paths.outline_file(run_dir, "image"))
+    )
+    assert result.topics[0].slides == [1]
+    assert result.unreadable_notes == []

@@ -139,7 +139,10 @@ class BridgedFact(Strict):
         default_factory=list,
         description="Pairs of slide number and index into that slide's visuals.",
     )
-    candidate_signal: str
+    candidate_signals: list[str] = Field(
+        min_length=1,
+        description="Every code-side signal that proposed the pair, not just the first.",
+    )
 
 
 class Outline(Strict):
@@ -152,6 +155,10 @@ class Outline(Strict):
     bridged_facts: list[BridgedFact] = Field(default_factory=list)
     candidates_proposed: int = 0
     candidate_cap: int = 0
+    unreadable_notes: list[int] = Field(
+        default_factory=list,
+        description="Slides whose note file exists but could not be parsed.",
+    )
     topic_cap_exceeded: bool = False
     question_budget: list[tuple[str, int]] = Field(default_factory=list)
     untested_topics: list[str] = Field(default_factory=list)
