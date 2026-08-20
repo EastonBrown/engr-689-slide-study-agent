@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "engr-689-slide-study-agent"
+version = "0.1.0"
+description = "Slide deck to study guide agent for ENGR 689."
+requires-python = ">=3.14"
+
+[tool.setuptools.packages.find]
+where = ["src"]
