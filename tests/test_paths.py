@@ -233,6 +233,33 @@ class TestTimestampIsActuallyUtc:
         assert paths.utc_timestamp(west) == paths.utc_timestamp(instant)
 
 
+class TestUtcIso:
+    """The in-file stamp. Same instant as `utc_timestamp`, readable form."""
+
+    def test_is_iso_8601_with_a_z(self):
+        from datetime import datetime, timezone
+
+        noon = datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc)
+        assert paths.utc_iso(noon) == "2026-08-20T12:00:00Z"
+
+    def test_converts_an_aware_non_utc_datetime(self):
+        from datetime import datetime, timedelta, timezone
+
+        noon_utc = datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc)
+        tokyo = noon_utc.astimezone(timezone(timedelta(hours=9)))
+        assert paths.utc_iso(tokyo) == "2026-08-20T12:00:00Z"
+
+    def test_a_naive_datetime_is_taken_as_utc_rather_than_local(self):
+        from datetime import datetime
+
+        assert paths.utc_iso(datetime(2026, 8, 20, 12, 0, 0)) == "2026-08-20T12:00:00Z"
+
+    def test_defaults_to_now_and_is_not_a_directory_name(self):
+        stamp = paths.utc_iso()
+        assert stamp.endswith("Z")
+        assert ":" in stamp
+
+
 # A manifest whose write died partway through: unterminated, and carrying bytes
 # that are not valid UTF-8. Built rather than written as a literal so the file
 # itself stays ASCII.

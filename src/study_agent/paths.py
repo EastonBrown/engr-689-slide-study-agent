@@ -76,6 +76,21 @@ def utc_timestamp(moment: datetime | None = None) -> str:
     return moment.astimezone(timezone.utc).strftime(TIMESTAMP_FORMAT)
 
 
+def utc_iso(moment: datetime | None = None) -> str:
+    """A UTC ISO 8601 stamp for a timestamp field inside a file.
+
+    Distinct from `utc_timestamp`, which names directories and so cannot hold a
+    colon. Anything CONTEXT.md marks "UTC" without giving it a format uses
+    this: `created_at`, `taken_at`, `generated_at`, `contributed_at`.
+    """
+
+    if moment is None:
+        moment = datetime.now(timezone.utc)
+    elif moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 def new_attempt_id() -> str:
     """A UTC timestamp plus a short random suffix, per ADR 0005."""
 
