@@ -15,6 +15,11 @@ pages.
 **Page reader.** The stage that looks at one slide and returns one slide note.
 Runs once per slide, concurrently across the deck.
 
+**Outline stage.** The stage that sees every slide note in a deck at once and
+returns the outline: the deck's topics and the slides under each, which slides
+were skipped, the bridged facts, and the question budget. Runs once per path.
+See ADR 0007.
+
 **Image path.** The system. Slides are rendered to page images at 150 DPI and
 the page reader sees the image.
 
@@ -65,6 +70,30 @@ are processed rather than one authored up front. See ADR 0003.
 subject's topic list. For each topic the deck covers it either reuses an
 existing topic name verbatim or declares a new one with a reason. The page
 reader takes no part in this.
+
+**Covered slide.** A slide whose `page_role` is `content`. Covered slides are
+the only ones that belong to a topic, count toward exposure, or are cited in the
+review. Coverage is computed in code from `page_role` alone, never by a model.
+See ADR 0007.
+
+**Skipped slide.** A slide whose `page_role` is anything other than `content`.
+Named in the outline with its role rather than dropped, so the covered count is
+auditable against the deck length.
+
+**Degraded slide.** A covered slide whose `reader_note` is non-null. Keeps its
+topic and its exposure, is flagged in the outline, and is never cited by a quiz
+question.
+
+**Bridged fact.** A fact that exists only across two or more slides and is
+present on none of them alone. Assembled by the outline stage from candidate
+pairs the code proposes; the model may compose or reject a candidate but may not
+propose one. Day 3 slides 55 to 56 are the case the design is built around.
+
+**Question budget.** The allocation of ADR 0005's ten questions across a deck's
+topics. Arithmetic, not a model judgment: one question reserved for a bridged
+fact when any exist, the rest by largest-remainder proportional allocation over
+covered slide count, capped at three per topic. A topic allocated zero is
+recorded as untested rather than padded up.
 
 **Topic mastery profile.** The per-subject record of what its topics are and how
 they stand. Holds two axes that are never collapsed into one score: exposure and
@@ -216,6 +245,63 @@ Concept
   spans are copied from the text it was given. Reported anyway, with the
   asymmetry stated.
 
+## The outline schema
+
+Locked by [ADR 0007](docs/adr/0007-outline-stage.md). One object per path,
+written to `outline-image.json` and `outline-text.json`.
+
+```
+Outline
+  deck_slug            str
+  path                 PathKind       image | text
+  topics               [OutlineTopic]
+  skipped              [SkippedSlide]
+  unassigned           [int]          covered slides no topic claimed
+  bridged_facts        [BridgedFact]
+  candidates_proposed  int
+  candidate_cap        int
+  topic_cap_exceeded   bool
+  question_budget      [(str, int)]   topic name to question count
+
+OutlineTopic
+  name             str            reused verbatim or newly declared
+  slides           [int]          ordered, covered slides only
+  is_new           bool
+  created_reason   str | null     set when is_new
+  degraded_slides  [int]          subset of slides
+
+SkippedSlide
+  slide_number   int
+  page_role      PageRole
+
+BridgedFact
+  slides            [int]   at least 2
+  statement         str     the fact as it reads once joined
+  from_visuals      [(int, int)]   slide number and index into its visuals
+  candidate_signal  str     which rule proposed the pair
+```
+
+### Rules that travel with the outline
+
+- Covered slides are partitioned: each belongs to exactly one topic. A topic's
+  `exposure` is the length of its slide list.
+- A topic's slides need not be contiguous. The same material recurring twenty
+  slides later is one topic, not two.
+- Coverage is `page_role == content`, decided in code.
+- Bridged-fact candidates come from three code-side signals: an edge in
+  `Visual.relates_to_slides`, an adjacent slide with a null or repeated
+  `title`, and adjacent slides sharing a `Concept.name`. The model confirms or
+  rejects; it never proposes.
+- Both paths run the same code and the same prompt, so a bridged fact the text
+  path cannot compose is a measurement.
+- The stage is two model calls over the whole deck: grouping with topic
+  assignment over compacted notes, then bridge confirmation over the candidates.
+  The question budget makes no call.
+- A contract violation degrades rather than aborting. After one repair call, a
+  doubly-claimed slide goes to the first topic listed, a still-unassigned
+  covered slide lands in `unassigned`, and more than 12 topics sets
+  `topic_cap_exceeded` and keeps them all.
+
 ## The topic record
 
 Locked by [ADR 0003](docs/adr/0003-cross-deck-topic-taxonomy.md). One entry per
@@ -319,3 +405,8 @@ Response
   as an image-path-only check, one golden run plus a repeatability probe, the
   empty results table, a committed `eval/` directory, and a Thursday-noon abort
   rule.
+- [ADR 0007](docs/adr/0007-outline-stage.md): the outline schema above, topics
+  as non-contiguous sets partitioning the covered slides, coverage decided in
+  code from `page_role`, bridged facts confirmed from code-proposed candidates,
+  an arithmetic question budget, two whole-deck model calls, and contract
+  violations that degrade rather than abort.
