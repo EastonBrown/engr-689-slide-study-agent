@@ -421,7 +421,7 @@ def allocate_question_budget(
     total_questions: int = config.QUIZ_QUESTIONS,
     max_per_topic: int = config.MAX_QUESTIONS_PER_TOPIC,
 ) -> tuple[list[tuple[str, int]], list[str]]:
-    """Allocate ADR 0005's fixed quiz budget without a model call."""
+    """Allocate the quiz target without exceeding ADR 0007's per-topic cap."""
 
     remaining = total_questions - (1 if has_bridged_facts else 0)
     budget: list[tuple[str, int]] = []
@@ -431,14 +431,11 @@ def allocate_question_budget(
         return budget, []
 
     total_slides = sum(len(topic.slides) for topic in topics)
-    effective_max = max_per_topic
-    if len(topics) * effective_max < remaining:
-        effective_max = remaining
     raw: list[tuple[OutlineTopic, int, float]] = []
     allocated = 0
     for topic in topics:
         share = (len(topic.slides) / total_slides * remaining) if total_slides else 0
-        base = min(int(share), effective_max)
+        base = min(int(share), max_per_topic)
         raw.append((topic, base, share - int(share)))
         allocated += base
 
@@ -447,7 +444,7 @@ def allocate_question_budget(
         for index, (topic, count, remainder) in sorted(
             enumerate(raw), key=lambda item: item[1][2], reverse=True
         ):
-            if count >= effective_max:
+            if count >= max_per_topic:
                 continue
             raw[index] = (topic, count + 1, remainder)
             allocated += 1

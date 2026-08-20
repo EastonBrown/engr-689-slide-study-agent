@@ -4,6 +4,7 @@
 - Date: 2026-08-20
 - Resolves: [Lock the outline stage: grouping, coverage, and cross-slide facts](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/10)
 - Amended: 2026-08-20, "Which 30 the cap keeps", while fixing [issue 32](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/32). The cap of 30 is unchanged; which 30 it keeps is now specified, because a prefix could not reach slides 55 to 56.
+- Amended: 2026-08-20, "The three-per-topic cap is hard", resolving [issue 35](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/35). Ten questions is the quiz target, not permission to exceed the cap; a small deck ships short after the quiz generator's one regeneration attempt.
 - Builds on: [ADR 0002](0002-per-slide-note-schema.md), [ADR 0003](0003-cross-deck-topic-taxonomy.md), [ADR 0004](0004-artifact-layout-and-memory-schema.md), [ADR 0005](0005-quiz-answer-key-and-retake-schema.md)
 
 ## Context
@@ -128,8 +129,8 @@ measurement rather than a missing feature.
 
 ### The question budget is arithmetic
 
-ADR 0005 fixes ten questions. The split across topics is computed in code, with
-no model call:
+ADR 0005 fixes a ten-question target. The split across topics is computed in
+code, with no model call:
 
 1. If the outline produced any bridged facts, one question is reserved for one
    of them.
@@ -137,6 +138,12 @@ no model call:
    topic's covered slide count, capped at three questions per topic.
 3. A topic allocated zero questions is recorded as untested for this deck. It is
    not padded up to one.
+
+The three-per-topic cap is hard. If the bridged-fact reservation plus the capped
+topic allocation cannot reach ten, the outline ships the attainable budget. The
+quiz generator may regenerate once for a shortfall, then records and ships the
+short quiz. Raising the cap to force ten would make a small deck look like it
+supports ten independent questions about the same topic.
 
 The reserved question is the single question the text path provably could not
 have written, which is what makes it worth a fixed slot rather than a share.

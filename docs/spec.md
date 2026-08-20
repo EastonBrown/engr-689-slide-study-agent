@@ -239,10 +239,11 @@ build-up frames says so out loud.
 - The cap of 12 topics per deck is unchanged. A long deck sets
   `topic_cap_exceeded`, keeps every topic per ADR 0007, and says so in the run
   summary.
-- Ten questions regardless of deck length is ADR 0005 and does not change. On a
-  200-slide deck that is thin coverage, so the quiz header states the covered
-  slide count it was drawn from rather than leaving the reader to assume
-  proportional coverage.
+- Ten questions is ADR 0005's target. ADR 0007's hard three-per-topic cap can
+  make a small deck ship short; the quiz generator regenerates once for the
+  shortfall, then records the final count. On a 200-slide deck ten questions is
+  thin coverage, so the quiz header states the covered slide count it was drawn
+  from rather than leaving the reader to assume proportional coverage.
 - The research cap of 15 lookups applies per path per deck, unchanged.
 
 ### Decks with no eval labels
@@ -444,8 +445,9 @@ used. **Out:** `review-image.md` or `review-text.md`.
 and "none of the above" are banned; numbers are allowed when the number is the
 reasoning and banned when the number is the fact. A question that cannot cite a
 slide is dropped rather than kept. Degraded slides are never cited, ADR 0007.
-The topic split is the outline's arithmetic budget, and the reserved
-bridged-fact question is the one the text path provably could not have written.
+The topic split is the outline's arithmetic budget, capped at three per topic,
+and the reserved bridged-fact question is the one the text path provably could
+not have written.
 
 **In:** the image outline, its notes, the question budget. **Out:** `quiz.json`.
 

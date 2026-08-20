@@ -243,7 +243,7 @@ def test_question_budget_sums_to_ten_and_reserves_one_for_a_bridge():
     assert ("A", 3) in budget
 
 
-def test_question_budget_still_sums_to_ten_when_topic_cap_makes_it_impossible():
+def test_question_budget_ships_short_when_the_hard_topic_cap_makes_ten_impossible():
     topics = [schemas.OutlineTopic(name="A", slides=[1], is_new=True)]
 
     budget, untested_topics = outline.allocate_question_budget(
@@ -253,7 +253,21 @@ def test_question_budget_still_sums_to_ten_when_topic_cap_makes_it_impossible():
         max_per_topic=3,
     )
 
-    assert budget == [("A", 10)]
+    assert budget == [("A", 3)]
+    assert untested_topics == []
+
+
+def test_question_budget_keeps_the_hard_topic_cap_alongside_a_bridge():
+    topics = [schemas.OutlineTopic(name="A", slides=[1], is_new=True)]
+
+    budget, untested_topics = outline.allocate_question_budget(
+        topics,
+        has_bridged_facts=True,
+        total_questions=10,
+        max_per_topic=3,
+    )
+
+    assert budget == [("bridged_fact", 1), ("A", 3)]
     assert untested_topics == []
 
 

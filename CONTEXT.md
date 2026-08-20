@@ -120,11 +120,12 @@ present on none of them alone. Assembled by the outline stage from candidate
 pairs the code proposes; the model may compose or reject a candidate but may not
 propose one. Day 3 slides 55 to 56 are the case the design is built around.
 
-**Question budget.** The allocation of ADR 0005's ten questions across a deck's
+**Question budget.** The allocation toward ADR 0005's ten-question target across a deck's
 topics. Arithmetic, not a model judgment: one question reserved for a bridged
 fact when any exist, the rest by largest-remainder proportional allocation over
-covered slide count, capped at three per topic. A topic allocated zero is
-recorded as untested rather than padded up.
+covered slide count, capped at three per topic. The cap is hard, so a small deck
+can ship short. A topic allocated zero is recorded as untested rather than
+padded up.
 
 **Topic mastery profile.** The per-subject record of what its topics are and how
 they stand. Holds two axes that are never collapsed into one score: exposure and
@@ -142,7 +143,7 @@ ADR 0005.
 **Question.** One multiple-choice item: a stem, exactly four options, one
 correct index, and the slides and topic it traces back to. See the schema below.
 
-**Quiz.** Ten questions generated for one deck from the image path, written to
+**Quiz.** Up to ten questions generated for one deck from the image path, written to
 `quiz.json` in the run directory. The text path generates no quiz.
 
 **Retake.** A ten-question quiz generated against a subject profile rather than
