@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 venv/
 .env
+*.egg-info/
 
 # Generated run artifacts. See ADR 0004: runs/ and memory/ are per-machine,
 # while cache/research/ and examples/golden/ are deliberately committed.

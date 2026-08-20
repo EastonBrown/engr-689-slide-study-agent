@@ -1,0 +1,160 @@
+"""Headless pipeline orchestration.
+
+Issue #16 stops after render: it creates a run directory, writes rendered page
+artifacts and a manifest, and updates the latest pointer. No model client is
+imported here.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+import time
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Callable
+
+from . import config, paths, render
+from .schemas import Manifest, PathKind, PathStats, StageUsage
+
+
+class PipelineError(RuntimeError):
+    """A user-facing refusal from the headless command."""
+
+
+@dataclass(frozen=True)
+class PipelineResult:
+    run_dir: Path
+    manifest: Manifest
+
+
+def _next_run_slot(
+    layout: paths.Layout,
+    subject_slug: str,
+    deck_slug: str,
+    started_at: datetime | None,
+) -> tuple[str, Path]:
+    """Return a timestamp and directory that do not already exist."""
+
+    moment = started_at
+    while True:
+        stamp = paths.utc_timestamp(moment)
+        run_dir = layout.run_dir(subject_slug, deck_slug, stamp)
+        if not run_dir.exists():
+            return stamp, run_dir
+        if started_at is not None:
+            raise PipelineError(f"run directory already exists: {run_dir}")
+        time.sleep(1.0)
+        moment = None
+
+
+def run_render_pipeline(
+    deck_path: Path,
+    subject_slug: str,
+    *,
+    layout: paths.Layout | None = None,
+    started_at: datetime | None = None,
+    log: Callable[[str], None] | None = None,
+) -> PipelineResult:
+    """Run the render/preflight stage and persist its manifest."""
+
+    deck_path = Path(deck_path)
+    if not deck_path.is_file():
+        raise PipelineError(f"deck not found: {deck_path}")
+
+    layout = layout or paths.Layout()
+    deck_sha256 = paths.sha256_file(deck_path)
+    deck_slug = paths.deck_slug(
+        deck_path.name, deck_sha256, layout.deck_slugs_with_hashes(subject_slug)
+    )
+    caller_started_at = started_at
+    if started_at is None:
+        started_at = datetime.now(timezone.utc)
+    run_timestamp, run_dir = _next_run_slot(
+        layout, subject_slug, deck_slug, started_at=caller_started_at
+    )
+    started_stamp = (
+        paths.utc_timestamp(started_at)
+        if caller_started_at is not None
+        else run_timestamp
+    )
+
+    if log:
+        log(f"creating run {subject_slug}/{deck_slug}/{run_timestamp}")
+
+    try:
+        render_result = render.render_deck(deck_path, run_dir, log=log)
+    except render.DeckUnreadable as error:
+        raise PipelineError(str(error)) from error
+
+    ended_stamp = paths.utc_timestamp()
+    manifest = Manifest(
+        schema_version=config.SCHEMA_VERSION,
+        subject_slug=subject_slug,
+        deck_slug=deck_slug,
+        deck_sha256=deck_sha256,
+        deck_filename=deck_path.name,
+        run_timestamp=run_timestamp,
+        started_at=started_stamp,
+        ended_at=ended_stamp,
+        model=config.MODEL_ID,
+        prompt_version=config.PROMPT_VERSION,
+        dpi=config.RENDER_DPI,
+        preflight=render_result.preflight,
+        paths=[
+            PathStats(path=PathKind.image, completed_stages=["render"]),
+            PathStats(path=PathKind.text, completed_stages=["render"]),
+        ],
+        stage_usage=[StageUsage(stage="render")],
+        total_cost_usd=0.0,
+    )
+
+    paths.write_model(paths.manifest_file(run_dir), manifest)
+    layout.write_latest(subject_slug, deck_slug, run_timestamp)
+
+    if log:
+        log(f"wrote {paths.manifest_file(run_dir)}")
+        log(f"latest -> {run_timestamp}")
+    return PipelineResult(run_dir=run_dir, manifest=manifest)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="python -m study_agent.pipeline",
+        description="Render a slide deck into a timestamped run directory.",
+    )
+    parser.add_argument("deck_pdf", type=Path, help="PDF slide deck to process")
+    parser.add_argument(
+        "--subject",
+        required=True,
+        help="Subject slug, for example engr-689",
+    )
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=None,
+        help=argparse.SUPPRESS,
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    layout = paths.Layout(args.root) if args.root is not None else paths.Layout()
+    try:
+        result = run_render_pipeline(
+            args.deck_pdf,
+            args.subject,
+            layout=layout,
+            log=lambda message: print(message, file=sys.stderr),
+        )
+    except PipelineError as error:
+        print(error, file=sys.stderr)
+        return 1
+    print(result.run_dir)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
