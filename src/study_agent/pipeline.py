@@ -85,6 +85,15 @@ def run_render_pipeline(
     if not deck_path.is_file():
         raise PipelineError(f"deck not found: {deck_path}")
 
+    # A range outside the deck is a typo, not a render request. Count the PDF
+    # before allocating a run directory so this refusal creates no artifacts
+    # or latest pointer and makes no model calls.
+    if slide_numbers:
+        try:
+            _require_slides_in_deck(slide_numbers, render.page_count(deck_path))
+        except render.DeckUnreadable as error:
+            raise PipelineError(str(error)) from error
+
     layout = layout or paths.Layout()
     deck_sha256 = paths.sha256_file(deck_path)
     deck_slug = paths.deck_slug(
@@ -133,15 +142,6 @@ def run_render_pipeline(
 
     paths.write_model(paths.manifest_file(run_dir), manifest)
     layout.write_latest(subject_slug, deck_slug, run_timestamp)
-
-    # After the manifest, not before it. A refusal here still leaves a complete
-    # run directory, whereas raising between render and this write left one
-    # holding page artifacts and no manifest, which `deck_slugs_with_hashes`
-    # skips. That drops the deck's sha256, and a later different PDF whose stem
-    # slugifies alike then claims the same deck directory instead of the hashed
-    # slug that exists to keep them apart.
-    if slide_numbers:
-        _require_slides_in_deck(slide_numbers, render_result.preflight.page_count)
 
     if read_pages:
         page_reader.read_run_pages(

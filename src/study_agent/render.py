@@ -167,6 +167,21 @@ def _points_to_pixels(points: float, dpi: int) -> int:
     return int(round(points * dpi / 72.0))
 
 
+def page_count(pdf_path: Path) -> int:
+    """Return a readable PDF's page count without creating run artifacts."""
+
+    import pypdfium2 as pdfium
+
+    try:
+        document = pdfium.PdfDocument(str(pdf_path))
+        count = len(document)
+    except Exception as error:  # pdfium raises its own error types
+        raise DeckUnreadable(f"{pdf_path.name} will not open: {error}") from error
+    if count == 0:
+        raise DeckUnreadable(f"{pdf_path.name} has no pages")
+    return count
+
+
 def render_deck(
     pdf_path: Path,
     run_dir: Path,

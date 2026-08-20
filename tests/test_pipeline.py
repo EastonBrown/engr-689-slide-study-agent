@@ -213,6 +213,7 @@ class Outliner:
 
 def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
+    monkeypatch.setattr(render, "page_count", lambda _deck: 2)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
 
@@ -269,10 +270,14 @@ class TestASlideSelectionIsCheckedAgainstTheDeck:
         with pytest.raises(pipeline.PipelineError, match="slide numbers start at 1"):
             pipeline.parse_slide_numbers("-4")
 
-    def test_a_range_past_the_end_of_the_deck_is_refused_before_any_read(
+    def test_a_range_past_the_end_of_the_deck_is_refused_before_any_work(
         self, tmp_path, monkeypatch
     ):
-        monkeypatch.setattr(render, "render_deck", fake_render)
+        def should_not_render(*_args, **_kwargs):
+            raise AssertionError("an invalid range must be refused before render")
+
+        monkeypatch.setattr(render, "render_deck", should_not_render)
+        monkeypatch.setattr(render, "page_count", lambda _deck: 2)
         deck = tmp_path / "Day3 Principle.pdf"
         deck.write_bytes(b"pdf bytes")
         reader = Reader()
@@ -288,15 +293,10 @@ class TestASlideSelectionIsCheckedAgainstTheDeck:
                 reader=reader,
             )
 
-    def test_the_refused_run_still_holds_a_manifest(self, tmp_path, monkeypatch):
-        """A run directory with no manifest is invisible to slug collision.
+        assert not (tmp_path / "runs").exists()
 
-        `deck_slugs_with_hashes` skips a deck whose runs carry no manifest, so
-        an orphan left by this refusal would drop the deck's sha256 and let a
-        different PDF with the same stem claim its directory.
-        """
-
-        monkeypatch.setattr(render, "render_deck", fake_render)
+    def test_a_refused_range_creates_no_run_or_latest_pointer(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(render, "page_count", lambda _deck: 2)
         deck = tmp_path / "Day3 Principle.pdf"
         deck.write_bytes(b"pdf bytes")
         layout = paths.Layout(tmp_path)
@@ -312,11 +312,8 @@ class TestASlideSelectionIsCheckedAgainstTheDeck:
                 reader=Reader(),
             )
 
-        run_dir = layout.run_dir("engr-689", "day3-principle", "2026-08-20T12-00-00Z")
-        assert paths.manifest_file(run_dir).is_file()
-        assert layout.deck_slugs_with_hashes("engr-689") == {
-            "day3-principle": paths.sha256_file(deck)
-        }
+        assert not (tmp_path / "runs").exists()
+        assert layout.read_latest("engr-689", "day3-principle") is None
 
     def test_the_cli_reports_the_refusal_rather_than_a_traceback(
         self, tmp_path, monkeypatch, capsys
