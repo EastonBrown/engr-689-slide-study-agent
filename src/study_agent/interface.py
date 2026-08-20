@@ -167,6 +167,10 @@ def latest_run_summary(layout: paths.Layout, subject_slug: str) -> RunSummary | 
     run_dir = _latest_run_for_subject(layout, subject_slug)
     if run_dir is None:
         return None
+    return run_summary(run_dir)
+
+
+def run_summary(run_dir: Path) -> RunSummary | None:
     manifest = _load_manifest(run_dir)
     if manifest is None:
         return None

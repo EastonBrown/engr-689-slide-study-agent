@@ -3,18 +3,25 @@
 from __future__ import annotations
 
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 import streamlit as st
 
-from study_agent import interface, paths, pipeline, schemas
+from study_agent import config, interface, paths, pipeline, replay, schemas
 
 
 def main() -> None:
     layout = paths.Layout()
     st.set_page_config(page_title="ENGR 689 Slide Study Agent", layout="wide")
     st.title("Slide Study Agent")
+
+    replay_target = st.query_params.get("replay")
+    if replay_target:
+        delay = float(st.query_params.get("delay", config.REPLAY_LINE_DELAY_S))
+        _render_replay(Path(replay_target), delay_s=delay, layout=layout)
+        return
 
     subjects = interface.subject_options(layout)
     labels = [item.display_name for item in subjects]
@@ -103,12 +110,30 @@ def _render_pending_stage_boxes() -> None:
 
 
 def _render_stage_boxes(run_dir: Path) -> None:
-    for state in interface.stage_states(run_dir):
+    _render_stage_states(interface.stage_states(run_dir))
+
+
+def _render_stage_states(states: list[interface.StageState], *, delay_s: float | None = None) -> None:
+    for state in states:
         label = state.name if state.state == "complete" else f"{state.name} {state.state}"
         with st.status(label, state="complete", expanded=state.state != "complete"):
             st.write(state.summary)
+            if delay_s is not None:
+                time.sleep(delay_s)
             for line in state.log_lines:
                 st.write(line)
+                if delay_s is not None:
+                    time.sleep(delay_s)
+
+
+def _render_replay(run_dir: Path, *, delay_s: float, layout: paths.Layout) -> None:
+    plan = replay.replay_plan(run_dir)
+    _render_stage_states(plan.stages, delay_s=delay_s)
+    if plan.summary is not None:
+        _render_summary(plan.summary)
+        _render_degraded(run_dir)
+        _render_review_and_comparison(run_dir)
+        _render_quiz_grade_retake(layout, plan.summary, read_only=True)
 
 
 def _render_summary(summary: interface.RunSummary) -> None:
@@ -187,7 +212,12 @@ def _render_review_and_comparison(run_dir: Path) -> None:
     right.markdown(text_review.markdown if text_review else "Pending.")
 
 
-def _render_quiz_grade_retake(layout: paths.Layout, summary: interface.RunSummary) -> None:
+def _render_quiz_grade_retake(
+    layout: paths.Layout,
+    summary: interface.RunSummary,
+    *,
+    read_only: bool = False,
+) -> None:
     st.header("Quiz")
     quiz_payload = paths.read_json(paths.quiz_file(summary.run_dir))
     if quiz_payload is None:
@@ -202,11 +232,12 @@ def _render_quiz_grade_retake(layout: paths.Layout, summary: interface.RunSummar
                     question.options,
                     index=None,
                     key=question.question_id,
+                    disabled=read_only,
                 )
                 choices[question.question_id] = (
                     question.options.index(choice) if choice is not None else None
                 )
-            submitted = st.form_submit_button("Submit quiz")
+            submitted = st.form_submit_button("Submit quiz", disabled=read_only)
         if submitted:
             interface.submit_quiz_answers(layout, summary.run_dir, choices)
             st.rerun()
@@ -221,7 +252,7 @@ def _render_quiz_grade_retake(layout: paths.Layout, summary: interface.RunSummar
             st.write({item.topic: (item.correct, item.seen) for item in result.rollup})
 
     st.header("Retake")
-    if st.button("Generate retake"):
+    if st.button("Generate retake", disabled=read_only):
         result = interface.generate_retake_for_subject(layout, summary.subject_slug)
         if isinstance(result, str):
             st.write(result)
