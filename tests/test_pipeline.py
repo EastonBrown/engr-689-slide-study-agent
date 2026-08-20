@@ -251,3 +251,175 @@ def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypa
     assert paths.outline_file(result.run_dir, "image").is_file()
     assert paths.outline_file(result.run_dir, "text").is_file()
     assert all("outline" in stat.completed_stages for stat in result.manifest.paths)
+
+
+class TestASlideSelectionIsCheckedAgainstTheDeck:
+    """A slice naming a page the deck does not have is a typo, not a read.
+
+    Left unchecked it reached the reader as a request for a PNG that was never
+    rendered, which is the one input the stage cannot do anything useful with.
+    Refusing costs nothing and names the mistake.
+    """
+
+    def test_a_slide_number_below_one_is_rejected_at_parse_time(self):
+        with pytest.raises(pipeline.PipelineError, match="slide numbers start at 1"):
+            pipeline.parse_slide_numbers("0,3")
+
+    def test_a_negative_slide_number_is_rejected(self):
+        with pytest.raises(pipeline.PipelineError, match="slide numbers start at 1"):
+            pipeline.parse_slide_numbers("-4")
+
+    def test_a_range_past_the_end_of_the_deck_is_refused_before_any_read(
+        self, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+        reader = Reader()
+
+        with pytest.raises(pipeline.PipelineError, match="deck has 2 slides"):
+            pipeline.run_render_pipeline(
+                deck,
+                "engr-689",
+                layout=paths.Layout(tmp_path),
+                started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+                read_pages=True,
+                slide_numbers=[1, 70],
+                reader=reader,
+            )
+
+    def test_the_refused_run_still_holds_a_manifest(self, tmp_path, monkeypatch):
+        """A run directory with no manifest is invisible to slug collision.
+
+        `deck_slugs_with_hashes` skips a deck whose runs carry no manifest, so
+        an orphan left by this refusal would drop the deck's sha256 and let a
+        different PDF with the same stem claim its directory.
+        """
+
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+        layout = paths.Layout(tmp_path)
+
+        with pytest.raises(pipeline.PipelineError):
+            pipeline.run_render_pipeline(
+                deck,
+                "engr-689",
+                layout=layout,
+                started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+                read_pages=True,
+                slide_numbers=[70],
+                reader=Reader(),
+            )
+
+        run_dir = layout.run_dir("engr-689", "day3-principle", "2026-08-20T12-00-00Z")
+        assert paths.manifest_file(run_dir).is_file()
+        assert layout.deck_slugs_with_hashes("engr-689") == {
+            "day3-principle": paths.sha256_file(deck)
+        }
+
+    def test_the_cli_reports_the_refusal_rather_than_a_traceback(
+        self, tmp_path, monkeypatch, capsys
+    ):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+
+        code = pipeline.main(
+            [
+                str(deck),
+                "--subject",
+                "engr-689",
+                "--root",
+                str(tmp_path),
+                "--slides",
+                "0-3",
+            ]
+        )
+
+        assert code == 1
+        assert "slide numbers start at 1" in capsys.readouterr().err
+
+
+class TestTheManifestClockCoversTheWholeRun:
+    """`ended_at` is the run's duration in the results table.
+
+    Stamped when render finished, it excluded every model stage, which is
+    almost all of a run's wall time. A duration that reads as six seconds for a
+    run that took ten minutes is worse than no duration at all.
+    """
+
+    def test_ended_at_is_stamped_after_the_last_stage_not_after_render(
+        self, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+
+        stamps = iter(["2026-08-20T12-00-01Z", "2026-08-20T12-09-30Z"])
+        real = paths.utc_timestamp
+        monkeypatch.setattr(
+            paths,
+            "utc_timestamp",
+            lambda moment=None: real(moment) if moment is not None else next(stamps),
+        )
+
+        result = pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=paths.Layout(tmp_path),
+            started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+            read_pages=True,
+            outline_pages=True,
+            reader=Reader(),
+            outliner=Outliner(),
+        )
+
+        assert result.manifest.ended_at == "2026-08-20T12-09-30Z"
+        on_disk = schemas.Manifest.model_validate(
+            paths.read_json(paths.manifest_file(result.run_dir))
+        )
+        assert on_disk.ended_at == "2026-08-20T12-09-30Z"
+
+    def test_a_render_only_run_still_records_an_end(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+
+        result = pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=paths.Layout(tmp_path),
+            started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+        )
+
+        assert result.manifest.ended_at is not None
+
+
+def test_the_documented_headless_command_runs_from_the_repo_root(tmp_path):
+    """The command in the README and docs/spec.md, run the way a person runs it.
+
+    No `PYTHONPATH`, no `cwd` trick: the package is installed by
+    `requirements.txt`, and this fails if that install is ever dropped. Every
+    other test in this file imports `study_agent` through `pytest.ini`'s
+    `pythonpath = src`, which is exactly why none of them caught this.
+    """
+
+    import os
+    import subprocess
+    import sys
+
+    environment = dict(os.environ)
+    environment.pop("PYTHONPATH", None)
+
+    result = subprocess.run(
+        [sys.executable, "-m", "study_agent.pipeline", "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=paths.repo_root(),
+        env=environment,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "--subject" in result.stdout

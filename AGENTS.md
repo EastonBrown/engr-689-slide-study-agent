@@ -20,6 +20,22 @@ Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See
 `docs/agents/domain.md`. The stage-by-stage build contract assembled from both
 is `docs/spec.md`; read it before implementing a stage.
 
+## Setup
+
+From the repo root, once per clone:
+
+```
+python -m venv .venv
+.venv/Scripts/pip install -r requirements-dev.txt    (Windows)
+.venv/bin/pip install -r requirements-dev.txt        (macOS, Linux)
+```
+
+`requirements.txt` leads with `-e .`, so this also installs the package itself.
+That install is what makes `python -m study_agent.pipeline` resolve. Without it
+only pytest can import `study_agent`, because `pytest.ini` sets `pythonpath = src`
+for its own runs and nothing else does. Never work around a missing install by
+setting `PYTHONPATH` by hand; the documented command has to work as documented.
+
 ## Checks
 
 `python -m pytest` and `python -m mypy` from the repo root. Both are expected to

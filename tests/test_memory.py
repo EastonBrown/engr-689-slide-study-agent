@@ -292,3 +292,36 @@ class TestMemoryStaysGitignored:
     def test_the_repo_ignores_the_memory_tree(self):
         ignored = (paths.repo_root() / ".gitignore").read_text(encoding="utf-8").split()
         assert "memory/" in ignored
+
+
+class TestASubjectSlugIsRefusedWhenItsDirectoryExists:
+    """The profile is not the only thing a subject directory holds.
+
+    `create_subject` refused a slug whose `profile.json` survived, but a tree
+    with attempts, retakes, or contributions and no profile is the same
+    half-deleted state, and registering over it silently re-adopts files that
+    belong to a subject the registry no longer knows about.
+    """
+
+    def test_a_directory_holding_attempts_but_no_profile_is_refused(self, tmp_path):
+        layout = paths.Layout(tmp_path)
+        paths.write_json(layout.attempt_file("engr-689", "a1"), {"orphan": True})
+
+        with pytest.raises(memory.MemoryUnreadable, match="already exists"):
+            memory.create_subject("ENGR 689", layout)
+
+    def test_the_registry_is_untouched_by_the_refusal(self, tmp_path):
+        layout = paths.Layout(tmp_path)
+        paths.write_json(layout.attempt_file("engr-689", "a1"), {"orphan": True})
+
+        with pytest.raises(memory.MemoryUnreadable):
+            memory.create_subject("ENGR 689", layout)
+
+        assert memory.list_subjects(layout) == []
+
+    def test_a_free_slug_is_still_created(self, tmp_path):
+        layout = paths.Layout(tmp_path)
+
+        entry = memory.create_subject("ENGR 689", layout)
+
+        assert entry.slug == "engr-689"

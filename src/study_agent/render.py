@@ -23,6 +23,18 @@ class DeckUnreadable(RuntimeError):
 # --- Build-up frames --------------------------------------------------------
 
 
+def normalize_newlines(text: str) -> str:
+    """CRLF and bare CR to LF, once, at the point of extraction.
+
+    pdfium returns CRLF. Every consumer downstream compares against this text:
+    build-up detection, the text path's page reader, and the verbatim span
+    scorer. Normalizing here means they all see one line ending and a span the
+    model quoted across a line break can be found by a plain substring test.
+    """
+
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def _line_set(text: str) -> set[str]:
     """Normalized non-empty lines. Case and internal spacing are not content."""
 
@@ -192,7 +204,7 @@ def render_deck(
         page = document[index]
 
         textpage = page.get_textpage()
-        text = textpage.get_text_range() or ""
+        text = normalize_newlines(textpage.get_text_range() or "")
         page_texts.append(text)
         paths.write_text(paths.page_render_txt(run_dir, slide_number), text)
 
@@ -219,5 +231,5 @@ def load_page_texts(run_dir: Path, page_count: int) -> list[str]:
     texts: list[str] = []
     for slide_number in range(1, page_count + 1):
         target = paths.page_render_txt(run_dir, slide_number)
-        texts.append(target.read_text(encoding="utf-8") if target.is_file() else "")
+        texts.append(paths.read_text(target) if target.is_file() else "")
     return texts

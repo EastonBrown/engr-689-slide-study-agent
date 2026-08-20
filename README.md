@@ -3,9 +3,10 @@
 Final project for ENGR 689 (SPTP: Multimodal LLM Agents), Texas A&M, fall 2026
 sprint session. Instructors: Yu Zhang and Cheng Zhang.
 
-**Status: scaffolding. The pipeline described below is the target design, not yet
-implemented. This section will be replaced with real setup and run instructions
-as components land.**
+**Status: partial. Render, the page reader, and the outline stage run; research,
+the review writer, the quiz, grading, and the interface do not yet. The table
+below marks the whole target design, not what is built. Setup and Running it are
+real and current.**
 
 ## What it does
 
@@ -49,11 +50,47 @@ the same deck and compared directly.
 
 ## Setup
 
-To be written once dependencies are pinned.
+Python 3.14. From the repo root:
+
+```
+python -m venv .venv
+.venv/Scripts/pip install -r requirements-dev.txt    # Windows
+.venv/bin/pip install -r requirements-dev.txt        # macOS, Linux
+```
+
+`requirements.txt` leads with `-e .`, so this installs the package itself along
+with its dependencies. That is what puts `study_agent` on the import path; the
+commands below will not resolve without it, and no manual `PYTHONPATH` is needed
+or wanted.
+
+Model calls need an Anthropic credential, from `ANTHROPIC_API_KEY` in the
+environment or a gitignored `.env` at the repo root.
 
 ## Running it
 
-To be written.
+A headless run over one deck, writing a timestamped run directory under `runs/`:
+
+```
+python -m study_agent.pipeline "data/course/slides/Day3 Principle.pdf" --subject engr-689
+```
+
+Render alone is the default. Add stages as needed:
+
+| Flag | What it adds |
+|---|---|
+| `--read-pages` | The vision and text passes, one `SlideNote` per slide per path |
+| `--slides 55-61` | Restricts the page reads to a slice, for a cheap check |
+| `--resume` | With `--read-pages`, retries only the slides whose read failed |
+| `--outline` | Groups the notes into topics and writes `outline-{image,text}.json` |
+
+Then score the image path's quoted spans against the text the renderer
+extracted from the same pages:
+
+```
+python eval/score_spans.py runs/engr-689/day3-principle/<run-timestamp>
+```
+
+The checks are `python -m pytest` and `python -m mypy`, both from the repo root.
 
 ## Limitations and failure cases
 

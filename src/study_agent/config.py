@@ -37,6 +37,12 @@ MAX_TOKENS_QUIZ = 16_000
 # failure channel. This counts total attempts, not retries after the first.
 LLM_ATTEMPTS = 2
 
+# Seconds to wait before the second attempt, doubling if attempts are ever
+# raised above two. The SDK retries 429 and 5xx underneath this loop, and
+# READER_CONCURRENCY puts eight threads behind it, so retrying with no wait
+# turns one rate limit into eight immediate retries.
+LLM_RETRY_BACKOFF_S = 1.0
+
 # ADR 0001 requires one image per request with client-side concurrency; the
 # width is spec-level.
 READER_CONCURRENCY = 8

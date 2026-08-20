@@ -310,6 +310,12 @@ page numbering by construction. The extracted text is also what
 `eval/score_spans.py` checks `verbatim_spans` against, so it is written to disk
 even though the image path never receives it.
 
+**Spec-level:** line endings are normalized to `\n` at extraction and the text
+is written and read back without newline translation, so what is on disk is what
+pdfium produced. This is a correctness requirement of the span check rather than
+a formatting preference: untranslated CRLF grew a second CR on write, and every
+verbatim span crossing a line break then scored as a fabrication.
+
 **Spec-level:** rendered pages are written under the run directory as
 `pages-render/NNNN.png` and extracted text as `pages-render/NNNN.txt`. ADR 0004
 did not list them. The interface needs page images beside reviews and failures
@@ -509,6 +515,13 @@ delay per line so the animation still reads on camera. The committed
 `eval/score_spans.py` is the one scripted check: every `verbatim_spans` entry
 tested as an exact substring of that page's extracted text, image path only, no
 model call. Figure-only recovery and quiz citation accuracy are scored by hand.
+
+**Spec-level:** a page whose extracted text is empty or missing is reported as
+*unscoreable* rather than counted as a failure, and does not change the exit
+code. The check can only ever establish that a span is absent from the text, so
+a page with no text is a gap in the evidence and not a fabrication by the
+reader. Empty is the case that occurs: render writes a `.txt` for every page,
+including the image-only ones pdfium extracts nothing from.
 
 **Spec-level:** `eval/figure-only-facts.json` is keyed by deck slug, so the four
 Day 3 labels sit under `day3-principle` and another deck can be labeled later
