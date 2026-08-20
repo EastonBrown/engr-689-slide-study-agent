@@ -11,7 +11,7 @@ import hashlib
 import json
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -140,12 +140,19 @@ def run_research_dir(run_dir: Path) -> Path:
 
 @dataclass(frozen=True)
 class Layout:
-    """The four trees ADR 0004 names, rooted anywhere (tests root them in tmp)."""
+    """The four trees ADR 0004 names, rooted anywhere (tests root them in tmp).
 
-    root: Path | None = None
+    `root` defaults to the repo root and is always a real path once the
+    instance exists, which is why it is not annotated as optional: every
+    method below joins onto it unconditionally.
+    """
+
+    root: Path = field(default_factory=repo_root)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "root", Path(self.root) if self.root else repo_root())
+        # Coerce so a caller may hand over anything os.PathLike, tmp_path
+        # included, and every method downstream still sees a Path.
+        object.__setattr__(self, "root", Path(self.root))
 
     # runs/
     def runs_dir(self) -> Path:

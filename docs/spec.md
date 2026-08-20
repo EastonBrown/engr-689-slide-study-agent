@@ -60,6 +60,13 @@ contact with later decisions. Each is recorded here and applied to `CONTEXT.md`.
   | `streamlit` | the interface, per #8 |
   | `pypdfium2` | PDF page rendering and text extraction |
 
+  Development only, not imported by the pipeline:
+
+  | Package | Role |
+  | --- | --- |
+  | `pytest` | the test suite, configured in `pytest.ini` |
+  | `mypy` | typechecking, configured in `mypy.ini` |
+
   `pypdfium2` is spec-level and does both jobs with no external binary and a
   permissive license. PyMuPDF is the fallback if extraction quality
   disappoints; it needs an AGPL note in the acknowledgements if adopted. Avoid
@@ -105,6 +112,12 @@ eval/score_spans.py           the verbatim_spans substring check
 - `python -m study_agent.pipeline <deck.pdf> --subject <slug>` for a headless
   run, so a run can be produced without driving the UI on camera.
 - `python eval/score_spans.py <run-dir>` for the scripted citation check.
+- `python -m pytest` and `python -m mypy` for the test suite and the
+  typechecker. `src/` is checked strictly; `tests/` is exempted from the
+  annotation requirements, since a test full of deliberately malformed fixture
+  dicts gains nothing from them. `mypy.ini` names each strictness flag on its
+  own line rather than setting `strict`, so relaxing one later is a visible
+  edit rather than a dropped flag.
 
 **Prompt versioning.** `PROMPT_VERSION` is one string in `config.py` covering
 all prompts, written into `manifest.json`. Bumping it is a manual act. Locked

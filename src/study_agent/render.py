@@ -8,6 +8,7 @@ live here because they need the extracted text and nothing else.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -158,7 +159,7 @@ def render_deck(
     pdf_path: Path,
     run_dir: Path,
     dpi: int = config.RENDER_DPI,
-    log=None,
+    log: Callable[[str], None] | None = None,
 ) -> RenderResult:
     """Render every page to PNG and write its extracted text beside it.
 

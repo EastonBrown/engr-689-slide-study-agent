@@ -403,7 +403,7 @@ class TestStrictSchemaForTheApi:
                 assert set(node["required"]) == set(node.get("properties", {}))
         assert objects, "found no object to check"
 
-    def test_a_defaulted_field_on_a_nested_model_is_still_required(self):
+    def test_a_defaulted_field_on_a_nested_model_is_still_required(self) -> None:
         """The API wants every property required, however deep it sits."""
 
         class Inner(schemas.Strict):

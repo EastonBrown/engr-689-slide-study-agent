@@ -30,7 +30,11 @@ class Strict(BaseModel):
 
 
 class PageRole(str, Enum):
-    title = "title"
+    # `title` shadows str.title, which mypy reports as an incompatible
+    # assignment. The member name is the value CONTEXT.md locks for page_role,
+    # so the name stays and the report is silenced here rather than worked
+    # around with an alias nothing else would use.
+    title = "title"  # type: ignore[assignment]
     agenda = "agenda"
     section_break = "section_break"
     content = "content"
