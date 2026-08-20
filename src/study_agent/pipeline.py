@@ -17,7 +17,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import page_reader
+from .stages import outline, page_reader
 
 
 class PipelineError(RuntimeError):
@@ -61,6 +61,8 @@ def run_render_pipeline(
     resume: bool = False,
     slide_numbers: list[int] | None = None,
     reader: page_reader.PageReader | None = None,
+    outline_pages: bool = False,
+    outliner: outline.Outliner | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
 
@@ -127,6 +129,17 @@ def run_render_pipeline(
         )
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
+    if outline_pages:
+        outline.outline_run(
+            run_dir,
+            deck_slug=deck_slug,
+            superseded=render_result.preflight.superseded,
+            subject_slug=subject_slug,
+            layout=layout,
+            outliner=outliner,
+        )
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
     if log:
         log(f"wrote {paths.manifest_file(run_dir)}")
         log(f"latest -> {run_timestamp}")
@@ -189,6 +202,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--slides",
         help="Optional slide list for page reads, for example 55-61 or 1,3,5.",
     )
+    parser.add_argument(
+        "--outline",
+        action="store_true",
+        help="Continue after page reading and write outline-image/text.json.",
+    )
     return parser
 
 
@@ -204,6 +222,7 @@ def main(argv: list[str] | None = None) -> int:
             read_pages=args.read_pages,
             resume=args.resume,
             slide_numbers=slide_numbers,
+            outline_pages=args.outline,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

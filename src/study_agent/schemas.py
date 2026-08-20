@@ -154,6 +154,7 @@ class Outline(Strict):
     candidate_cap: int = 0
     topic_cap_exceeded: bool = False
     question_budget: list[tuple[str, int]] = Field(default_factory=list)
+    untested_topics: list[str] = Field(default_factory=list)
     repair_attempted: bool = False
 
 

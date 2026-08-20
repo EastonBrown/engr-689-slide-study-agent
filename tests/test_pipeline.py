@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from study_agent import paths, pipeline, render, schemas
-from study_agent.stages import page_reader
+from study_agent.stages import outline, page_reader
 
 
 def preflight(page_count: int = 2) -> schemas.Preflight:
@@ -174,6 +174,43 @@ class Reader:
         )
 
 
+class Outliner:
+    def group(
+        self,
+        notes: list[schemas.SlideNote],
+        existing_topics: list[str],
+    ) -> schemas.GroupingDraft:
+        del existing_topics
+        return schemas.GroupingDraft(
+            topics=[
+                schemas.TopicAssignmentDraft(
+                    name="Topic",
+                    slides=[note.slide_number for note in notes],
+                    is_new=True,
+                    created_reason="new",
+                )
+            ]
+        )
+
+    def confirm_bridges(
+        self,
+        notes_by_slide: dict[int, schemas.SlideNote],
+        candidates: list[outline.BridgeCandidate],
+    ) -> schemas.BridgeDraft:
+        del notes_by_slide, candidates
+        return schemas.BridgeDraft(confirmations=[])
+
+    def repair_grouping(
+        self,
+        notes: list[schemas.SlideNote],
+        existing_topics: list[str],
+        grouping: schemas.GroupingDraft,
+        violations: list[str],
+    ) -> schemas.GroupingDraft:
+        del notes, existing_topics, violations
+        return grouping
+
+
 def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
@@ -193,3 +230,24 @@ def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monk
     assert paths.page_note(result.run_dir, "text", 2).is_file()
     image = next(stat for stat in result.manifest.paths if stat.path == schemas.PathKind.image)
     assert "page_reader" in image.completed_stages
+
+
+def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypatch):
+    monkeypatch.setattr(render, "render_deck", fake_render)
+    deck = tmp_path / "Day3 Principle.pdf"
+    deck.write_bytes(b"pdf bytes")
+
+    result = pipeline.run_render_pipeline(
+        deck,
+        "engr-689",
+        layout=paths.Layout(tmp_path),
+        started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+        read_pages=True,
+        outline_pages=True,
+        reader=Reader(),
+        outliner=Outliner(),
+    )
+
+    assert paths.outline_file(result.run_dir, "image").is_file()
+    assert paths.outline_file(result.run_dir, "text").is_file()
+    assert all("outline" in stat.completed_stages for stat in result.manifest.paths)
