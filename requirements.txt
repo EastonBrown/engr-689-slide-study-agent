@@ -4,10 +4,17 @@
 #   .venv/Scripts/pip install -r requirements.txt        (Windows)
 #   .venv/bin/pip install -r requirements.txt            (macOS, Linux)
 #
+# The first line installs this repo itself, in editable mode, which is what
+# puts `src/study_agent` on the path. Without it `python -m study_agent.pipeline`
+# cannot find the package and only pytest works, because pytest.ini sets
+# `pythonpath = src` for its own runs and nothing else does.
+#
 # Pinned rather than floored. This is a two-day build with a filmed demo at the
 # end of it, so a transitive release breaking the run on Friday morning costs
 # more than staying current is worth. Only direct dependencies are listed;
 # nothing here is a lockfile.
+
+-e .                    # this repo, so `python -m study_agent.pipeline` resolves
 
 anthropic==0.125.0      # the only model client, ADR 0001
 pydantic==2.13.4        # strict validation of every schema in CONTEXT.md

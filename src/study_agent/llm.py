@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Generic, TypeVar
@@ -62,6 +63,56 @@ def create_client(root: Path | None = None) -> Any:
     return anthropic.Anthropic(api_key=load_api_key(root))
 
 
+def _is_retryable(error: Exception) -> bool:
+    """Whether trying the same request again could plausibly succeed.
+
+    A schema violation or unparseable JSON is retryable because the model may
+    simply do better; a transport fault or a 5xx is retryable because the
+    server may. Everything else is not: a bad credential, a malformed request,
+    and a `TypeError` in request construction all fail identically on attempt
+    two, so retrying them only spends round trips and delays the real error.
+    """
+
+    if isinstance(error, (ValidationError, json.JSONDecodeError)):
+        return True
+
+    import anthropic
+
+    if isinstance(
+        error,
+        (anthropic.APIConnectionError, anthropic.APITimeoutError, anthropic.RateLimitError),
+    ):
+        return True
+    if isinstance(error, anthropic.APIStatusError):
+        # 5xx is the server's problem and may pass; 4xx is the request's and
+        # will not. `getattr` because the error may be constructed without one.
+        return int(getattr(error, "status_code", 0) or 0) >= 500
+    return False
+
+
+def _is_request_fault(error: Exception) -> bool:
+    """Whether this failure is about one request rather than the whole run.
+
+    The distinction the stages need, and not the same question as whether to
+    retry. An oversized or corrupt page image comes back as a 400: retrying it
+    is pointless, but so is killing a 66-slide run over one bad page, so it is
+    reported as a `StructuredCallError` and the caller degrades that slide
+    through `reader_note`.
+
+    A bad credential or a revoked key is the opposite: every remaining call
+    fails the same way, and turning that into 132 notes each carrying the same
+    authentication message would bill nothing but bury the real problem. Those
+    propagate, as does anything that is not an API error at all, so a
+    programming error still crashes where it happened.
+    """
+
+    import anthropic
+
+    if isinstance(error, (anthropic.AuthenticationError, anthropic.PermissionDeniedError)):
+        return False
+    return isinstance(error, anthropic.APIStatusError)
+
+
 def _text_from_message(message: Any) -> str:
     content = getattr(message, "content", message)
     if isinstance(content, str):
@@ -85,7 +136,11 @@ def _usage_from_message(message: Any, stage: str, calls: int) -> schemas.StageUs
     input_tokens = int(getattr(usage, "input_tokens", 0) or 0)
     output_tokens = int(getattr(usage, "output_tokens", 0) or 0)
     cache_read_tokens = int(getattr(usage, "cache_read_input_tokens", 0) or 0)
-    web_searches = int(getattr(usage, "web_searches", 0) or 0)
+    # Server tool counts live one level down, under `server_tool_use`. Read
+    # straight off `usage` this was always 0, which priced every web search at
+    # nothing and reported search spend as free rather than as unmeasured.
+    server_tools = getattr(usage, "server_tool_use", None)
+    web_searches = int(getattr(server_tools, "web_search_requests", 0) or 0)
     cost = (
         input_tokens * config.USD_PER_MTOK_INPUT
         + output_tokens * config.USD_PER_MTOK_OUTPUT
@@ -139,7 +194,9 @@ def structured_call(
 
     accumulated = schemas.StageUsage(stage=stage)
     last_error: Exception | None = None
-    for _ in range(config.LLM_ATTEMPTS + 1):
+    for attempt in range(config.LLM_ATTEMPTS):
+        if attempt:
+            time.sleep(config.LLM_RETRY_BACKOFF_S * 2 ** (attempt - 1))
         try:
             kwargs: dict[str, Any] = {
                 "model": config.MODEL_ID,
@@ -160,9 +217,15 @@ def structured_call(
                 output=response_model.model_validate(payload),
                 usage=accumulated,
             )
-        except (ValidationError, json.JSONDecodeError) as error:
-            last_error = error
         except Exception as error:
+            if not _is_retryable(error):
+                if _is_request_fault(error):
+                    # Not retried, but still the stage's failure rather than the
+                    # run's. `accumulated` goes with it: an earlier attempt in
+                    # this loop may already have been billed, and dropping those
+                    # tokens would under-report the run's cost.
+                    raise StructuredCallError(str(error), accumulated) from error
+                raise
             last_error = error
     raise StructuredCallError(
         str(last_error) if last_error else "structured call failed",

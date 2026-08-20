@@ -92,3 +92,83 @@ def test_documented_script_entrypoint_works_from_repo_root(tmp_path):
 
     assert result.returncode == 0
     assert "passes: 1" in result.stdout
+
+
+class TestTheScorerSurvivesTheInputsItIsActuallyGiven:
+    def test_a_run_directory_given_as_a_string_is_accepted(self, tmp_path):
+        run_dir = tmp_path / "run"
+        paths.write_text(paths.page_render_txt(run_dir, 1), "alpha")
+        write_note(run_dir, 1, ["alpha"])
+
+        result = score_spans.score_run(str(run_dir))
+
+        assert result.passed == 1
+
+    def test_a_page_with_no_extracted_text_is_unscoreable_not_a_crash(self, tmp_path):
+        """Absent evidence is not evidence of fabrication.
+
+        A note whose page text never made it to disk cannot be checked either
+        way. Counting its spans as failures would report a hallucination the
+        run has no grounds to claim, and aborting would throw away the pages
+        that did score.
+        """
+
+        run_dir = tmp_path / "run"
+        paths.write_text(paths.page_render_txt(run_dir, 1), "alpha")
+        write_note(run_dir, 1, ["alpha"])
+        write_note(run_dir, 2, ["beta", "gamma"])
+
+        result = score_spans.score_run(run_dir)
+
+        assert result.passed == 1
+        assert result.failed == 0
+        assert result.unscoreable == 2
+        assert result.unscoreable_slides == [2]
+
+    def test_an_image_only_page_is_unscoreable_rather_than_a_fabrication(self, tmp_path):
+        """The case that actually happens: render wrote the file, and it is blank.
+
+        Slide 56 of the Day 3 deck extracts to whitespace. Scoring its spans as
+        failures would report the image reader as hallucinating a caption it
+        read correctly off the page.
+        """
+
+        run_dir = tmp_path / "run"
+        paths.write_text(paths.page_render_txt(run_dir, 56), "   \n\n  ")
+        write_note(run_dir, 56, ["a caption only the image shows"])
+
+        result = score_spans.score_run(run_dir)
+
+        assert result.failed == 0
+        assert result.spans_checked == 0
+        assert result.unscoreable == 1
+        assert result.unscoreable_slides == [56]
+
+    def test_an_image_only_page_does_not_fail_the_scripted_check(self, tmp_path):
+        run_dir = tmp_path / "run"
+        paths.write_text(paths.page_render_txt(run_dir, 56), "")
+        write_note(run_dir, 56, ["a caption only the image shows"])
+
+        assert score_spans.main([str(run_dir)]) == 0
+
+    def test_the_cli_reports_unscoreable_pages_and_still_succeeds(self, tmp_path, capsys):
+        run_dir = tmp_path / "run"
+        write_note(run_dir, 3, ["beta"])
+
+        code = score_spans.main([str(run_dir)])
+
+        captured = capsys.readouterr()
+        assert code == 0
+        assert "unscoreable: 1" in captured.out
+        assert "no extracted text for slide 3" in captured.out
+
+    def test_a_span_crossing_a_line_break_scores_as_a_pass(self, tmp_path):
+        run_dir = tmp_path / "run"
+        text = "Retrieval\naugmented generation"
+        paths.write_text(paths.page_render_txt(run_dir, 1), text)
+        write_note(run_dir, 1, [text])
+
+        result = score_spans.score_run(run_dir)
+
+        assert result.passed == 1
+        assert result.failed == 0

@@ -126,16 +126,23 @@ def create_subject(display_name: str, layout: Layout | None = None) -> SubjectEn
     if any(entry.slug == slug for entry in registry.subjects):
         raise SubjectExists(f"subject {slug!r} already exists")
 
-    # An unregistered profile on disk is the half-deleted tree the module
-    # docstring names: the registry is gone but a subject's accumulated topics
-    # are not. Writing over it would destroy every deck that subject has ever
-    # seen, silently, so this refuses and leaves the choice to a human.
-    profile = layout.profile_file(slug)
-    if profile.exists():
+    # An unregistered subject directory on disk is the half-deleted tree the
+    # module docstring names: the registry is gone but the subject's
+    # accumulated topics, attempts, retakes, and contributions are not. Writing
+    # over it would destroy every deck that subject has ever seen, silently, so
+    # this refuses and leaves the choice to a human.
+    #
+    # The directory is the test, not `profile.json`. A tree whose profile is
+    # the one file that did not survive is in exactly the same state, and
+    # adopting its attempts into a freshly created subject would carry a
+    # stranger's history into the retake weighting.
+    subject = layout.subject_dir(slug)
+    if subject.exists():
         raise MemoryUnreadable(
-            f"{profile} already exists but {slug!r} is not in the registry. "
-            "Move or delete it rather than losing the topics it holds."
+            f"{subject} already exists but {slug!r} is not in the registry. "
+            "Move or delete it rather than losing what it holds."
         )
+    profile = layout.profile_file(slug)
 
     entry = SubjectEntry(slug=slug, display_name=name, created_at=paths.utc_iso())
     registry.subjects.append(entry)

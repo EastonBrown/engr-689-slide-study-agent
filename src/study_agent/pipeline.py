@@ -50,6 +50,21 @@ def _next_run_slot(
         moment = None
 
 
+def _require_slides_in_deck(slide_numbers: list[int], page_count: int) -> None:
+    """Refuse a slice naming a page the deck does not have.
+
+    Checked once the deck's length is known and before any note is read, so a
+    mistyped range costs the render it already paid for and no model calls.
+    """
+
+    past_end = [slide for slide in slide_numbers if slide > page_count]
+    if past_end:
+        raise PipelineError(
+            f"deck has {page_count} slides; --slides names "
+            f"{', '.join(str(slide) for slide in past_end)}"
+        )
+
+
 def run_render_pipeline(
     deck_path: Path,
     subject_slug: str,
@@ -95,7 +110,6 @@ def run_render_pipeline(
     except render.DeckUnreadable as error:
         raise PipelineError(str(error)) from error
 
-    ended_stamp = paths.utc_timestamp()
     manifest = Manifest(
         schema_version=config.SCHEMA_VERSION,
         subject_slug=subject_slug,
@@ -104,7 +118,7 @@ def run_render_pipeline(
         deck_filename=deck_path.name,
         run_timestamp=run_timestamp,
         started_at=started_stamp,
-        ended_at=ended_stamp,
+        ended_at=paths.utc_timestamp(),
         model=config.MODEL_ID,
         prompt_version=config.PROMPT_VERSION,
         dpi=config.RENDER_DPI,
@@ -119,6 +133,15 @@ def run_render_pipeline(
 
     paths.write_model(paths.manifest_file(run_dir), manifest)
     layout.write_latest(subject_slug, deck_slug, run_timestamp)
+
+    # After the manifest, not before it. A refusal here still leaves a complete
+    # run directory, whereas raising between render and this write left one
+    # holding page artifacts and no manifest, which `deck_slugs_with_hashes`
+    # skips. That drops the deck's sha256, and a later different PDF whose stem
+    # slugifies alike then claims the same deck directory instead of the hashed
+    # slug that exists to keep them apart.
+    if slide_numbers:
+        _require_slides_in_deck(slide_numbers, render_result.preflight.page_count)
 
     if read_pages:
         page_reader.read_run_pages(
@@ -140,6 +163,13 @@ def run_render_pipeline(
         )
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
+    # Re-stamped last, because every stage above rewrites the manifest from
+    # its own copy and would otherwise leave `ended_at` at the moment render
+    # finished. A run's recorded duration has to cover the model stages, which
+    # are nearly all of its wall time.
+    manifest = manifest.model_copy(update={"ended_at": paths.utc_timestamp()})
+    paths.write_model(paths.manifest_file(run_dir), manifest)
+
     if log:
         log(f"wrote {paths.manifest_file(run_dir)}")
         log(f"latest -> {run_timestamp}")
@@ -154,7 +184,7 @@ def parse_slide_numbers(raw: str) -> list[int]:
         piece = part.strip()
         if not piece:
             continue
-        if "-" in piece:
+        if "-" in piece.lstrip("-"):
             start_raw, end_raw = piece.split("-", 1)
             try:
                 start, end = int(start_raw), int(end_raw)
@@ -168,6 +198,12 @@ def parse_slide_numbers(raw: str) -> list[int]:
                 slides.add(int(piece))
             except ValueError as error:
                 raise PipelineError(f"invalid slide number: {piece}") from error
+    # Slides are 1-based everywhere: the render filenames, the manifest counts,
+    # and every citation. A 0 reaching the reader asks for a page that cannot
+    # exist, so it is a typo worth naming rather than a read worth attempting.
+    below = sorted(slide for slide in slides if slide < 1)
+    if below:
+        raise PipelineError(f"slide numbers start at 1, got {below[0]}")
     return sorted(slides)
 
 

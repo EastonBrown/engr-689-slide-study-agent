@@ -324,5 +324,23 @@ def read_json(target: Path) -> Any | None:
 
 
 def write_text(target: Path, text: str) -> None:
+    """Write text verbatim, creating parents. No newline translation.
+
+    `newline=""` is the whole point. The default translates every newline to the
+    platform's line ending on write, so text extracted as CRLF came back out as
+    CR-CR-LF and the file on disk was no longer the text that was extracted.
+    Extracted page text is evidence a verbatim span is checked against, so it
+    has to survive the write unchanged. Pair with `read_text` below, which does
+    not translate either.
+    """
+
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(text, encoding="utf-8")
+    with target.open("w", encoding="utf-8", newline="") as handle:
+        handle.write(text)
+
+
+def read_text(target: Path) -> str:
+    """Read back exactly what `write_text` wrote, line endings included."""
+
+    with target.open("r", encoding="utf-8", newline="") as handle:
+        return handle.read()

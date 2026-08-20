@@ -2,9 +2,69 @@
 
 from __future__ import annotations
 
+import sys
+import types
+from pathlib import Path
+from unittest import mock
+
 import pytest
 
-from study_agent import config, render
+from study_agent import config, paths, render
+
+
+class FakeImage:
+    def save(self, target) -> None:
+        Path(target).write_bytes(b"png")
+
+
+class FakeBitmap:
+    def to_pil(self) -> FakeImage:
+        return FakeImage()
+
+
+class FakeTextPage:
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+    def get_text_range(self) -> str:
+        return self.text
+
+
+class FakePage:
+    """One pdfium page, returning CRLF text the way the real one does."""
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+    def get_size(self) -> tuple[float, float]:
+        return 960.0, 540.0
+
+    def get_textpage(self) -> FakeTextPage:
+        return FakeTextPage(self.text)
+
+    def render(self, scale: float) -> FakeBitmap:
+        del scale
+        return FakeBitmap()
+
+
+class FakeDocument:
+    def __init__(self, pages: list[FakePage]) -> None:
+        self.pages = pages
+
+    def __len__(self) -> int:
+        return len(self.pages)
+
+    def __getitem__(self, index: int) -> FakePage:
+        return self.pages[index]
+
+
+def render_deck_with(document: FakeDocument, run_dir: Path) -> render.RenderResult:
+    """Run the real render stage over a stubbed pdfium."""
+
+    module = types.ModuleType("pypdfium2")
+    module.PdfDocument = lambda _path: document  # type: ignore[attr-defined]
+    with mock.patch.dict(sys.modules, {"pypdfium2": module}):
+        return render.render_deck(run_dir / "deck.pdf", run_dir)
 
 
 def page(*lines: str) -> str:
@@ -128,3 +188,39 @@ class TestScaleForLongEdge:
     def test_a_portrait_page_scales_on_its_height(self):
         scale = render.scale_for_long_edge(1000, 5000)
         assert scale == pytest.approx(config.MAX_LONG_EDGE_PX / 5000)
+
+
+class TestExtractedTextRoundTrips:
+    """A span that crosses a line break has to survive the write and the read.
+
+    pdfium hands back CRLF line endings. Written through a text handle that
+    translates newlines and read back through one that does not, every CRLF
+    grew a second CR, so the text on disk was not the text that was extracted
+    and every multi-line verbatim span scored as a fabrication.
+    """
+
+    def test_crlf_extracted_text_reads_back_byte_identical(self, tmp_path):
+        target = paths.page_render_txt(tmp_path, 1)
+        text = "Self-supervised learning\n• Modern methods\no Contrastive"
+
+        paths.write_text(target, text)
+
+        assert paths.read_text(target) == text
+        assert b"\r" not in target.read_bytes()
+
+    def test_render_normalizes_line_endings_before_writing(self, tmp_path):
+        extracted = "Self-supervised learning\r\n• Modern methods\ro Contrastive"
+
+        document = FakeDocument([FakePage(extracted)])
+        render_deck_with(document, tmp_path)
+
+        stored = paths.read_text(paths.page_render_txt(tmp_path, 1))
+        assert stored == "Self-supervised learning\n• Modern methods\no Contrastive"
+        assert render.load_page_texts(tmp_path, 1) == [stored]
+
+    def test_a_span_crossing_a_line_break_is_found_in_the_stored_text(self, tmp_path):
+        document = FakeDocument([FakePage("Retrieval\r\naugmented generation")])
+        render_deck_with(document, tmp_path)
+
+        stored = paths.read_text(paths.page_render_txt(tmp_path, 1))
+        assert "Retrieval\naugmented generation" in stored

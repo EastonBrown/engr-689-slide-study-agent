@@ -99,6 +99,9 @@ def _message_content(request: PageReadRequest) -> list[dict[str, object]]:
         "text": f"Read slide {request.slide_number} on the {request.path_kind.value} path.",
     }
     if request.path_kind == PathKind.image:
+        # Whether the file is actually there is `_missing_artifact`'s question,
+        # asked before any reader is called. This is the narrowing that lets the
+        # read below happen, and it cannot be reached through the stage.
         if request.image_path is None:
             raise PageReadFailed("image path has no rendered image")
         data = base64.b64encode(request.image_path.read_bytes()).decode("ascii")
@@ -147,7 +150,7 @@ def _request_for(run_dir: Path, path_kind: PathKind, slide_number: int) -> PageR
         path_kind=path_kind,
         slide_number=slide_number,
         image_path=None,
-        extracted_text=text_path.read_text(encoding="utf-8") if text_path.is_file() else "",
+        extracted_text=paths.read_text(text_path) if text_path.is_file() else "",
     )
 
 
@@ -179,10 +182,32 @@ def _failed_note(slide_number: int, message: str) -> SlideNote:
     )
 
 
+def _missing_artifact(request: PageReadRequest) -> str | None:
+    """Why this slide cannot be read at all, or None if it can.
+
+    Checked before the reader is called rather than inside the message builder,
+    so the answer does not depend on which `PageReader` is in use. The image
+    path is the only one that can be missing an artifact: the text path already
+    substitutes an empty string for an absent .txt, and an empty page is a real
+    reading rather than a failure.
+    """
+
+    if request.path_kind != PathKind.image:
+        return None
+    if request.image_path is None:
+        return "image path has no rendered image"
+    if not request.image_path.is_file():
+        return f"no rendered page image at {request.image_path.name}"
+    return None
+
+
 def _write_one_note(
     run_dir: Path, reader: PageReader, request: PageReadRequest
 ) -> tuple[PathKind, SlideNote, StageUsage]:
     try:
+        missing = _missing_artifact(request)
+        if missing is not None:
+            raise PageReadFailed(missing)
         result = reader.read(request)
         note = SlideNote(slide_number=request.slide_number, **result.note.model_dump())
         usage = result.usage
@@ -192,6 +217,12 @@ def _write_one_note(
     except PageReadFailed as error:
         note = _failed_note(request.slide_number, str(error))
         usage = error.usage
+    except OSError as error:
+        # A render artifact that vanished, or a directory that will not read.
+        # Same failure channel: the note is written with `reader_note` set so a
+        # missing note file keeps meaning exactly one thing.
+        note = _failed_note(request.slide_number, f"page artifact unreadable: {error}")
+        usage = StageUsage(stage=PAGE_READER_STAGE)
     paths.write_model(paths.page_note(run_dir, request.path_kind.value, request.slide_number), note)
     return request.path_kind, note, usage
 
@@ -206,7 +237,17 @@ def _update_manifest(
     manifest: Manifest | None,
     counts: dict[PathKind, tuple[int, int, int]],
     usage: StageUsage,
+    aborted: bool = False,
 ) -> None:
+    """Record what this invocation read. `aborted` withholds the completion mark.
+
+    The counts and the usage are written either way, because they are what the
+    stage actually did and losing them is the bug this path exists to fix. What
+    an aborted run may not claim is that the stage finished: a manifest saying
+    `page_reader` completed with 40 of 66 slides is a worse artifact than one
+    that says the stage is still outstanding.
+    """
+
     if manifest is None:
         return
 
@@ -214,7 +255,7 @@ def _update_manifest(
     for path_kind, (attempted, succeeded, reader_notes) in counts.items():
         existing = stats_by_path.get(path_kind, PathStats(path=path_kind))
         stages = list(existing.completed_stages)
-        if "page_reader" not in stages:
+        if not aborted and "page_reader" not in stages:
             stages.append("page_reader")
         stats_by_path[path_kind] = existing.model_copy(
             update={
@@ -264,10 +305,18 @@ def read_run_pages(
         path_kind: [0, 0, 0] for path_kind in selected_paths
     }
 
+    # An unexpected error is re-raised, but only after the manifest has been
+    # written. A programmer bug still crashes the run loudly; it no longer also
+    # discards the accounting for every slide that finished before it.
+    unexpected: BaseException | None = None
     with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
         futures = [executor.submit(_write_one_note, run_dir, reader, request) for request in requests]
         for future in as_completed(futures):
-            path_kind, note, item_usage = future.result()
+            try:
+                path_kind, note, item_usage = future.result()
+            except BaseException as error:  # noqa: BLE001 - re-raised below
+                unexpected = unexpected or error
+                continue
             counts[path_kind][0] += 1
             if note.reader_note is None:
                 counts[path_kind][1] += 1
@@ -283,4 +332,7 @@ def read_run_pages(
             for path_kind, values in counts.items()
         },
         usage,
+        aborted=unexpected is not None,
     )
+    if unexpected is not None:
+        raise unexpected
