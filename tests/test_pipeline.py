@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from study_agent import paths, pipeline, render, schemas
-from study_agent.stages import outline, page_reader, research, review
+from study_agent.stages import outline, page_reader, quiz, research, review
 
 
 def preflight(page_count: int = 2) -> schemas.Preflight:
@@ -242,6 +242,28 @@ class ReviewWriter:
         )
 
 
+class QuizGenerator:
+    def generate(self, request: quiz.QuizRequest) -> quiz.QuizGenerationResult:
+        slide = request.outline.topics[0].slides[0]
+        return quiz.QuizGenerationResult(
+            draft=schemas.QuizDraft(
+                questions=[
+                    schemas.QuestionDraft(
+                        stem="What follows from the slide?",
+                        options=["Correct", "Wrong 1", "Wrong 2", "Wrong 3"],
+                        correct_index=0,
+                        explanation="The slide says so.",
+                        distractor_rationale=[None, "Wrong.", "Wrong.", "Wrong."],
+                        slide_citations=[slide],
+                        topic=request.outline.topics[0].name,
+                        source=schemas.Source.prose,
+                    )
+                ]
+            ),
+            usage=schemas.StageUsage(stage="quiz", calls=1),
+        )
+
+
 def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
@@ -326,3 +348,26 @@ def test_pipeline_can_continue_into_review_after_research(tmp_path, monkeypatch)
     assert paths.review_file(result.run_dir, "image").is_file()
     assert paths.review_file(result.run_dir, "text").is_file()
     assert all("review" in stat.completed_stages for stat in result.manifest.paths)
+
+
+def test_pipeline_can_continue_into_quiz_after_review(tmp_path, monkeypatch):
+    monkeypatch.setattr(render, "render_deck", fake_render)
+    deck = tmp_path / "Day3 Principle.pdf"
+    deck.write_bytes(b"pdf bytes")
+
+    result = pipeline.run_render_pipeline(
+        deck,
+        "engr-689",
+        layout=paths.Layout(tmp_path),
+        started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+        quiz_pages=True,
+        reader=Reader(),
+        outliner=Outliner(),
+        researcher=Researcher(),
+        review_writer=ReviewWriter(),
+        quiz_generator=QuizGenerator(),
+    )
+
+    assert paths.quiz_file(result.run_dir).is_file()
+    assert paths.review_file(result.run_dir, "text").is_file()
+    assert result.manifest.quiz_questions == 2

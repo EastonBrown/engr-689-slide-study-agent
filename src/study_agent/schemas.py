@@ -197,10 +197,10 @@ class BridgeDraft(Strict):
 
 class QuestionDraft(Strict):
     stem: str
-    options: list[str]
-    correct_index: int
+    options: list[str] = Field(min_length=4, max_length=4)
+    correct_index: int = Field(ge=0, le=3)
     explanation: str
-    distractor_rationale: list[str | None]
+    distractor_rationale: list[str | None] = Field(min_length=4, max_length=4)
     slide_citations: list[int]
     topic: str
     source: Source

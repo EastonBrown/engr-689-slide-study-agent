@@ -17,7 +17,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import outline, page_reader, research, review
+from .stages import outline, page_reader, quiz, research, review
 
 
 class PipelineError(RuntimeError):
@@ -67,6 +67,8 @@ def run_render_pipeline(
     researcher: research.Researcher | None = None,
     review_pages: bool = False,
     review_writer: review.ReviewWriter | None = None,
+    quiz_pages: bool = False,
+    quiz_generator: quiz.QuizGenerator | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
 
@@ -124,7 +126,8 @@ def run_render_pipeline(
     paths.write_model(paths.manifest_file(run_dir), manifest)
     layout.write_latest(subject_slug, deck_slug, run_timestamp)
 
-    should_research_pages = research_pages or review_pages
+    should_review_pages = review_pages or quiz_pages
+    should_research_pages = research_pages or should_review_pages
     should_outline_pages = outline_pages or should_research_pages
     should_read_pages = read_pages or should_outline_pages
 
@@ -152,8 +155,12 @@ def run_render_pipeline(
         research.research_run(run_dir, layout=layout, researcher=researcher)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
-    if review_pages:
+    if should_review_pages:
         review.review_run(run_dir, writer=review_writer)
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
+    if quiz_pages:
+        quiz.quiz_run(run_dir, generator=quiz_generator)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
     if log:
@@ -233,6 +240,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Continue through research and write review-image/text.md.",
     )
+    parser.add_argument(
+        "--quiz",
+        action="store_true",
+        help="Continue through review and write image-path quiz.json.",
+    )
     return parser
 
 
@@ -251,6 +263,7 @@ def main(argv: list[str] | None = None) -> int:
             outline_pages=args.outline,
             research_pages=args.research,
             review_pages=args.review,
+            quiz_pages=args.quiz,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

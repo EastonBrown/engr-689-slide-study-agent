@@ -322,6 +322,17 @@ class TestStrictness:
         with pytest.raises(ValidationError):
             schemas.CacheEntry.model_validate({**CACHE_ENTRY, "citations": []})
 
+    def test_questions_require_four_options_one_correct_index_and_a_citation(self):
+        with pytest.raises(ValidationError):
+            schemas.QuestionDraft.model_validate({**QUESTION, "options": ["A"]})
+        with pytest.raises(ValidationError):
+            schemas.QuestionDraft.model_validate({**QUESTION, "correct_index": 4})
+        draft_payload = {key: value for key, value in QUESTION.items() if key != "question_id"}
+        draft = schemas.QuestionDraft.model_validate(
+            {**draft_payload, "slide_citations": []}
+        )
+        assert draft.slide_citations == []
+
 
 class TestTheLockedShapes:
     def test_visual_kind_includes_table_and_photo(self):
