@@ -40,6 +40,30 @@ not at all through text extraction. Four are hand-labeled in the Day 3 deck; see
 **Subject.** The namespace for memory. A topic mastery profile accumulates
 across every deck in a subject; a different class gets its own profile.
 
+**Topic.** A chapter-level unit of subject matter that mastery accumulates
+against. Topics are the memory vocabulary. They are coarser than concepts,
+capped at 12 per deck, and drawn from a list the subject accumulates as decks
+are processed rather than one authored up front. See ADR 0003.
+
+**Topic assignment.** The outline stage's mapping of a deck's concepts onto the
+subject's topic list. For each topic the deck covers it either reuses an
+existing topic name verbatim or declares a new one with a reason. The page
+reader takes no part in this.
+
+**Topic mastery profile.** The per-subject record of what its topics are and how
+they stand. Holds two axes that are never collapsed into one score: exposure and
+performance.
+
+**Exposure.** How much of a subject's material touched a topic, measured in
+slides. Not mastery, and never reported as mastery.
+
+**Performance.** How a learner did on a topic when quizzed. Keyed by topic and
+kept apart from exposure. Its contents are fixed by the quiz schema, not here.
+
+**Deck contribution.** One deck's share of a topic mastery profile, stored
+separately so profile totals are derived. Re-running a deck replaces its
+contribution, which makes a re-run idempotent.
+
 ## The slide note schema
 
 Locked by [ADR 0002](docs/adr/0002-per-slide-note-schema.md). Strict JSON,
@@ -90,6 +114,32 @@ Concept
   spans are copied from the text it was given. Reported anyway, with the
   asymmetry stated.
 
+## The topic record
+
+Locked by [ADR 0003](docs/adr/0003-cross-deck-topic-taxonomy.md). One entry per
+topic in a subject's topic mastery profile.
+
+```
+Topic
+  name             str          reused verbatim across decks once it exists
+  first_seen_deck  str
+  decks            [str]        every deck that contributed
+  slide_citations  [(deck, slide_number)]
+  exposure         int          slide count
+  performance      ...          owned by the quiz schema
+  created_reason   str | null   set when the topic was declared new
+```
+
+### Rules that travel with the record
+
+- The topic list for a subject starts empty. The first deck matches nothing and
+  reports so plainly; there is no bootstrap pass.
+- Every run reports "N topics, M matched, K new".
+- `exposure` and `performance` are never averaged together.
+- Near-duplicate topics are flagged for a human, never merged automatically.
+- A subject is picked from a dropdown of existing subjects or created
+  explicitly, never inferred from a typed string.
+
 ## Decisions on record
 
 - [ADR 0001](docs/adr/0001-model-provider-and-vision-model.md): Anthropic
@@ -97,3 +147,5 @@ Concept
   web search for the research step.
 - [ADR 0002](docs/adr/0002-per-slide-note-schema.md): the slide note schema
   above.
+- [ADR 0003](docs/adr/0003-cross-deck-topic-taxonomy.md): the cross-deck topic
+  taxonomy and the topic record above.
