@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
-from . import config, paths, render
+from . import config, memory, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
 from .stages import outline, page_reader, quiz, research, review
 
@@ -149,6 +149,7 @@ def run_render_pipeline(
             layout=layout,
             outliner=outliner,
         )
+        memory.write_deck_contribution(run_dir, layout=layout)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
     if should_research_pages:

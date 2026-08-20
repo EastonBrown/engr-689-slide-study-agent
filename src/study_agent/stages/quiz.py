@@ -206,6 +206,23 @@ def _filter_questions(
     return accepted, dropped
 
 
+def filter_questions(
+    drafts: list[QuestionDraft],
+    *,
+    outline: Outline,
+    notes: list[SlideNote],
+    accepted_counts: dict[str, int] | None = None,
+) -> tuple[list[QuestionDraft], int]:
+    """Public quiz contract for first-pass and retake question validation."""
+
+    return _filter_questions(
+        drafts,
+        outline=outline,
+        notes=notes,
+        accepted_counts=accepted_counts,
+    )
+
+
 def _covered_slide_count(outline: Outline) -> int:
     return sum(len(topic.slides) for topic in outline.topics)
 
@@ -223,7 +240,7 @@ def _materialize_quiz(
     questions: list[QuestionDraft],
     dropped: int,
 ) -> Quiz:
-    return Quiz(
+    return materialize_quiz(
         quiz_id=f"{deck_slug}-{run_timestamp}",
         subject_slug=subject_slug,
         deck_slug=deck_slug,
@@ -231,8 +248,37 @@ def _materialize_quiz(
         kind=AttemptKind.first_pass,
         generated_at=_stamp(),
         covered_slide_count=_covered_slide_count(outline),
+        question_id_prefix=deck_slug,
+        questions=questions,
+        dropped=dropped,
+    )
+
+
+def materialize_quiz(
+    *,
+    quiz_id: str,
+    subject_slug: str,
+    deck_slug: str | None,
+    run_timestamp: str | None,
+    kind: AttemptKind,
+    generated_at: str,
+    covered_slide_count: int,
+    question_id_prefix: str,
+    questions: list[QuestionDraft],
+    dropped: int,
+) -> Quiz:
+    """Build a quiz artifact from validated question drafts."""
+
+    return Quiz(
+        quiz_id=quiz_id,
+        subject_slug=subject_slug,
+        deck_slug=deck_slug,
+        run_timestamp=run_timestamp,
+        kind=kind,
+        generated_at=generated_at,
+        covered_slide_count=covered_slide_count,
         questions=[
-            Question(question_id=f"{deck_slug}-q{index:02d}", **question.model_dump())
+            Question(question_id=f"{question_id_prefix}-q{index:02d}", **question.model_dump())
             for index, question in enumerate(questions, start=1)
         ],
         dropped_count=dropped,

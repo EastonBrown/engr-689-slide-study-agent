@@ -42,6 +42,21 @@ def fake_render(deck_path: Path, run_dir: Path, dpi: int = 150, log=None):
     )
 
 
+def register_subject(layout: paths.Layout) -> None:
+    paths.write_model(
+        layout.subjects_file(),
+        schemas.SubjectsRegistry(
+            subjects=[
+                schemas.SubjectEntry(
+                    slug="engr-689",
+                    display_name="ENGR 689",
+                    created_at="2026-08-20T12:00:00Z",
+                )
+            ]
+        ),
+    )
+
+
 def test_pipeline_writes_a_run_directory_manifest_and_latest(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
@@ -289,6 +304,7 @@ def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypa
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
+    register_subject(paths.Layout(tmp_path))
 
     result = pipeline.run_render_pipeline(
         deck,
@@ -303,6 +319,8 @@ def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypa
 
     assert paths.outline_file(result.run_dir, "image").is_file()
     assert paths.outline_file(result.run_dir, "text").is_file()
+    assert paths.Layout(tmp_path).contribution_file("engr-689", "day3-principle").is_file()
+    assert paths.Layout(tmp_path).profile_file("engr-689").is_file()
     assert all("outline" in stat.completed_stages for stat in result.manifest.paths)
 
 
@@ -310,6 +328,7 @@ def test_pipeline_can_continue_into_research_after_page_reader(tmp_path, monkeyp
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
+    register_subject(paths.Layout(tmp_path))
 
     result = pipeline.run_render_pipeline(
         deck,
@@ -332,6 +351,7 @@ def test_pipeline_can_continue_into_review_after_research(tmp_path, monkeypatch)
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
+    register_subject(paths.Layout(tmp_path))
 
     result = pipeline.run_render_pipeline(
         deck,
@@ -354,6 +374,7 @@ def test_pipeline_can_continue_into_quiz_after_review(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
+    register_subject(paths.Layout(tmp_path))
 
     result = pipeline.run_render_pipeline(
         deck,

@@ -49,6 +49,21 @@ def write_quiz(root: Path, item: schemas.Quiz | None = None) -> Path:
     return target
 
 
+def register_subject(layout: paths.Layout) -> None:
+    paths.write_model(
+        layout.subjects_file(),
+        schemas.SubjectsRegistry(
+            subjects=[
+                schemas.SubjectEntry(
+                    slug="engr-689",
+                    display_name="ENGR 689",
+                    created_at="2026-08-20T12:00:00Z",
+                )
+            ]
+        ),
+    )
+
+
 def test_grade_quiz_returns_verdict_feedback_and_topic_rollup(tmp_path):
     quiz_path = write_quiz(tmp_path)
 
@@ -122,6 +137,7 @@ def test_grade_quiz_handles_unanswered_explicitly(tmp_path):
 
 def test_performance_derivation_requires_three_sittings(tmp_path):
     layout = paths.Layout(tmp_path)
+    register_subject(layout)
     quiz_path = write_quiz(tmp_path)
     for attempt_number, choices in enumerate(([0, 2, 1], [0, 1, 1], [1, 2, 0]), start=1):
         grade.grade_quiz_file(
@@ -142,6 +158,7 @@ def test_performance_derivation_requires_three_sittings(tmp_path):
 
 def test_performance_with_fewer_than_three_sightings_reports_insufficient_evidence(tmp_path):
     layout = paths.Layout(tmp_path)
+    register_subject(layout)
     quiz_path = write_quiz(tmp_path)
     grade.grade_quiz_file(
         quiz_path,
