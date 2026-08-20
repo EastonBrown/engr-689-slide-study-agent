@@ -145,6 +145,10 @@ def run_research_dir(run_dir: Path) -> Path:
     return run_dir / "research"
 
 
+def run_research_path_dir(run_dir: Path, path_kind: str) -> Path:
+    return run_research_dir(run_dir) / path_kind
+
+
 # --- The trees --------------------------------------------------------------
 
 

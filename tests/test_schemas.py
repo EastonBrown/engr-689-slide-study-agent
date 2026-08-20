@@ -219,6 +219,10 @@ MANIFEST = {
             "research_lookups": 12,
             "research_cache_hits": 3,
             "research_cap_hit": False,
+            "review_calls": 1,
+            "review_input_tokens": 10,
+            "review_output_tokens": 20,
+            "review_cost_usd": 0.25,
             "completed_stages": ["render", "page_reader"],
         }
     ],

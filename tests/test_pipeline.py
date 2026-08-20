@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from study_agent import paths, pipeline, render, schemas
-from study_agent.stages import outline, page_reader, research
+from study_agent.stages import outline, page_reader, research, review
 
 
 def preflight(page_count: int = 2) -> schemas.Preflight:
@@ -229,6 +229,19 @@ class Researcher:
         )
 
 
+class ReviewWriter:
+    def write(self, request: review.ReviewRequest) -> review.ReviewWriteResult:
+        topic_sections = "\n".join(
+            f"# {topic.name}\nClaim [slide {topic.slides[0]}]"
+            for topic in request.outline.topics
+            if topic.slides
+        )
+        return review.ReviewWriteResult(
+            markdown=topic_sections + "\n# Research\nResearch-derived: fact [Source](https://example.com)\n",
+            usage=schemas.StageUsage(stage="review", calls=1),
+        )
+
+
 def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
@@ -291,3 +304,25 @@ def test_pipeline_can_continue_into_research_after_page_reader(tmp_path, monkeyp
     assert paths.run_research_dir(result.run_dir).is_dir()
     assert all("outline" in stat.completed_stages for stat in result.manifest.paths)
     assert all("research" in stat.completed_stages for stat in result.manifest.paths)
+
+
+def test_pipeline_can_continue_into_review_after_research(tmp_path, monkeypatch):
+    monkeypatch.setattr(render, "render_deck", fake_render)
+    deck = tmp_path / "Day3 Principle.pdf"
+    deck.write_bytes(b"pdf bytes")
+
+    result = pipeline.run_render_pipeline(
+        deck,
+        "engr-689",
+        layout=paths.Layout(tmp_path),
+        started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+        review_pages=True,
+        reader=Reader(),
+        outliner=Outliner(),
+        researcher=Researcher(),
+        review_writer=ReviewWriter(),
+    )
+
+    assert paths.review_file(result.run_dir, "image").is_file()
+    assert paths.review_file(result.run_dir, "text").is_file()
+    assert all("review" in stat.completed_stages for stat in result.manifest.paths)

@@ -131,6 +131,9 @@ def test_cache_entries_are_keyed_by_normalized_query_and_copied_to_run(tmp_path)
     expected_cache = layout.research_cache_file("what is rag")
     assert expected_cache.is_file()
     assert (paths.run_research_dir(run_dir) / expected_cache.name).is_file()
+    assert (
+        paths.run_research_path_dir(run_dir, "image") / expected_cache.name
+    ).is_file()
     entry = schemas.CacheEntry.model_validate(paths.read_json(expected_cache))
     assert entry == entries[0]
     assert entry.query == "  What   is RAG? "

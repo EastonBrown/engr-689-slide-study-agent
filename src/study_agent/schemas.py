@@ -394,6 +394,10 @@ class PathStats(Strict):
     research_lookups: int = 0
     research_cache_hits: int = 0
     research_cap_hit: bool = False
+    review_calls: int = 0
+    review_input_tokens: int = 0
+    review_output_tokens: int = 0
+    review_cost_usd: float = 0.0
     completed_stages: list[str] = Field(default_factory=list)
 
 

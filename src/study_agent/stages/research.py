@@ -125,10 +125,14 @@ def _named_only_queries(notes: list[SlideNote]) -> list[ResearchQuery]:
     return queries
 
 
-def _copy_to_run(run_dir: Path, cache_file: Path) -> None:
+def _copy_to_run(run_dir: Path, path_kind: PathKind, cache_file: Path) -> None:
     payload = paths.read_json(cache_file)
     if payload is not None:
         paths.write_json(paths.run_research_dir(run_dir) / cache_file.name, payload)
+        paths.write_json(
+            paths.run_research_path_dir(run_dir, path_kind.value) / cache_file.name,
+            payload,
+        )
 
 
 def _cache_entry(
@@ -178,7 +182,7 @@ def research_path(
         cached = paths.read_json(cache_file)
         if cached is not None:
             entry = CacheEntry.model_validate(cached)
-            _copy_to_run(run_dir, cache_file)
+            _copy_to_run(run_dir, path_kind, cache_file)
             entries.append(entry)
             stats = ResearchPathStats(
                 lookups=stats.lookups,
@@ -196,7 +200,7 @@ def research_path(
             now=now,
         )
         paths.write_model(cache_file, entry)
-        _copy_to_run(run_dir, cache_file)
+        _copy_to_run(run_dir, path_kind, cache_file)
         entries.append(entry)
         stats = ResearchPathStats(
             lookups=stats.lookups + 1,
