@@ -19,7 +19,7 @@ Three kinds of statement appear below, and they are labeled:
 
 ## Amendments to the locked layout
 
-Six things in the locked layout and the decisions around it do not survive
+Five things in the locked layout and the decisions around it do not survive
 contact with later decisions. Each is recorded here and applied to `CONTEXT.md`.
 
 1. **`review.md` becomes `review-image.md` and `review-text.md`.** The interface
@@ -47,13 +47,6 @@ contact with later decisions. Each is recorded here and applied to `CONTEXT.md`.
    sits at the high-resolution tier limit instead. ADR 0001's separate 2000 px
    figure applies only to requests carrying more than 20 images, which the
    one-image-per-request design never makes. Spec-level; no ADR changes.
-6. **ADR 0007's candidate cap keeps a ranked, deck-wide sample.** The cap of 30
-   stands, but which 30 it keeps is now specified, because two of the three
-   signals fire on most consecutive content pairs and a prefix of 30 can never
-   reach past the opening third of a full-length deck. A pair is also one
-   candidate however many signals proposed it. Described under "Which
-   candidates the cap keeps". Amends ADR 0007.
-
 ## Environment
 
 - **Python 3.14.2.** The interface prototype was built and probed on it (#8).
@@ -369,21 +362,13 @@ the subject's current topic list from `memory/<subject>/profile.json`.
 
 The candidate proposer is pure code over the notes, using ADR 0007's three
 signals: an edge in `Visual.relates_to_slides`, an adjacent slide with a null or
-repeated `title`, and adjacent slides sharing a `Concept.name`. A pair is one
-candidate however many of the three proposed it. Its cap and the number
-proposed before the cap are both recorded in the outline, so a truncated deck is
-distinguishable from one that fit.
+repeated `title`, and adjacent slides sharing a `Concept.name`. Its cap and the
+number proposed before the cap are both recorded in the outline, so a truncated
+deck is distinguishable from one that fit.
 
-**Which candidates the cap keeps** (amendment 6). Two of the three
-signals fire on most consecutive content pairs, so a sixty-slide deck proposes
-roughly sixty pairs against a cap of thirty and the cap always binds. Keeping
-the first thirty confines every candidate to the opening third of the deck,
-which is where the cross-slide facts are least likely to be. The proposer ranks
-pairs instead: a visual edge first, since it is deliberate and the only signal
-that can propose a non-adjacent pair; then a pair two adjacency signals agree
-on; then a pair one proposed. Inside whichever rank overflows the remaining
-slots, it samples evenly across the deck rather than taking a prefix. The cap
-itself stays at ADR 0007's thirty.
+A pair is one candidate however many of the three signals proposed it, and the
+cap keeps a ranked, deck-wide sample rather than the first 30. ADR 0007 carries
+that rule, since it decides what the model is allowed to see.
 
 **Superseded frames** (spec-level, amendment 4). A slide on the render stage's
 `superseded` list is excluded from the partition, from exposure, from the

@@ -3,6 +3,7 @@
 - Status: accepted
 - Date: 2026-08-20
 - Resolves: [Lock the outline stage: grouping, coverage, and cross-slide facts](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/10)
+- Amended: 2026-08-20, "Which 30 the cap keeps", while fixing [issue 32](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/32). The cap of 30 is unchanged; which 30 it keeps is now specified, because a prefix could not reach slides 55 to 56.
 - Builds on: [ADR 0002](0002-per-slide-note-schema.md), [ADR 0003](0003-cross-deck-topic-taxonomy.md), [ADR 0004](0004-artifact-layout-and-memory-schema.md), [ADR 0005](0005-quiz-answer-key-and-retake-schema.md)
 
 ## Context
@@ -99,8 +100,27 @@ that would catch a fabricated one, and a fabricated cross-slide fact is the
 confident-and-wrong failure mode at its worst: it reads as the most impressive
 output the pipeline produces.
 
-The candidate set is capped, and the cap and the number of candidates proposed
-are both recorded in the outline.
+The candidate set is capped at 30, and both the cap and the number of candidates
+proposed before it are recorded in the outline, so a deck that was truncated is
+distinguishable from one that fit.
+
+**Which 30 the cap keeps.** A slide pair is one candidate however many of the
+three signals proposed it, and the signals are merged onto it. Two of them, the
+repeated title and the shared concept, fire on most consecutive content pairs,
+so a 66-slide deck proposes roughly 65 pairs against a cap of 30 and the cap
+always binds. Keeping the first 30 confines every candidate to the opening half
+of the deck, which is the part least likely to hold a cross-slide fact and, on
+the Day 3 deck, excludes slides 55 to 56 outright: the one pair this stage
+exists to find. The cap therefore ranks pairs and then samples:
+
+- a pair carrying a visual edge first, since that edge is deliberate and is the
+  only signal that can propose a non-adjacent pair,
+- then a pair two adjacency signals agree on,
+- then a pair one signal proposed.
+
+Inside whichever rank overflows the remaining slots, the sample is spread evenly
+across the deck rather than taken as a prefix. The ranking is code, not a
+judgment call, so it is auditable against the recorded pre-cap count.
 
 Both paths run identical code and an identical prompt. On the text path slide 56
 carries nothing, so the pair cannot be composed, and that failure is a
@@ -177,6 +197,11 @@ papering-over.
 - The bridged-fact candidate rule is a heuristic and will miss pairs whose only
   link is visual and non-adjacent. That is a stated limitation, and the
   alternative is a fabrication risk with no ground truth to catch it.
+- The cap binds on every full-length deck, so the ranking decides what the model
+  is allowed to see. A pair proposed by one adjacency signal in a deck rich in
+  visual edges may never be offered, and nothing downstream can tell that it
+  existed beyond the pre-cap count. Raising the cap is the lever if the eval
+  shows a real bridge being ranked out.
 - The text path now has a second place it visibly loses, on top of figure-only
   fact recovery: it cannot compose slides 55 to 56. Whether that becomes a
   reported number or stays a demonstration is the eval's call, and ADR 0006 has
