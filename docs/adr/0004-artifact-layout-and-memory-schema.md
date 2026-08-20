@@ -4,6 +4,7 @@
 - Date: 2026-08-19
 - Resolves: [Lock the artifact layout and memory schema](https://github.com/EastonBrown/engr-689-slide-study-agent/issues/6)
 - Builds on: [ADR 0002](0002-per-slide-note-schema.md), [ADR 0003](0003-cross-deck-topic-taxonomy.md)
+- Amended by: [ADR 0005](0005-quiz-answer-key-and-retake-schema.md), which adds `memory/<subject-slug>/retakes/` to the layout below
 
 ## Context
 

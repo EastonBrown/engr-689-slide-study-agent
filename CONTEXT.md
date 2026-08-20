@@ -58,7 +58,21 @@ performance.
 slides. Not mastery, and never reported as mastery.
 
 **Performance.** How a learner did on a topic when quizzed. Keyed by topic and
-kept apart from exposure. Its contents are fixed by the quiz schema, not here.
+kept apart from exposure. Derived by reading the attempts directory, never
+stored, and always the pair (correct, seen) rather than a percentage. Below
+three sightings a topic reports insufficient evidence instead of a score. See
+ADR 0005.
+
+**Question.** One multiple-choice item: a stem, exactly four options, one
+correct index, and the slides and topic it traces back to. See the schema below.
+
+**Quiz.** Ten questions generated for one deck from the image path, written to
+`quiz.json` in the run directory. The text path generates no quiz.
+
+**Retake.** A ten-question quiz generated against a subject profile rather than
+a deck, targeting the three weakest topics and the least-tested ones. Questions
+are always fresh, built from slide notes already on disk. Lives in `memory/`,
+not in a run.
 
 **Deck contribution.** One deck's share of a topic mastery profile, stored
 separately so profile totals are derived. Re-running a deck replaces its
@@ -105,6 +119,8 @@ memory/<subject-slug>/profile.json                schema_version, topic list,
                                                   exposure
 memory/<subject-slug>/contributions/<deck-slug>.json
 memory/<subject-slug>/attempts/<attempt-id>.json
+memory/<subject-slug>/retakes/<retake-id>.json    a quiz built from the profile
+                                                  rather than from a deck
 
 cache/research/<sha256-of-normalized-query>.json  query, timestamp, results
 examples/golden/                                  one committed run plus the
@@ -190,7 +206,7 @@ Topic
   decks            [str]        every deck that contributed
   slide_citations  [(deck, slide_number)]
   exposure         int          slide count
-  performance      ...          owned by the quiz schema
+  performance      derived      (correct, seen) read from attempts; see below
   created_reason   str | null   set when the topic was declared new
 ```
 
@@ -204,6 +220,62 @@ Topic
 - A subject is picked from a dropdown of existing subjects or created
   explicitly, never inferred from a typed string.
 
+## The quiz schema
+
+Locked by [ADR 0005](docs/adr/0005-quiz-answer-key-and-retake-schema.md). The
+format target is the instructors' own Quizzes 1 to 3: ten questions, four
+options, one correct.
+
+```
+Question
+  question_id          str          "<deck-slug>-q<NN>", stable within the quiz
+  stem                 str
+  options              [str]        exactly 4
+  correct_index        int          0..3
+  explanation          str          why the correct option is correct
+  distractor_rationale [str | null] exactly 4; entry at correct_index is null
+  slide_citations      [int]        at least 1
+  topic                str          a topic name from the subject's topic list
+  source               Source       prose | visual
+
+Attempt
+  attempt_id     str            UTC timestamp plus a short random suffix
+  subject_slug   str
+  deck_slug      str | null     null for a retake
+  run_timestamp  str | null     null for a retake
+  quiz_sha256    str            the quiz file exactly as asked
+  kind           AttemptKind    first_pass | retake
+  taken_at       str            UTC
+  responses      [Response]
+
+Response
+  question_id    str
+  topic          str
+  chosen_index   int
+  correct        bool
+```
+
+### Rules that travel with the schema
+
+- Ten questions, always, whatever the deck length.
+- Only the image path generates a quiz. `source: visual` counts how many
+  questions the text path could not have asked.
+- Banned in a stem or an option: dates, named authors, paper titles. Also no
+  "all of the above" and no "none of the above". Numbers are allowed when the
+  number is the reasoning and banned when the number is the fact.
+- A question that cannot cite a slide is dropped, not kept.
+- The grader is deterministic and makes no model call. It returns the verdict,
+  the explanation, the rationale for the option actually chosen, and a per-topic
+  rollup.
+- Grading writes nothing to `profile.json`. It appends one attempt file.
+- A retake targets the three weakest topics with `seen >= 3` at two questions
+  each, then fills the remaining four from topics with `seen < 3`, oldest
+  exposure first. With no attempts on record it refuses rather than improvising.
+- A retake never reuses a question. It resolves each target topic to its
+  `slide_citations` and generates from those `pages-image` notes in the `latest`
+  run of each contributing deck, so it costs no page reads and needs those run
+  directories to still exist.
+
 ## Decisions on record
 
 - [ADR 0001](docs/adr/0001-model-provider-and-vision-model.md): Anthropic
@@ -216,3 +288,6 @@ Topic
 - [ADR 0004](docs/adr/0004-artifact-layout-and-memory-schema.md): the on-disk
   layout above, flat JSON with no database, one committed golden run, and
   memory that stays local to a machine.
+- [ADR 0005](docs/adr/0005-quiz-answer-key-and-retake-schema.md): the quiz,
+  attempt, and retake schemas above, a deterministic grader, and performance as
+  a derived (correct, seen) pair.
