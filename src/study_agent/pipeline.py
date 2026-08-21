@@ -12,7 +12,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import outline, page_reader, research, review
+from .stages import outline, page_reader, quiz, research, review
 
 
 class PipelineError(RuntimeError):
@@ -77,6 +77,8 @@ def run_render_pipeline(
     researcher: research.Researcher | None = None,
     review_pages: bool = False,
     reviewer: review.Reviewer | None = None,
+    quiz_pages: bool = False,
+    quiz_generator: quiz.QuizGenerator | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
 
@@ -84,6 +86,8 @@ def run_render_pipeline(
         raise PipelineError("--research requires --read-pages and --outline")
     if review_pages and not (read_pages and outline_pages):
         raise PipelineError("--review requires --read-pages and --outline")
+    if quiz_pages and not (read_pages and outline_pages):
+        raise PipelineError("--quiz requires --read-pages and --outline")
 
     deck_path = Path(deck_path)
     if not deck_path.is_file():
@@ -173,6 +177,10 @@ def run_render_pipeline(
 
     if review_pages:
         review.review_run(run_dir, reviewer=reviewer)
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
+    if quiz_pages:
+        quiz.quiz_run(run_dir, generator=quiz_generator)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
     # Re-stamped last, because every stage above rewrites the manifest from
@@ -265,6 +273,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Continue after outlining and write both Markdown lesson reviews.",
     )
+    parser.add_argument(
+        "--quiz",
+        action="store_true",
+        help="Continue after outlining and write the image-path quiz.",
+    )
     return parser
 
 
@@ -283,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
             outline_pages=args.outline,
             research_concepts=args.research,
             review_pages=args.review,
+            quiz_pages=args.quiz,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:
