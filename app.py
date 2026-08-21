@@ -150,6 +150,9 @@ def _run(uploaded: st.runtime.uploaded_file_manager.UploadedFile, subject_slug: 
             layout=layout,
         )
         status.update(label="Outline: complete", state="complete", expanded=False)
+    # Memory is derived only from the image-path outline. The text path remains
+    # a baseline and never contributes exposure or topic citations.
+    memory.contribute_run(run_dir, layout)
     for label in ("Research", "Review", "Quiz"):
         with st.status(f"{label}: not run", expanded=True):
             st.caption("Pending — this stage has not written artifacts yet.")

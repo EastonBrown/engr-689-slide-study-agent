@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from study_agent import config, memory, paths
+from study_agent import config, memory, paths, schemas
 from study_agent.schemas import Attempt, AttemptKind, Response, TopicRecord
 
 
@@ -325,3 +325,49 @@ class TestASubjectSlugIsRefusedWhenItsDirectoryExists:
         entry = memory.create_subject("ENGR 689", layout)
 
         assert entry.slug == "engr-689"
+
+
+def test_contribute_run_replaces_one_deck_and_rebuilds_profile(tmp_path):
+    layout = paths.Layout(tmp_path)
+    memory.create_subject("ENGR 689", layout)
+    run = layout.run_dir("engr-689", "day3", "2026-08-20T12-00-00Z")
+    manifest = schemas.Manifest(
+        schema_version=config.SCHEMA_VERSION,
+        subject_slug="engr-689",
+        deck_slug="day3",
+        deck_sha256="a" * 64,
+        deck_filename="Day3.pdf",
+        run_timestamp="2026-08-20T12-00-00Z",
+        started_at="2026-08-20T12-00-00Z",
+        ended_at="2026-08-20T12-01-00Z",
+        model="model",
+        prompt_version="test",
+        dpi=150,
+        preflight=schemas.Preflight(
+            readable=True, page_count=3, text_native_pages=3,
+            text_native_fraction=1.0, image_only=False, page_width_px=1,
+            page_height_px=1, downscaled=False, buildup_detection_ran=True,
+            superseded_count=0,
+        ),
+        paths=[schemas.PathStats(path=kind) for kind in schemas.PathKind],
+    )
+    outline = schemas.Outline(
+        deck_slug="day3", path=schemas.PathKind.image,
+        topics=[schemas.OutlineTopic(name="Agents", slides=[1, 2], is_new=True, created_reason="first")],
+        skipped=[],
+    )
+    paths.write_model(paths.manifest_file(run), manifest)
+    paths.write_model(paths.outline_file(run, "image"), outline)
+    first = memory.contribute_run(run, layout)
+    assert first.topics[0].slides == [1, 2]
+    assert memory.topic_exposure("engr-689", layout) == {"Agents": 2}
+
+    replacement = outline.model_copy(update={"topics": [schemas.OutlineTopic(
+        name="Agents", slides=[3], is_new=False, created_reason=None
+    )]})
+    paths.write_model(paths.outline_file(run, "image"), replacement)
+    second = memory.contribute_run(run, layout)
+    assert second.topics[0].slides == [3]
+    profile = memory.load_profile("engr-689", layout)
+    assert profile.topics[0].slide_citations == [("day3", 3)]
+    assert profile.topics[0].exposure == 1

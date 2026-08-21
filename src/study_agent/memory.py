@@ -11,8 +11,9 @@ enforced in code rather than left to callers:
 * Performance is derived from the attempts directory on every read and is never
   stored. `profile.json` holds exposure and nothing about correctness.
 
-Contributions and retakes have their own tickets and live in their own
-functions later; this module owns the registry, the profile, and attempts.
+Contributions live here because they rebuild the subject profile. Retake
+generation lives in `stages/retake.py`; this module owns the registry, profile,
+contributions, and attempts.
 """
 
 from __future__ import annotations
@@ -28,9 +29,15 @@ from . import config, paths
 from .paths import Layout
 from .schemas import (
     Attempt,
+    DeckContribution,
+    Manifest,
+    Outline,
+    PathKind,
     Profile,
     SubjectEntry,
     SubjectsRegistry,
+    TopicContribution,
+    TopicRecord,
     TopicPerformance,
 )
 
@@ -197,6 +204,111 @@ def topic_exposure(subject_slug: str, layout: Layout | None = None) -> dict[str,
     """Topic name to slides seen. The other axis from performance, never mixed."""
 
     return {record.name: record.exposure for record in load_profile(subject_slug, layout).topics}
+
+
+# --- Deck contributions ----------------------------------------------------
+
+
+def _load_contributions(subject_slug: str, layout: Layout) -> list[DeckContribution]:
+    require_subject(subject_slug, layout)
+    directory = layout.contributions_dir(subject_slug)
+    if not directory.is_dir():
+        return []
+    contributions: list[DeckContribution] = []
+    for target in sorted(directory.glob("*.json"), key=lambda path: path.name):
+        payload = paths.read_json(target)
+        if payload is None:
+            raise MemoryUnreadable(f"{target} exists but does not parse as JSON")
+        try:
+            contributions.append(DeckContribution.model_validate(payload))
+        except ValidationError as error:
+            raise MemoryUnreadable(f"{target} is not a deck contribution: {error}") from error
+    return contributions
+
+
+def _rebuild_profile_from_contributions(
+    subject_slug: str, layout: Layout
+) -> Profile:
+    """Derive topic exposure and citations from the contribution files."""
+
+    topics: dict[str, TopicRecord] = {}
+    for contribution in sorted(
+        _load_contributions(subject_slug, layout),
+        key=lambda item: (item.contributed_at, item.deck_slug),
+    ):
+        for item in contribution.topics:
+            record = topics.get(item.name)
+            if record is None:
+                record = TopicRecord(
+                    name=item.name,
+                    first_seen_deck=contribution.deck_slug,
+                    created_reason=item.created_reason if item.is_new else None,
+                )
+                topics[item.name] = record
+            if contribution.deck_slug not in record.decks:
+                record.decks.append(contribution.deck_slug)
+            record.slide_citations.extend(
+                (contribution.deck_slug, slide) for slide in item.slides
+            )
+            record.exposure += len(item.slides)
+
+    profile = Profile(
+        schema_version=config.SCHEMA_VERSION,
+        subject_slug=subject_slug,
+        topics=list(topics.values()),
+    )
+    save_profile(profile, layout)
+    return profile
+
+
+def contribute_run(
+    run_dir: Path, layout: Layout | None = None
+) -> DeckContribution:
+    """Record the image-path outline as the subject's replaceable contribution.
+
+    The contribution is keyed by the manifest's deck slug. Re-running the same
+    deck therefore replaces one file, while the profile is rebuilt from every
+    contribution so exposure cannot accumulate twice.
+    """
+
+    layout = layout or Layout()
+    run_dir = Path(run_dir)
+    manifest_payload = paths.read_json(paths.manifest_file(run_dir))
+    outline_payload = paths.read_json(paths.outline_file(run_dir, "image"))
+    if manifest_payload is None or outline_payload is None:
+        raise MemoryUnreadable(f"{run_dir} is missing its manifest or image outline")
+    try:
+        manifest = Manifest.model_validate(manifest_payload)
+        outline = Outline.model_validate(outline_payload)
+    except ValidationError as error:
+        raise MemoryUnreadable(f"{run_dir} has invalid contribution artifacts: {error}") from error
+    if outline.path is not PathKind.image:
+        raise MemoryUnreadable("only an image-path outline can contribute to memory")
+    require_subject(manifest.subject_slug, layout)
+    topics = [
+        TopicContribution(
+            name=topic.name,
+            slides=topic.slides,
+            is_new=topic.is_new,
+            created_reason=topic.created_reason,
+        )
+        for topic in outline.topics
+        if topic.slides
+    ]
+    contribution = DeckContribution(
+        subject_slug=manifest.subject_slug,
+        deck_slug=manifest.deck_slug,
+        deck_sha256=manifest.deck_sha256,
+        run_timestamp=manifest.run_timestamp,
+        contributed_at=paths.utc_iso(),
+        topics=topics,
+    )
+    paths.write_model(
+        layout.contribution_file(manifest.subject_slug, manifest.deck_slug),
+        contribution,
+    )
+    _rebuild_profile_from_contributions(manifest.subject_slug, layout)
+    return contribution
 
 
 # --- Attempts, and the performance derived from them ------------------------

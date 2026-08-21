@@ -16,3 +16,11 @@ at the same level of abstraction as the answer.
 
 If a question cannot be supported by a slide citation, omit it rather than inventing
 one."""
+
+GENERATE_RETAKE = """Write fresh multiple-choice retake questions from the supplied stored image-path notes.
+
+Follow the supplied retake question budget by topic. Do not reuse any question stem
+listed under QUESTIONS TO AVOID VERBATIM. Every question must have exactly four
+options, four distractor rationales with null at the correct index, and at least one
+real slide citation from the supplied notes. Never cite a degraded note. Keep the
+same bans and visual/prose source rules as the original quiz prompt."""
