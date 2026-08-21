@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from study_agent import paths, pipeline, render, schemas
+from study_agent import memory, paths, pipeline, render, schemas
 from study_agent.stages import outline, page_reader
 
 
@@ -237,11 +237,13 @@ def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypa
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
     deck.write_bytes(b"pdf bytes")
+    layout = paths.Layout(tmp_path)
+    memory.create_subject("ENGR 689", layout)
 
     result = pipeline.run_render_pipeline(
         deck,
         "engr-689",
-        layout=paths.Layout(tmp_path),
+        layout=layout,
         started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
         read_pages=True,
         outline_pages=True,
@@ -360,6 +362,8 @@ class TestTheManifestClockCoversTheWholeRun:
         monkeypatch.setattr(render, "render_deck", fake_render)
         deck = tmp_path / "Day3 Principle.pdf"
         deck.write_bytes(b"pdf bytes")
+        layout = paths.Layout(tmp_path)
+        memory.create_subject("ENGR 689", layout)
 
         stamps = iter(["2026-08-20T12-00-01Z", "2026-08-20T12-09-30Z"])
         real = paths.utc_timestamp
@@ -372,7 +376,7 @@ class TestTheManifestClockCoversTheWholeRun:
         result = pipeline.run_render_pipeline(
             deck,
             "engr-689",
-            layout=paths.Layout(tmp_path),
+            layout=layout,
             started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
             read_pages=True,
             outline_pages=True,
