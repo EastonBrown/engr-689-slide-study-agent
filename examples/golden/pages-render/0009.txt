@@ -1,0 +1,4 @@
+Computer vision
+• When the data are about 
+images, videos, or signals 
+captured by 3D sensors …

@@ -1,0 +1,33 @@
+{
+  "page_role": "content",
+  "title": "Recap: Foundation models for language are omnipresent",
+  "reading": "A recap slide making the point that language foundation models are now everywhere in everyday tools. It carries no body text, relying instead on a screenshot of a chatbot prompt interface and a cluster of vendor logos to illustrate ubiquity.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "ChatGPT-style chat entry screen reading 'How can I help, Cheng?' with an 'Ask anything' input box and buttons for Search, Deep research, Create image, plus voice icons.",
+      "assertion": "Consumer-facing LLM interfaces are a routine, general-purpose entry point offering search, research and image generation.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "decorative",
+      "description": "Logos of ChatGPT, Gemini, Perplexity, and Claude.",
+      "assertion": "Multiple major vendors offer widely used language foundation model products.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Foundation models for language",
+      "status": "named_only",
+      "why_it_matters": "Large pretrained language models underlie the widely deployed assistants shown."
+    }
+  ],
+  "verbatim_spans": [
+    "Recap: Foundation models for language are omnipresent",
+    "How can I help, Cheng?",
+    "Ask anything"
+  ],
+  "reader_note": null,
+  "slide_number": 4
+}

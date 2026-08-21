@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Momentum Contrastive Learning (MoCo)",
+  "reading": "The slide presents MoCo as a contrastive objective that maximizes similarity of positive pairs and minimizes similarity of negative pairs. A schematic below shows the two-encoder architecture with a similarity matrix loss, plus the momentum update rule for the key encoder.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Key image feeds a purple 'Encoder' (encoder k) and query image feeds a green 'Encoder' (encoder q); both outputs form a similarity matrix (grid with highlighted diagonal cells) labelled 'loss'. A red arrow shows gradients updating encoder q only, while text and equation θ_k := m θ_k + (1−m) θ_q indicate encoder k is updated by a moving average.",
+      "assertion": "Only the query encoder is trained by gradients from the contrastive loss; the key encoder's parameters track it via a momentum (exponential moving average) update, and the diagonal of the similarity matrix are the positive pairs.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "MoCo (Momentum Contrast)",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised representation learning with a slowly-updated key encoder for consistent negatives."
+    },
+    {
+      "name": "Positive/negative pairs",
+      "status": "assumed_prior",
+      "why_it_matters": "Defines the contrastive objective."
+    },
+    {
+      "name": "Momentum/moving-average parameter update",
+      "status": "explained_here",
+      "why_it_matters": "Keeps key representations consistent across batches."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Update encoder k by moving average",
+    "Update encoder q"
+  ],
+  "reader_note": null,
+  "slide_number": 34
+}

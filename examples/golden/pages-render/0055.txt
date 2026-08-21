@@ -1,0 +1,4 @@
+Compositionality in large pre-trained models
+A cup of coffee A cat A cup of cat
+DALL-E 2
+Credit: A. Torralba

@@ -1,0 +1,29 @@
+{
+  "page_role": "content",
+  "title": "Task decomposition for robot manipulation",
+  "reading": "The slide presents task decomposition as an approach for robot manipulation, citing MOKA (Liu et al., 2024), which uses mark-based visual prompting to enable open-world robotic manipulation. Only the title and citation are available on the text path; any accompanying figure or example imagery is not captured.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Task decomposition",
+      "status": "named_only",
+      "why_it_matters": "Breaking a manipulation task into sub-steps makes long-horizon robot behaviour tractable."
+    },
+    {
+      "name": "Mark-based visual prompting",
+      "status": "named_only",
+      "why_it_matters": "Annotating images with marks lets a VLM specify keypoints and motions for manipulation."
+    },
+    {
+      "name": "Open-world robotic manipulation",
+      "status": "named_only",
+      "why_it_matters": "Target setting where robots must handle unseen objects and instructions."
+    }
+  ],
+  "verbatim_spans": [
+    "Task decomposition for robot manipulation",
+    "MOKA: Open-World Robotic Manipulation through Mark-Based Visual Prompting"
+  ],
+  "reader_note": "Text path only; slide likely contains figures from the MOKA paper that are not represented.",
+  "slide_number": 65
+}

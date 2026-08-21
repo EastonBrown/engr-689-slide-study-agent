@@ -1,0 +1,23 @@
+{
+  "page_role": "section_break",
+  "title": "Retrieval, text/image-to-image search",
+  "reading": "A section marker introducing retrieval, specifically text-to-image and image-to-image search. No body content accompanies the heading; the topic is only named here and presumably developed on following slides.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Retrieval",
+      "status": "named_only",
+      "why_it_matters": "Frames the upcoming section as finding relevant items from a collection."
+    },
+    {
+      "name": "Text-to-image and image-to-image search",
+      "status": "named_only",
+      "why_it_matters": "Names the cross-modal and same-modal search settings to be covered."
+    }
+  ],
+  "verbatim_spans": [
+    "Retrieval, text/image-to-image search"
+  ],
+  "reader_note": "Text path provided only the slide heading; no body text available.",
+  "slide_number": 13
+}

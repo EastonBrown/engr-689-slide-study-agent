@@ -1,0 +1,6 @@
+How Do Image/Video Generation Work?
+Diffusion models: Gradually add Gaussian noise and then learn to reverse
+“A golden lab puppy, tongue hanging out, and wearing a blue collar”
+Frozen text encoder
+Training data: Pairs of Inputs: caption, outputs: image
+Text embedding: … …

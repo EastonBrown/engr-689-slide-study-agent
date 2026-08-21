@@ -13,7 +13,7 @@ from study_agent.stages import grade
 
 
 def question(number: int, topic: str, correct: int, rationale: str | None) -> Question:
-    rationales = ["wrong", "wrong", "wrong", "wrong"]
+    rationales: list[str | None] = ["wrong", "wrong", "wrong", "wrong"]
     rationales[0] = rationale or "wrong"
     rationales[correct] = None
     return Question(

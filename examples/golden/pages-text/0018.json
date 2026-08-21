@@ -1,0 +1,25 @@
+{
+  "page_role": "content",
+  "title": "How to let computers recognize objects?",
+  "reading": "The slide poses the problem of object recognition by computers, asking whether a given image shows a cat, a lion, or a car. It then frames the task in agent terms: the percept is seeing a picture, and the action is telling the object class, e.g. answering 'a cat!'. No figure content is described in the extracted text, though the questions imply accompanying example images.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Object recognition",
+      "status": "explained_here",
+      "why_it_matters": "Motivating task: mapping an image to a class label."
+    },
+    {
+      "name": "Percept and action (agent framing)",
+      "status": "assumed_prior",
+      "why_it_matters": "Recasts recognition as an agent that takes an image percept and outputs a class-label action."
+    }
+  ],
+  "verbatim_spans": [
+    "How to let computers recognize objects?",
+    "Percept:\nSee a picture",
+    "Action:\nTell the object class: \na cat!"
+  ],
+  "reader_note": null,
+  "slide_number": 18
+}

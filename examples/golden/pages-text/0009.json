@@ -1,0 +1,24 @@
+{
+  "page_role": "content",
+  "title": "Computer vision",
+  "reading": "A brief content slide introducing computer vision as the area concerned with data that consists of images, videos, or signals captured by 3D sensors. The bullet trails off with an ellipsis, suggesting the speaker elaborates verbally or continues on the following slide. No definition of methods is given here; the slide only frames the data modality. The extracted text likely accompanies an image on the rendered slide that is not available on the text path.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Computer vision",
+      "status": "named_only",
+      "why_it_matters": "Frames the subfield handling image, video, and 3D sensor data."
+    },
+    {
+      "name": "3D sensors",
+      "status": "named_only",
+      "why_it_matters": "Extends visual data beyond 2D images to depth/point-cloud signals."
+    }
+  ],
+  "verbatim_spans": [
+    "Computer vision",
+    "When the data are about images, videos, or signals captured by 3D sensors …"
+  ],
+  "reader_note": "Text-only extraction; any imagery on the slide is not visible to this reader.",
+  "slide_number": 9
+}

@@ -1,0 +1,4 @@
+Contrastive learning
+• Supervised classification is contrastive learning
+o Maximize similarities of positive pairs
+o Minimize similarities of negative pairs 

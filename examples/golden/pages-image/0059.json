@@ -1,0 +1,27 @@
+{
+  "page_role": "agenda",
+  "title": "Agenda",
+  "reading": "An agenda slide marking progress through the talk. Two earlier items \talk background on computer vision and agentic AI, and multimodal (vision and language) models with sub-items on understanding and generation \tappear greyed out as completed, while the final item, \"Multimodal agents,\" is shown in black to signal the section now beginning.",
+  "visuals": [
+    {
+      "kind": "decorative",
+      "description": "Greying-out of completed agenda items versus black text for the current item.",
+      "assertion": null,
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal agents",
+      "status": "named_only",
+      "why_it_matters": "The upcoming section topic: agents that act using combined vision and language capabilities."
+    }
+  ],
+  "verbatim_spans": [
+    "Background on computer vision and agentic AI",
+    "Multimodal (vision and language) models",
+    "Multimodal agents"
+  ],
+  "reader_note": null,
+  "slide_number": 59
+}

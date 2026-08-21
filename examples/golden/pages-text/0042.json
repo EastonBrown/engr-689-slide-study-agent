@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Predictive learning: computer vision",
+  "reading": "The slide presents masked image modeling as a predictive self-supervised learning approach in computer vision, using the Masked Autoencoder (MAE) as the example: portions of an image are masked out and a Transformer is trained to predict the missing patches. It cites the CVPR 2022 paper 'Masked Autoencoders Are Scalable Vision Learners' as the reference.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Masked image modeling",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised pretext task that yields visual representations without labels."
+    },
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Canonical scalable vision self-supervised method."
+    },
+    {
+      "name": "Transformer",
+      "status": "assumed_prior",
+      "why_it_matters": "Backbone architecture operating on image patches."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked image modeling (Masked Autoencoder)",
+    "Predict the masked patches using Transformers",
+    "Masked Autoencoders Are Scalable Vision Learners , CVPR 2022"
+  ],
+  "reader_note": null,
+  "slide_number": 42
+}

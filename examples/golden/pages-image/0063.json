@@ -1,0 +1,48 @@
+{
+  "page_role": "content",
+  "title": "Multimodal LLM-based Agents",
+  "reading": "The slide contrasts two ways of using a multimodal LLM on the same vision task: building a database of runner faces paired with their bib numbers. The top half shows the non-agentic, zero-shot approach, in which the whole task is issued as a single prompt. The bottom half shows an agentic workflow that decomposes the task into five explicit steps: detect faces as bounding boxes, detect bib numbers as text plus bounding box, match each bib to the nearest face vertically, write a face/bib record to the database, and repeat over all video frames. Accompanying images illustrate the one-shot pass and the iterative loop. Credited to Andrew Ng.",
+  "visuals": [
+    {
+      "kind": "photo",
+      "description": "Photograph of a crowd of marathon runners with visible bib numbers, with a downward arrow labelled START at top and FINISH at bottom to its right.",
+      "assertion": "The zero-shot workflow goes straight from start to finish in a single uninterrupted pass over the input.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "A rounded loop of thick arrows circling a screenshot of Python code (process_image with object_detection calls), labelled 'Coding' on the left arm and 'Planning /Testing' on the right arm.",
+      "assertion": "The agentic workflow cycles repeatedly between planning/testing and coding rather than completing in one pass.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Non-agentic (zero-shot) workflow",
+      "status": "explained_here",
+      "why_it_matters": "Baseline where the model must solve the whole task in one prompt-response pass."
+    },
+    {
+      "name": "Agentic workflow",
+      "status": "explained_here",
+      "why_it_matters": "Decomposing a task into steps with iteration typically yields better results on complex multimodal tasks."
+    },
+    {
+      "name": "Multimodal LLM agents",
+      "status": "named_only",
+      "why_it_matters": "Frames the lecture topic: LLMs that call vision tools like detection and OCR."
+    },
+    {
+      "name": "Object/face detection with bounding boxes",
+      "status": "assumed_prior",
+      "why_it_matters": "The tool primitives the agent orchestrates."
+    }
+  ],
+  "verbatim_spans": [
+    "\"Create a database of runner faces and corresponding bib numbers\"",
+    "Iterate through Steps 1-4 for all frames in the video",
+    "Credit: Andrew Ng"
+  ],
+  "reader_note": null,
+  "slide_number": 63
+}

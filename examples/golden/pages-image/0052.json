@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "How Do Image/Video Generation Work?",
+  "reading": "The slide explains text-to-image/video generation via diffusion models: noise is gradually added to data and the model learns to reverse that process. It states the training data consists of paired inputs (captions) and outputs (images). A pipeline figure below illustrates conditional denoising driven by text embeddings from a frozen text encoder.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left-to-right pipeline: a pure-noise image passes through a green hourglass-shaped (U-Net-like) denoiser, producing a noisy puppy image, then a second denoiser produces a clean golden puppy photo. Each denoiser receives an upward arrow from a bracketed row of orange text-embedding vectors, both emitted by an orange 'Frozen text encoder' bar fed the caption \"A golden lab puppy, tongue hanging out, and wearing a blue collar\".",
+      "assertion": "Sampling iteratively denoises from Gaussian noise to an image, with each step conditioned on text embeddings produced by a frozen text encoder from the caption.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Diffusion models",
+      "status": "explained_here",
+      "why_it_matters": "Core generative mechanism: add Gaussian noise then learn the reverse denoising process."
+    },
+    {
+      "name": "Frozen text encoder / text embedding",
+      "status": "named_only",
+      "why_it_matters": "Provides the conditioning signal that steers generation toward the caption."
+    },
+    {
+      "name": "Caption-image training pairs",
+      "status": "explained_here",
+      "why_it_matters": "Defines the supervision needed for text-conditioned generation."
+    }
+  ],
+  "verbatim_spans": [
+    "Diffusion models: Gradually add Gaussian noise and then learn to reverse",
+    "Inputs: caption, outputs: image",
+    "Frozen text encoder"
+  ],
+  "reader_note": null,
+  "slide_number": 52
+}

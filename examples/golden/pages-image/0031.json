@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide makes the point that supervised classification can be reinterpreted as a form of contrastive learning. A large diagram recasts the standard classification pipeline in query-key terms: images pass through an image encoder to produce feature vectors, which are matched against class weight vectors drawn from a fixed vocabulary of labels. Two callout boxes define the mapping from classifier and feature terminology onto keys and queries.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left: a column of five images (bear, shark, chess, dog, flower) feeds an 'image encoder' trapezoid, producing a green column of queries q0...qN. Top right: a vocabulary row (chess, bear, dog, ..., flower, ..., shark) maps down to a purple row of keys k0...kK. Center: a matrix of dot products q_i k_j, with a few cells highlighted blue (q0k1, q1kK, q2k0, qNk9) marking the correct label pairs. Two callouts: 'Classifier: weights in the last FC layer' points to the keys row; 'Features: representations before the last FC layer' points to the queries column.",
+      "assertion": "In supervised classification the features act as queries and the last FC layer's class weights act as keys; the ground-truth class gives the positive query-key pair among all vocabulary keys, exactly the contrastive setup.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "named_only",
+      "why_it_matters": "Framework unifying representation learning by pulling positive pairs together and pushing negatives apart."
+    },
+    {
+      "name": "Query-key formulation of classification",
+      "status": "explained_here",
+      "why_it_matters": "Shows supervised classification is a special case with a fixed key dictionary of class weights."
+    },
+    {
+      "name": "Last FC layer weights as class prototypes",
+      "status": "explained_here",
+      "why_it_matters": "Each class weight vector serves as a key compared against image features."
+    }
+  ],
+  "verbatim_spans": [
+    "Supervised classification is contrastive learning",
+    "Classifier: weights in the last FC layer",
+    "Features: representations before the last FC layer"
+  ],
+  "reader_note": null,
+  "slide_number": 31
+}

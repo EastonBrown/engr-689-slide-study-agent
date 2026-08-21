@@ -1,0 +1,16 @@
+Recap: LLMs are General Purpose models
+Architecture/System 
+supports a wide range 
+of tasks
+Generality of 
+Architecture
+Performs tasks of 
+unseen skill-concept 
+combinations
+Generality of 
+Concepts across Skills
+Learning new tasks efficiently 
+via descriptions and 
+in-context examples
+Generality of 
+Learning

@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide asks how masked-prediction pretraining can yield good representations, and answers by contrasting two masking ratios applied to the same cheetah photograph. A side-by-side comparison of light versus heavy masking carries the argument; captions label the left as a small masked portion and the right as a large masked portion.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Two versions of a cheetah photo. Left: a single small grey square patch occluding part of the animal's shoulder, captioned 'Small portion: May not require a high-level understanding'. Right: the same image with most patches replaced by grey, only scattered fragments visible, captioned 'Large portion: Encourage to learn semantic features'.",
+      "assertion": "Masking only a small region lets the model reconstruct from local low-level cues, whereas masking a large portion forces it to learn semantic, high-level features.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked image prediction / masking ratio",
+      "status": "explained_here",
+      "why_it_matters": "The fraction of the image hidden determines whether the pretext task is trivially local or demands semantic understanding."
+    },
+    {
+      "name": "Semantic features vs low-level cues",
+      "status": "named_only",
+      "why_it_matters": "Motivates high masking ratios in self-supervised methods like MAE."
+    }
+  ],
+  "verbatim_spans": [
+    "How to learn good representations by prediction?",
+    "Small portion:\nMay not require a high-level understanding",
+    "Large portion:\nEncourage to learn semantic features"
+  ],
+  "reader_note": null,
+  "slide_number": 45
+}

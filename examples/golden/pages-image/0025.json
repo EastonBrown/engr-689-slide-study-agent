@@ -1,0 +1,49 @@
+{
+  "page_role": "content",
+  "title": "How LLMs influence computer vision",
+  "reading": "The slide illustrates the architecture and behaviour of a typical multimodal LLM, showing how an image and a text prompt are jointly consumed to produce a grounded natural-language answer. A worked example uses an aerial photo of the Texas A&M campus with the question about the tower building, and the model's response is shown at right, attributed to OpenAI GPT-4o.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left: an input campus photo feeds a 'Vision Encoder' box producing a sequence of orange visual tokens; a 'Text Prompt: Where is the tower building in the image?' produces blue text tokens; both token sequences feed upward into a wide green 'Large Language Models' block, whose output is a speech bubble pointing to the answer panel.",
+      "assertion": "A multimodal LLM works by encoding images into token embeddings that are concatenated with text prompt tokens and fed into a single LLM backbone.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Text panel with the model's answer identifying the tall white cylindrical building as a water tower on the Texas A&M campus bearing 'WELCOME TO AGGIELAND', located in the foreground left of center with Kyle Field behind it. Caption: 'By OpenAI GPT 4o'.",
+      "assertion": "A modern multimodal LLM can identify, read text on, and spatially localize objects in an image while providing corroborating contextual reasoning.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "photo",
+      "description": "Aerial photograph of the Texas A&M campus with a water tower in the foreground and a football stadium behind.",
+      "assertion": null,
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal LLM",
+      "status": "explained_here",
+      "why_it_matters": "Core architecture that lets language models process visual input."
+    },
+    {
+      "name": "Vision encoder",
+      "status": "named_only",
+      "why_it_matters": "Converts pixels into tokens the LLM can consume."
+    },
+    {
+      "name": "Text prompt tokens",
+      "status": "assumed_prior",
+      "why_it_matters": "Shared token space enables joint image-text reasoning."
+    }
+  ],
+  "verbatim_spans": [
+    "A typical Multimodal LLM:",
+    "Text Prompt: Where is the tower building in the image?",
+    "By OpenAI GPT 4o"
+  ],
+  "reader_note": null,
+  "slide_number": 25
+}

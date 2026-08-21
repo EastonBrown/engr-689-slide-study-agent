@@ -1,0 +1,8 @@
+How to learn good representations by prediction?
+In images, masking 75% is optimal for 
+representation learning. 
+In language, masking 
+15% tokens is optimal 
+(for BERT). 
+• Information in images is more redundant than in languages 
+• Select a masking ratio based on the application

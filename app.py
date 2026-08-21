@@ -7,13 +7,14 @@ every later rerun reconstructs this screen from that directory.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 import re
 from typing import Any
 
 import streamlit as st
 
-from study_agent import memory, paths, pipeline, run_view
+from study_agent import memory, paths, pipeline, replay, run_view
 from study_agent.schemas import PathKind, Quiz, SlideNote
 from study_agent.stages import grade, outline, page_reader, retake
 
@@ -153,19 +154,36 @@ def _render_review(run_dir: Path, path_kind: PathKind, *, title: str) -> None:
             st.json(note.model_dump())
 
 
-def _fact_score(run_dir: Path, path_kind: PathKind, deck_slug: str) -> tuple[int, int, bool]:
+def _fact_score(path_kind: PathKind, deck_slug: str) -> tuple[int, int] | None:
+    """Figure-only fact recovery for one path, or None when it is not scored.
+
+    ADR 0006 makes this a hand judgement: a hit is the fact appearing anywhere
+    in that slide's `SlideNote`, in any field, which is not a string match. An
+    earlier version of this function tried to decide it by searching for the
+    label's English sentence inside the note, which can never match and so
+    reported every path as zero. A zero the reader takes for a measurement is
+    worse than an absence, so a fact that has not been scored by hand is
+    reported as unscored instead.
+
+    Scores are read from the label file: a fact carries `scored`, mapping a
+    path name to whether that path recovered it. The score is shown only when
+    every labelled fact carries one for this path, so a partial hand pass is
+    never presented as a total.
+    """
+
     payload = paths.read_json(paths.Layout().figure_only_facts_file())
     if not isinstance(payload, dict) or payload.get("deck_slug") != deck_slug:
-        return 0, 0, False
+        return None
     facts = payload.get("facts", [])
-    notes = _notes(run_dir, path_kind)
+    if not facts:
+        return None
     hits = 0
     for fact in facts:
-        fields = [notes[slide].model_dump() for slide in fact.get("slides", []) if slide in notes]
-        text = " ".join(str(value) for field in fields for value in field.values()).lower()
-        if str(fact.get("fact", "")).lower() in text:
-            hits += 1
-    return hits, len(facts), True
+        scored = fact.get("scored")
+        if not isinstance(scored, dict) or path_kind.value not in scored:
+            return None
+        hits += bool(scored[path_kind.value])
+    return hits, len(facts)
 
 
 def _render_comparison(run_dir: Path) -> None:
@@ -177,15 +195,20 @@ def _render_comparison(run_dir: Path) -> None:
     text_notes = _notes(run_dir, PathKind.text)
     image_visuals = sum(len(note.visuals) for note in image_notes.values())
     text_visuals = sum(len(note.visuals) for note in text_notes.values())
-    image_hit, fact_total, labeled = _fact_score(run_dir, PathKind.image, summary.deck_slug)
-    text_hit, _, _ = _fact_score(run_dir, PathKind.text, summary.deck_slug)
+    image_score = _fact_score(PathKind.image, summary.deck_slug)
+    text_score = _fact_score(PathKind.text, summary.deck_slug)
     columns = st.columns(3)
     columns[0].metric("Slides read", f"{summary.slides_read} / {summary.slides_total}", f"baseline {summary.text_slides_read} / {summary.text_slides_total}")
     columns[1].metric("Visuals found", f"{image_visuals}", f"baseline {text_visuals}")
-    if labeled:
-        columns[2].metric("Figure-only recovery", f"{image_hit} / {fact_total}", f"baseline {text_hit} / {fact_total}")
+    if image_score is not None and text_score is not None:
+        columns[2].metric(
+            "Figure-only recovery",
+            f"{image_score[0]} / {image_score[1]}",
+            f"baseline {text_score[0]} / {text_score[1]}",
+        )
     else:
-        columns[2].metric("Figure-only recovery", "not labeled for this deck")
+        columns[2].metric("Figure-only recovery", "scored by hand")
+        columns[2].caption("See eval/results.md. ADR 0006 makes this a judgement, not a string match.")
     if summary.image_only:
         st.info("Text path not applicable, this deck is image-only.")
     st.caption("Slide 10 is partial on both sides: its labels extract, but the spatial relation does not.")
@@ -216,21 +239,21 @@ def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None
     for number, question in enumerate(quiz.questions):
         answer = st.radio(question.stem, question.options, index=None, key=f"answer-{quiz.quiz_id}-{number}")
         answers.append(question.options.index(answer) if answer is not None else None)
-    result_payload: Any = None
+    # The grade belongs to the attempt this session submitted. An earlier
+    # version rebuilt it from the newest matching attempt in memory, which
+    # meant a quiz opened with its answer key already showing to anyone who had
+    # ever taken it, including on the first screen of a demo. Session state
+    # holds it across the reruns Streamlit fires on every click, and a page
+    # reload starts the quiz unanswered again, which is what a reload means.
+    graded_key = f"grade-{quiz.quiz_id}"
     if st.button("Submit quiz", key=f"submit-{quiz.quiz_id}"):
         try:
             result = grade.grade_run(run_dir, answers, layout=layout)
         except (grade.GradeError, memory.UnknownSubject) as error:
             st.error(str(error))
         else:
-            result_payload = result.model_dump()
-    if result_payload is None:
-        quiz_hash = paths.sha256_file(paths.quiz_file(run_dir))
-        for attempt in reversed(memory.read_attempts(subject_slug, layout).attempts):
-            if attempt.quiz_sha256 == quiz_hash:
-                chosen = [response.chosen_index if response.chosen_index >= 0 else None for response in attempt.responses]
-                result_payload = grade.grade_quiz(quiz, chosen, quiz_sha256=quiz_hash).model_dump()
-                break
+            st.session_state[graded_key] = result.model_dump()
+    result_payload: Any = st.session_state.get(graded_key)
     if isinstance(result_payload, dict):
         _render_grade(result_payload)
     attempts = memory.read_attempts(subject_slug, layout).attempts
@@ -327,6 +350,98 @@ def _run(uploaded: st.runtime.uploaded_file_manager.UploadedFile, subject_slug: 
     return run_dir
 
 
+def _replay(source: Path, layout: paths.Layout) -> Path:
+    """Animate a completed run into the same seven boxes the live path fills.
+
+    The boxes, their labels, their summaries, and their lines all come from
+    `run_view`, so this is the live screen replayed rather than a second screen
+    that resembles it. No model client is constructed on this path.
+    """
+
+    run_dir = replay.install_run(source, layout)
+    stages = replay.replay_stages(run_dir)
+    boxes: dict[str, Any] = {}
+    logs: dict[str, Any] = {}
+    lines: dict[str, list[str]] = {}
+
+    def start(stage: replay.ReplayStage) -> None:
+        if stage.absent:
+            with st.status(f"{stage.label}: {stage.summary}", expanded=False, state="running"):
+                st.caption("Pending — this stage has not written artifacts yet.")
+            return
+        boxes[stage.key] = st.status(stage.label, expanded=True)
+        logs[stage.key] = st.empty()
+        lines[stage.key] = []
+
+    def line(stage: replay.ReplayStage, message: str) -> None:
+        lines[stage.key].append(message)
+        logs[stage.key].code("\n".join(lines[stage.key][-20:]), language=None)
+
+    def end(stage: replay.ReplayStage) -> None:
+        if stage.absent:
+            return
+        boxes[stage.key].update(
+            label=f"{stage.label}: {stage.summary}",
+            state=_status_state(stage.state),
+            expanded=False,
+        )
+
+    replay.drive(stages, on_line=line, on_stage_start=start, on_stage_end=end)
+    st.caption(f"Replayed from the committed run in {source}. No API calls were made.")
+    return run_dir
+
+
+_OPEN_RUN = "open-run"
+
+
+def _opened_run() -> Path | None:
+    """The run this session has opened, if any. Empty on a fresh page load.
+
+    Only a path is held. Everything shown under it is still read from the run
+    directory on every rerun, so this does not reintroduce the run state the
+    module docstring rules out: it records which run the user asked for, not
+    what that run contains.
+    """
+
+    opened = st.session_state.get(_OPEN_RUN)
+    if not isinstance(opened, str):
+        return None
+    candidate = Path(opened)
+    return candidate if candidate.is_dir() else None
+
+
+def _open_run(run_dir: Path) -> None:
+    st.session_state[_OPEN_RUN] = str(run_dir)
+
+
+def _offer_latest_run(layout: paths.Layout, subject_slug: str) -> None:
+    """Let a finished run be reopened, by asking rather than by appearing.
+
+    ADR 0004 writes at every stage boundary so a run survives the interface
+    dying, and this is how that is cashed in after a reload. It is a button
+    because opening a previous run unprompted is indistinguishable, on screen,
+    from having just produced it.
+    """
+
+    latest = run_view.latest_run(layout, subject_slug)
+    if latest is None:
+        return
+    summary = run_view.run_summary(latest)
+    described = summary.run_timestamp if summary else latest.name
+    if st.button(f"Open the last run for this subject ({described})"):
+        _open_run(latest)
+        st.rerun()
+
+
+def _replay_source(uploaded: Any, layout: paths.Layout) -> Path | None:
+    """The committed run this upload is a replay of, matched by content hash."""
+
+    if uploaded is None:
+        return None
+    digest = hashlib.sha256(uploaded.getvalue()).hexdigest()
+    return replay.source_for_deck(digest, layout)
+
+
 def main() -> None:
     st.set_page_config(page_title="Slide deck to study guide", layout="wide")
     st.title("Slide deck to study guide")
@@ -337,14 +452,29 @@ def main() -> None:
     names = [subject.display_name for subject in subjects]
     lookup = {subject.display_name: subject.slug for subject in subjects}
 
+    try:
+        pointed_at = replay.replay_run_from_env(layout)
+    except replay.ReplayError as error:
+        st.error(str(error))
+        pointed_at = None
+
     controls = st.columns([2, 2, 1])
     with controls[0]:
         selected_name = st.selectbox("Subject", names, index=None, placeholder="Choose a subject")
     with controls[1]:
-        uploaded = st.file_uploader("Deck (PDF)", type="pdf")
+        if pointed_at is None:
+            uploaded = st.file_uploader("Deck (PDF)", type="pdf")
+        else:
+            uploaded = None
+            st.caption(f"Replay mode: {pointed_at}")
     with controls[2]:
         st.write("")
-        run = st.button("Run pipeline", type="primary", disabled=not (selected_name and uploaded))
+        # A deck the committed run was produced from replays that run instead
+        # of spending the API again, which is what the demo is pointed at.
+        source = pointed_at or _replay_source(uploaded, layout)
+        label = "Run pipeline" if source is None else "Generate study guide"
+        ready = bool(source) or bool(selected_name and uploaded)
+        run = st.button(label, type="primary", disabled=not ready)
 
     with st.expander("Create a subject"):
         display_name = st.text_input("New subject name")
@@ -356,25 +486,64 @@ def main() -> None:
             else:
                 st.success(f"Created {created.display_name}. Choose it above.")
 
+    if source is not None:
+        with st.expander("Replay controls"):
+            st.caption(
+                "This deck matches a run that is already committed, so pressing "
+                "the button replays that run from disk instead of calling the "
+                "API. A rehearsal leaves a graded attempt behind, which makes "
+                "the quiz open with its answer key already showing."
+            )
+            manifest_subject = replay.run_subject(source)
+            if manifest_subject and st.button("Clear previous quiz attempts"):
+                removed = replay.clear_attempts(manifest_subject, layout)
+                st.success(f"Cleared {removed} attempt(s) for {manifest_subject}.")
+
     selected_slug = lookup.get(selected_name or "")
-    run_dir = run_view.latest_run(layout, selected_slug) if selected_slug else None
-    ran_this_request = bool(run and uploaded and selected_slug)
-    if ran_this_request:
+    # What is on screen is the run this session has opened, not whatever is
+    # newest on disk. Choosing a subject used to load its latest run
+    # immediately, which meant the screen opened mid-demo, already showing
+    # slide numbers and a quiz for a run nobody had asked for. Only the run
+    # button and the explicit reopen below put a run here.
+    #
+    # The pointer is the only thing session state holds. Every number under it
+    # is still read from the run directory on each rerun, so a reload with
+    # nothing opened is the empty screen and nothing is remembered across one.
+    run_dir = _opened_run()
+    replaying = bool(run and source is not None)
+    ran_this_request = replaying or bool(run and uploaded and selected_slug)
+    if replaying and source is not None:
+        try:
+            run_dir = _replay(source, layout)
+        except replay.ReplayError as error:
+            st.error(str(error))
+        else:
+            _open_run(run_dir)
+    if ran_this_request and not replaying and selected_slug:
         try:
             run_dir = _run(uploaded, selected_slug)
         except (pipeline.PipelineError, page_reader.PageReadFailed) as error:
             st.error(str(error))
         except Exception as error:  # Streamlit should preserve and surface any artifacts already written.
             st.exception(error)
+        else:
+            _open_run(run_dir)
+
+    if run_dir is None and selected_slug:
+        _offer_latest_run(layout, selected_slug)
 
     if not ran_this_request:
         _render_stage_views(run_dir)
     if run_dir is not None:
+        # The run names its own subject, and that is the one whose attempts and
+        # retakes belong under it, whatever the dropdown happens to say.
+        summary = run_view.run_summary(run_dir)
+        subject_slug = summary.subject_slug if summary else selected_slug
         _render_summary(run_dir)
         _render_failures(run_dir)
         _render_comparison(run_dir)
-        if selected_slug:
-            _render_quiz(run_dir, selected_slug, layout)
+        if subject_slug:
+            _render_quiz(run_dir, subject_slug, layout)
 
 
 if __name__ == "__main__":

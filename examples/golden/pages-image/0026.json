@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "LLaVA (Large Language and Vision Assistant)",
+  "reading": "The slide introduces LLaVA, noting that it exploits the autoregressive nature of LLMs, and shows the model's architecture diagram from the original paper. It then describes training via visual instruction tuning using a large amount of <visual, question, answer> data. Attribution at bottom right to Liu et al., Visual Instruction Tuning, NeurIPS 2023.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "LLaVA architecture: image X_v goes into a Vision Encoder producing Z_v, which passes through a linear Projection W to visual tokens H_v; language instruction X_q becomes tokens H_q; both token sequences feed a Language Model f_phi that autoregressively emits the language response X_a (green tokens with attention-like arrows).",
+      "assertion": "Visual features are mapped by a simple learned projection into the LLM token space and concatenated with instruction tokens so a frozen-style LLM can generate the answer autoregressively.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "LLaVA",
+      "status": "explained_here",
+      "why_it_matters": "Canonical open multimodal assistant combining a vision encoder with an LLM."
+    },
+    {
+      "name": "Visual instruction tuning",
+      "status": "named_only",
+      "why_it_matters": "Training recipe that gives multimodal models conversational, instruction-following ability."
+    },
+    {
+      "name": "Autoregressive generation",
+      "status": "assumed_prior",
+      "why_it_matters": "Underlies how the response tokens are produced."
+    },
+    {
+      "name": "Linear projection of visual features",
+      "status": "named_only",
+      "why_it_matters": "Cheap way to align vision embeddings with LLM token space."
+    }
+  ],
+  "verbatim_spans": [
+    "LLaVA uses the autoregressive nature of LLMs",
+    "Large amount of <visual, question, answer> data",
+    "Liu et al., Visual Instruction Tuning, NeurIPS 2023"
+  ],
+  "reader_note": null,
+  "slide_number": 26
+}

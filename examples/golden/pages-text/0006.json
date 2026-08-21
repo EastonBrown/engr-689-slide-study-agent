@@ -1,0 +1,18 @@
+{
+  "page_role": "content",
+  "title": "GPT-4o (May 2024)",
+  "reading": "A content slide headed \"GPT-4o (May 2024)\", identifying OpenAI's GPT-4o model and its release date. The extracted text contains only the title, so no body content, bullets, or figure text is available on this path.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "GPT-4o",
+      "status": "named_only",
+      "why_it_matters": "An omni-modal large language model released by OpenAI in May 2024, typically cited as a milestone in unified text/audio/vision models."
+    }
+  ],
+  "verbatim_spans": [
+    "GPT-4o (May 2024)"
+  ],
+  "reader_note": "Text path yielded only the title; any body content or visuals on the slide could not be read.",
+  "slide_number": 6
+}

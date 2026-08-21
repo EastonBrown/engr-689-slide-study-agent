@@ -1,0 +1,23 @@
+{
+  "query": "What is 3D sensors?",
+  "normalized_query": "what is 3d sensors",
+  "asked_at": "2026-08-21T04:12:51Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "3D sensors",
+  "answer": "3D sensors (depth sensors) are devices that measure the distance from the sensor to points in a scene, adding a depth (z) dimension to ordinary 2D imaging so the output is a depth map or point cloud rather than just a flat picture. The three dominant approaches are stereo vision (triangulating matched pixels from two spaced cameras), structured light (projecting a known pattern and decoding its deformation), and time-of-flight (timing how long emitted infrared light takes to return). Each trades off accuracy, range, speed, and robustness to ambient light, which is why they power different applications such as robotics, navigation, AR/VR, and face recognition.",
+  "citations": [
+    {
+      "title": "Depth imaging system (US Patent 11,280,907)",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11280907"
+    },
+    {
+      "title": "Understanding 3D Camera Technologies: Stereo Vision, Structured Light and Time-of-flight",
+      "url": "https://www.edge-ai-vision.com/2025/04/understanding-3d-camera-technologies-stereo-vision-structured-light-and-time-of-flight/"
+    },
+    {
+      "title": "A Survey on RGB-D Datasets",
+      "url": "https://arxiv.org/pdf/2201.05761"
+    }
+  ]
+}

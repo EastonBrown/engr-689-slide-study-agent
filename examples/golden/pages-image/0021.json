@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Prelude of Foundation Models (early deep learning)",
+  "reading": "The slide traces the early deep learning era that preceded foundation models, anchored on the ImageNet Large Scale Visual Recognition Challenge and a succession of landmark CNN architectures cited as Krizhevsky et al. 2012 (AlexNet), Simonyan et al. 2015 (VGG), Szegedy et al. 2015 (GoogLeNet/Inception), He et al. 2016 (ResNet) and Huang et al. 2017 (DenseNet). A human error-rate marker of 0.05 is shown next to the ImageNet montage, and red arrows chain the architectures together.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A montage of ImageNet images labelled 'ImageNet Large Scale Visual Recognition Challenges', a green bar reading 0.05 labelled 'human', and four network architecture schematics (AlexNet, VGG, GoogLeNet, ResNet-34, DenseNet) connected by ascending red arrows.",
+      "assertion": "Successive ImageNet-era CNN architectures grew progressively deeper and drove error toward and past the ~0.05 human benchmark.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "ImageNet Large Scale Visual Recognition Challenge",
+      "status": "named_only",
+      "why_it_matters": "The benchmark that catalysed the deep learning era in vision."
+    },
+    {
+      "name": "Convolutional network architectures (AlexNet, VGG, Inception, ResNet, DenseNet)",
+      "status": "named_only",
+      "why_it_matters": "The architectural lineage leading to modern foundation models."
+    },
+    {
+      "name": "Human-level error rate baseline",
+      "status": "named_only",
+      "why_it_matters": "Provides the reference point models were compared against."
+    }
+  ],
+  "verbatim_spans": [
+    "Prelude of Foundation Models (early deep learning)",
+    "ImageNet Large Scale Visual Recognition Challenges",
+    "0.05"
+  ],
+  "reader_note": null,
+  "slide_number": 21
+}

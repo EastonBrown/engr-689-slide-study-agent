@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Stable Diffusion – much faster!",
+  "reading": "The slide introduces Stable Diffusion, a latent diffusion model that runs the diffusion process in a compressed latent space rather than directly on pixels, giving large speed gains. It is described as the first large-scale, open-sourced text-to-image generative model, citing Rombach et al., CVPR 2022. Accompanying figure labels ('Image to latent', 'Diffusion model in the latent space') indicate a pipeline diagram of the encoder step followed by latent-space diffusion.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline diagram fragment labelled 'Image to latent' and 'Diffusion model in the latent space'.",
+      "assertion": "An encoder maps images into a lower-dimensional latent space where the diffusion process is carried out.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Latent diffusion",
+      "status": "explained_here",
+      "why_it_matters": "Operating in latent space cuts compute cost versus pixel-space diffusion."
+    },
+    {
+      "name": "Stable Diffusion",
+      "status": "named_only",
+      "why_it_matters": "Landmark open-source text-to-image model."
+    },
+    {
+      "name": "Text-to-image generation",
+      "status": "assumed_prior",
+      "why_it_matters": "Task setting for the model."
+    }
+  ],
+  "verbatim_spans": [
+    "Apply the diffusion model in the latent space instead of pixel space",
+    "The first large-scale, open-sourced text-to-image generative model",
+    "Rombach et al., High-Resolution Image Synthesis with Latent Diffusion Models, CVPR 2022"
+  ],
+  "reader_note": null,
+  "slide_number": 57
+}

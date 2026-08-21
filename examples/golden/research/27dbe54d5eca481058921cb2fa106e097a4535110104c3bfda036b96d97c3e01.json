@@ -1,0 +1,15 @@
+{
+  "query": "What is Agentic AI?",
+  "normalized_query": "what is agentic ai",
+  "asked_at": "2026-08-21T04:10:17Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Agentic AI",
+  "answer": "Agentic AI refers to AI systems that pursue goals with a degree of autonomy: rather than just answering a prompt, they perceive their environment, break a goal into steps, plan, call tools or other systems, and act to produce results. Most implementations use a large language model as the reasoning \"brain,\" combined with memory/retrieval, tool APIs, and a workflow loop in which the system monitors intermediate outcomes and adapts. The key contrast for your slides: traditional generative AI mainly produces content in response to commands, while agentic AI executes multi-step tasks with minimal human intervention — which is why guardrails, boundaries, and human oversight are always part of the design.",
+  "citations": [
+    {
+      "title": "What is agentic AI? Definition and differentiators | Google Cloud",
+      "url": "https://cloud.google.com/discover/what-is-agentic-ai"
+    }
+  ]
+}

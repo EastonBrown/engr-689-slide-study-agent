@@ -1,0 +1,49 @@
+{
+  "page_role": "content",
+  "title": "How LLMs influence computer vision",
+  "reading": "The slide illustrates the architecture of a typical multimodal LLM and shows a worked example with a Texas A&M campus photo and a text prompt, together with the model's generated answer attributed to OpenAI GPT-4o. The vision encoder is highlighted in red, marking it as the focus of discussion.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline: a campus photo feeds a red-outlined 'Vision Encoder' box producing orange visual tokens; a text prompt ('Where is the tower building in the image?') produces blue text tokens; both token sequences feed upward into a green 'Large Language Models' block, whose output is a speech bubble containing the answer text.",
+      "assertion": "A multimodal LLM works by encoding an image into token embeddings with a vision encoder and concatenating them with text prompt tokens as input to the LLM.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "photo",
+      "description": "Aerial photo of Texas A&M campus with a white water tower reading 'WELCOME TO AGGIELAND' and Kyle Field stadium.",
+      "assertion": null,
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Text box with GPT-4o's response identifying the water tower on the Texas A&M campus, its 'WELCOME TO AGGIELAND' lettering, its foreground position slightly left of center, and Kyle Field behind it.",
+      "assertion": "The multimodal LLM correctly localizes and describes the tower and its surroundings in natural language.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal LLM",
+      "status": "explained_here",
+      "why_it_matters": "Shows how vision and language inputs are unified into one token stream for an LLM."
+    },
+    {
+      "name": "Vision encoder",
+      "status": "named_only",
+      "why_it_matters": "Highlighted component that converts images into tokens the LLM can consume."
+    },
+    {
+      "name": "Text prompt / tokens",
+      "status": "assumed_prior",
+      "why_it_matters": "Prompt tokens are interleaved with visual tokens as LLM input."
+    }
+  ],
+  "verbatim_spans": [
+    "A typical Multimodal LLM:",
+    "Text Prompt: Where is the tower building in the image?",
+    "By OpenAI GPT 4o"
+  ],
+  "reader_note": null,
+  "slide_number": 27
+}

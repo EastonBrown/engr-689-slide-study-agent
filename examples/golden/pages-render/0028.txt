@@ -1,0 +1,14 @@
+Variants of vision encoder
+Supervised Learning
+ViT, Dosovitskiy et al.
+Masked Modeling
+MAE, He et al.
+Auto-encoding
+VQVAE, Van den Oord et al.
+Self-distillation
+DINO, Caron et al.
+Multimodal Learning
+CLIP, Radford et al.
+Popularity of different 
+vision encoders in 
+Multimodal LLMs

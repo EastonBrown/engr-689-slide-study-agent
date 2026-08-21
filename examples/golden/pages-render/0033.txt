@@ -1,0 +1,2 @@
+Contrastive learning
+• What if we don’t have vocabulary? From a vocabulary with data itself

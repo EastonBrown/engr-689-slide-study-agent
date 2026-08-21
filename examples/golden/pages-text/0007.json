@@ -1,0 +1,18 @@
+{
+  "page_role": "title",
+  "title": "NVIDIA at Consumer Electronics Show (CES) 2025",
+  "reading": "A single line of text naming NVIDIA's presence at the 2025 Consumer Electronics Show. On the text path no body content, bullets, or figure captions were extracted, so the page reads as a title or section-break card introducing a segment about NVIDIA's CES 2025 announcements.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Consumer Electronics Show (CES)",
+      "status": "named_only",
+      "why_it_matters": "The annual industry venue where NVIDIA typically unveils new hardware and platform announcements, framing the segment that follows."
+    }
+  ],
+  "verbatim_spans": [
+    "NVIDIA at Consumer Electronics Show (CES) 2025"
+  ],
+  "reader_note": "Text path yielded only the heading; any accompanying imagery or bullets on the slide are not visible to this reader.",
+  "slide_number": 7
+}

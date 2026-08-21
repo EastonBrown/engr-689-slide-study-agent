@@ -3,10 +3,12 @@
 Final project for ENGR 689 (SPTP: Multimodal LLM Agents), Texas A&M, fall 2026
 sprint session. Instructors: Yu Zhang and Cheng Zhang.
 
-**Status: partial. Render, the page reader, and the outline stage run; research,
-the review writer, the quiz, grading, and the interface do not yet. The table
-below marks the whole target design, not what is built. Setup and Running it are
-real and current.**
+**Status: end to end on one deck. Every stage in the table below runs, and one
+complete run over a 66-slide course deck is committed under `examples/golden/`,
+both paths, with the quiz it generated and the memory it wrote. The interface
+runs that pipeline and replays that run. What is not claimed is breadth: the
+system has been exercised on the course decks, not on arbitrary ones, and the
+limitations section is still being filled in.**
 
 ## What it does
 
@@ -80,8 +82,35 @@ Render alone is the default. Add stages as needed:
 |---|---|
 | `--read-pages` | The vision and text passes, one `SlideNote` per slide per path |
 | `--slides 55-61` | Restricts the page reads to a slice, for a cheap check |
-| `--resume` | With `--read-pages`, retries only the slides whose read failed |
+| `--resume` | Reopens the latest run for this deck instead of starting a new one; with `--read-pages`, retries only the slides whose read failed |
 | `--outline` | Groups the notes into topics and writes `outline-{image,text}.json` |
+
+## The interface, and replaying a finished run
+
+```
+streamlit run app.py
+```
+
+Choose a subject, upload a deck, and press the button. Every screen is
+reconstructed from the run directory on disk, so a rerun, a refresh, or a
+crashed stage never loses what has already been written.
+
+One complete run is committed under `examples/golden/` (66 slides, both
+paths). Selecting the PDF it was produced from,
+`data/course/slides/Day3 Principle.pdf`, puts the interface in replay mode:
+the upload is matched to that run by content hash, the run is installed into
+`runs/` and `memory/`, and the seven stage boxes animate from the files that
+run actually wrote. Replay makes no API calls and needs no key. Two knobs:
+
+| Variable | What it does |
+|---|---|
+| `STUDY_AGENT_REPLAY_DELAY` | Seconds per replayed log line, default 0.06 |
+| `STUDY_AGENT_REPLAY_STAGE_DELAY` | Seconds held on a finished stage box, default 0.6 |
+| `STUDY_AGENT_REPLAY_RUN` | Points the interface at any completed run directory instead of an upload |
+
+At the defaults the golden run's 192 lines replay in about sixteen seconds. A
+run that stopped before a later stage replays what exists and marks the rest
+absent.
 
 Then score the image path's quoted spans against the text the renderer
 extracted from the same pages:

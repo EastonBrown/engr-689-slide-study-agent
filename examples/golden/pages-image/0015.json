@@ -1,0 +1,61 @@
+{
+  "page_role": "content",
+  "title": "Text-to-image/video generation",
+  "reading": "A largely visual slide showcasing outputs of modern generative models for text-to-image, text-to-video, and novel-view/3D synthesis. Named systems include DALL·E 2, Muse, Stable Diffusion, and Stable Zero123, with no accompanying body text beyond the title and product labels.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "Grid of DALL·E 2 sample images (goldfish in bowl, avocado, astronaut, neon shapes) with the DALL·E 2 logo.",
+      "assertion": "Diffusion-based text-to-image models produce diverse, photorealistic and stylized images from prompts.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Muse sample: birthday cake with candles spelling 'MUSE'.",
+      "assertion": "Muse can render legible text-shaped objects within generated scenes.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Stable Diffusion sample strip: astronaut playing piano, unicorn, otter in Victorian dress, bear in spacesuit.",
+      "assertion": "Stable Diffusion generates imaginative compositions combining unrelated concepts.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Four frames of generated video-like scenes: rocket launch, Earth from orbit, miniature village at night, cloudy seascape.",
+      "assertion": "Text-to-video models generate coherent cinematic scenes.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Stable Zero123 row showing a cartoon dinosaur rendered from five different viewpoints.",
+      "assertion": "Zero-shot novel view synthesis produces consistent 3D-aware renderings of an object from a single image.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Text-to-image generation",
+      "status": "named_only",
+      "why_it_matters": "Core generative task illustrated by the examples."
+    },
+    {
+      "name": "Text-to-video generation",
+      "status": "named_only",
+      "why_it_matters": "Extends generation to the temporal domain."
+    },
+    {
+      "name": "Novel view synthesis (Stable Zero123)",
+      "status": "named_only",
+      "why_it_matters": "Shows 3D-consistent generation from images."
+    }
+  ],
+  "verbatim_spans": [
+    "Text-to-image/video generation",
+    "DALL·E 2",
+    "Stable Zero123"
+  ],
+  "reader_note": null,
+  "slide_number": 15
+}

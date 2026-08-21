@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Quite a lot of variants",
+  "reading": "The slide surveys the many self-supervised / contrastive learning methods that all share the idea of comparing samples in the latent space, differing along axes such as data augmentation choice, loss function, whether negative samples are used, and whether a momentum encoder is present. Six method schematics are shown side by side as illustration.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Grid of six architecture schematics labelled CMC, SwAV, BYOL, SimSiam, Barlow Twins, and DINO. CMC shows anchor/positive/negative views embedded by separate encoders; SwAV shows two views mapped to codes via prototypes with swapped prediction; BYOL shows online view→representation→projection→prediction versus a target branch with stop-gradient; SimSiam shows two encoders sharing weights with a predictor and stop-grad; Barlow Twins shows distorted images through a shared net producing an empirical cross-correlation matrix pushed toward identity; DINO shows student/teacher with softmax, centering and EMA update.",
+      "assertion": "Many distinct SSL frameworks instantiate the same latent-space comparison idea with different structural choices (negatives, momentum/EMA teacher, stop-gradient, prototypes, redundancy reduction).",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Latent-space comparison",
+      "status": "named_only",
+      "why_it_matters": "Common principle uniting the variants."
+    },
+    {
+      "name": "Negative samples",
+      "status": "named_only",
+      "why_it_matters": "Key axis separating contrastive from non-contrastive methods."
+    },
+    {
+      "name": "Momentum encoder",
+      "status": "named_only",
+      "why_it_matters": "Stabilizes target branch in methods like BYOL/DINO."
+    },
+    {
+      "name": "CMC, SwAV, BYOL, SimSiam, Barlow Twins, DINO",
+      "status": "named_only",
+      "why_it_matters": "Canonical SSL methods the course will reference."
+    }
+  ],
+  "verbatim_spans": [
+    "Compare samples in the latent space",
+    "With or without momentum encoder",
+    "Barlow Twins"
+  ],
+  "reader_note": null,
+  "slide_number": 37
+}

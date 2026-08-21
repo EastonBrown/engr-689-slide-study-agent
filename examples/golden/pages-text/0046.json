@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide poses the motivating question of how predictive objectives can yield good representations, and answers it visually with a masked-autoencoder example. Only three column labels are present in the extracted text — 'Input', 'MAE prediction', and 'GT' — indicating a side-by-side comparison of a masked input image, the model's reconstruction, and the ground-truth image.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Three-column image comparison labelled Input, MAE prediction, and GT (ground truth); the underlying imagery is not recoverable from the text path.",
+      "assertion": "A masked autoencoder can reconstruct heavily masked inputs closely enough to match ground truth, evidencing that prediction forces learning of useful representations.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Canonical example of learning representations by predicting masked-out content."
+    },
+    {
+      "name": "Representation learning by prediction",
+      "status": "named_only",
+      "why_it_matters": "Framing question of the section: prediction as a self-supervised objective."
+    },
+    {
+      "name": "Ground truth (GT)",
+      "status": "assumed_prior",
+      "why_it_matters": "Reference for judging reconstruction quality."
+    }
+  ],
+  "verbatim_spans": [
+    "How to learn good representations by prediction?",
+    "MAE prediction",
+    "Input"
+  ],
+  "reader_note": "Text-only extraction; image content of the comparison figure inferred from labels.",
+  "slide_number": 46
+}

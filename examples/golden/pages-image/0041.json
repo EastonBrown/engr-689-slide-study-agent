@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Predictive learning: computer vision",
+  "reading": "The slide applies predictive (self-supervised) learning to computer vision through masked image modeling, exemplified by the context encoder, where a ConvNet is trained to predict the content of masked-out image patches. A before/after example illustrates the task, and the work is credited to the CVPR 2016 context encoders paper on feature learning by inpainting.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Two side-by-side photographs of a hotel storefront with an arrow between them: the left has a large white square hole masking the center; the right shows the hole filled in with plausible generated content (a pillar, awning, and window continuing the facade).",
+      "assertion": "A ConvNet-based context encoder can inpaint a removed central region so it plausibly continues the surrounding scene.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked image modeling",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised pretext task where hidden image regions are predicted from context."
+    },
+    {
+      "name": "Context encoder",
+      "status": "named_only",
+      "why_it_matters": "Early ConvNet approach to inpainting-based feature learning."
+    },
+    {
+      "name": "ConvNets",
+      "status": "assumed_prior",
+      "why_it_matters": "Backbone architecture used for the prediction."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked image modeling (context encoder)",
+    "Predict the masked patches using ConvNets",
+    "Context Encoders: Feature Learning by Inpainting, CVPR 2016"
+  ],
+  "reader_note": null,
+  "slide_number": 41
+}

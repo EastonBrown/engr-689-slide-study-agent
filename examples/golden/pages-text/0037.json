@@ -1,0 +1,34 @@
+{
+  "page_role": "content",
+  "title": "Quite a lot of variants",
+  "reading": "The slide summarises that self-supervised contrastive methods share a common core — comparing samples in the latent space — but differ across several design axes. The listed variations are the data augmentation scheme, the loss function, whether negative samples are used, and whether a momentum encoder is employed. It functions as a wrap-up framing many published methods as points in this design space.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Comparison in latent space",
+      "status": "named_only",
+      "why_it_matters": "Common principle unifying contrastive/self-supervised variants."
+    },
+    {
+      "name": "Data augmentation",
+      "status": "named_only",
+      "why_it_matters": "Defines what invariances the representation learns."
+    },
+    {
+      "name": "Negative samples",
+      "status": "named_only",
+      "why_it_matters": "Presence or absence distinguishes contrastive from non-contrastive methods."
+    },
+    {
+      "name": "Momentum encoder",
+      "status": "named_only",
+      "why_it_matters": "Stabilises targets and enables large consistent negative banks."
+    }
+  ],
+  "verbatim_spans": [
+    "Compare samples in the latent space",
+    "With or without momentum encoder"
+  ],
+  "reader_note": null,
+  "slide_number": 37
+}

@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide states the core objective of contrastive learning: maximize similarities of positive pairs and minimize similarities of negative pairs. Below, a schematic shows a two-encoder (key/query) setup feeding a similarity matrix used as the loss, with two annotated update strategies — weight sharing versus momentum (moving-average) updating of the key encoder, the latter given by an equation.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A key image and a query image each pass through a green trapezoidal Encoder; their outputs meet at a 5x5 similarity grid with the diagonal cells shaded blue, labelled 'loss'. A red arrow flows back from the loss to the query encoder ('Update encoder q'). Left annotation: 'Share weights for both encoder'; right annotation: 'Update encoder k by moving average' with the equation θ_k ≔ m θ_k + (1 − m) θ_q.",
+      "assertion": "Contrastive training compares encoded key and query batches in a similarity matrix whose diagonal entries are the positives; the query encoder is trained by gradients while the key encoder is either weight-shared or updated as a momentum moving average of the query encoder's parameters.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Positive and negative pairs",
+      "status": "named_only",
+      "why_it_matters": "Defines what the contrastive objective pulls together and pushes apart."
+    },
+    {
+      "name": "Momentum encoder update",
+      "status": "explained_here",
+      "why_it_matters": "Gives a slowly-evolving, consistent key encoder without backpropagating through it."
+    },
+    {
+      "name": "Similarity matrix / contrastive loss",
+      "status": "named_only",
+      "why_it_matters": "Implements the objective over a batch, with diagonal as positives."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Update encoder k by moving average",
+    "Share weights for both encoder"
+  ],
+  "reader_note": null,
+  "slide_number": 35
+}

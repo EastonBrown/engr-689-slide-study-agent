@@ -1,0 +1,7 @@
+Three representative directions
+image/video 3D/4D scene
+tree 1: Recognition
+tree 3: Generation
+[Figure credit: A. Torralba, P. Isola, and W. T. Freeman, Foundations of Computer Vision.]
+Projection surface
+Language can play in the middle of any stages! 2: Reconstruction

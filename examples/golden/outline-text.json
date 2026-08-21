@@ -1,0 +1,450 @@
+{
+  "deck_slug": "day3-principle",
+  "path": "text",
+  "topics": [
+    {
+      "name": "Course Logistics and Speaker Background",
+      "slides": [
+        2,
+        3
+      ],
+      "is_new": true,
+      "created_reason": "Opening administrative slides on the speaker's research interests and course project requirements, distinct from technical content.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Recap: Foundation Models and LLM Generality",
+      "slides": [
+        4,
+        5,
+        6
+      ],
+      "is_new": true,
+      "created_reason": "Slides recapping language foundation models, the three dimensions of LLM generality, and GPT-4o as a milestone.",
+      "degraded_slides": [
+        4,
+        6
+      ]
+    },
+    {
+      "name": "Computer Vision Landscape and Representative Tasks",
+      "slides": [
+        9,
+        10,
+        11,
+        16
+      ],
+      "is_new": true,
+      "created_reason": "Slides framing computer vision's data types, the recognition/reconstruction/generation triad, and the enumerated representative tasks including computer-using agents.",
+      "degraded_slides": [
+        9,
+        11,
+        16
+      ]
+    },
+    {
+      "name": "From Rule-Based Design to Learned Visual Recognition",
+      "slides": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "is_new": true,
+      "created_reason": "Slides motivating machine learning over hand-coded rules for object recognition and tracing early deep CNN architectures as precursors to foundation models.",
+      "degraded_slides": [
+        21
+      ]
+    },
+    {
+      "name": "Vision Encoders and Multimodal LLM Architecture",
+      "slides": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        48
+      ],
+      "is_new": true,
+      "created_reason": "Slides on the Vision Transformer, coupling vision encoders to LLMs (LLaVA, GPT-4o), and the comparative landscape of vision encoder variants.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Self-Supervised Learning: Contrastive Methods",
+      "slides": [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "is_new": true,
+      "created_reason": "A contiguous block defining self-supervised learning and developing contrastive learning from classification through MoCo, siamese variants, and CLIP.",
+      "degraded_slides": [
+        33
+      ]
+    },
+    {
+      "name": "Self-Supervised Learning: Predictive and Masked Modeling",
+      "slides": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "is_new": true,
+      "created_reason": "The complementary SSL family covering masked language modeling, masked image modeling, MAE mechanics, and masking-ratio design.",
+      "degraded_slides": [
+        46
+      ]
+    },
+    {
+      "name": "Visual Generation with Diffusion Models",
+      "slides": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        57,
+        58
+      ],
+      "is_new": true,
+      "created_reason": "Slides on generative visual foundation models, forward/reverse diffusion, text conditioning, latent diffusion, compositionality, and unified understanding-generation models.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Multimodal LLM Agents and Agentic Workflows",
+      "slides": [
+        60,
+        61,
+        63,
+        64,
+        65,
+        66
+      ],
+      "is_new": true,
+      "created_reason": "Culminating section defining agentic AI and showing agentic workflows for compound vision tasks, object detection, and robot manipulation, through the closing slide.",
+      "degraded_slides": [
+        61,
+        65,
+        66
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "slide_number": 1,
+      "page_role": "title"
+    },
+    {
+      "slide_number": 7,
+      "page_role": "title"
+    },
+    {
+      "slide_number": 8,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 12,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 13,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 14,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 15,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 17,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 22,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 49,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 56,
+      "page_role": "blank"
+    },
+    {
+      "slide_number": 59,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 62,
+      "page_role": "section_break"
+    }
+  ],
+  "superseded": [
+    23
+  ],
+  "unassigned": [],
+  "bridged_facts": [
+    {
+      "slides": [
+        29,
+        30
+      ],
+      "statement": "Self-supervised learning uses the data itself as supervision through pretext tasks such as reconstruction, rotation prediction, or jigsaw solving, in order to learn high-level semantic representations from large-scale unlabeled data; the modern instantiations of this idea fall into two families, contrastive learning and predictive learning.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        30,
+        31
+      ],
+      "statement": "Contrastive learning, named as one of the two modern self-supervised families, is introduced by first reinterpreting ordinary supervised classification as contrastive: a network splits into a classifier (the weights of the last fully-connected layer) and features (the representations produced just before that layer), so classification amounts to comparing features against per-class weight vectors.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        31,
+        32
+      ],
+      "statement": "Once the network is split into last-FC-layer classifier weights and the features before them, the comparison between features and class weights is exactly a contrastive objective: maximize similarities of positive pairs and minimize similarities of negative pairs.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        32,
+        33
+      ],
+      "statement": "Supervised classification realizes the maximize-positives / minimize-negatives objective using a predefined label vocabulary; when no such vocabulary exists, contrastive learning forms a vocabulary out of the data itself, letting each instance act as its own category.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        34,
+        35
+      ],
+      "statement": "MoCo instantiates the two-branch query/key contrastive pipeline with an asymmetric pair of encoders — the query encoder is updated by the loss gradient while the key encoder is a moving-average (momentum) copy — and this momentum update is one of two design choices for the key branch, the alternative being to share weights between both encoders.",
+      "from_visuals": [
+        [
+          34,
+          0
+        ],
+        [
+          35,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        35,
+        36
+      ],
+      "statement": "Taking the weight-sharing option for the query/key branches yields the siamese variant of contrastive learning: both encoders share weights and both receive gradient updates, in contrast to the momentum moving-average key encoder.",
+      "from_visuals": [
+        [
+          35,
+          0
+        ],
+        [
+          36,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        39,
+        40
+      ],
+      "statement": "Of the two modern self-supervised families, the predictive branch is illustrated first in NLP: masked language modeling as in BERT, where the model predicts the masked words (tokens) in the text so supervision comes from the text itself.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        41,
+        42
+      ],
+      "statement": "Masked image modeling in vision appears in two generations of backbone: the ConvNet-based context encoder that predicts masked patches by inpainting (CVPR 2016), and the Masked Autoencoder that predicts masked patches with Transformers (CVPR 2022).",
+      "from_visuals": [],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        42,
+        43
+      ],
+      "statement": "The Transformer-based Masked Autoencoder operates not on raw pixels directly but on image patches treated as visual tokens, following the Vision Transformer formulation.",
+      "from_visuals": [],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        43,
+        44
+      ],
+      "statement": "Given patches as visual tokens, MAE's pipeline randomly masks patches, encodes only the visible ones with a Transformer, expands the latents with learnable mask tokens so the decoder sees a full-length sequence, predicts the masked content, and computes an L2 loss in pixel space.",
+      "from_visuals": [
+        [
+          44,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        45,
+        46
+      ],
+      "statement": "The claim that predicting a large portion of the input (rather than a small one) forces semantic features is backed up by the Input / MAE prediction / GT comparison, where a heavily masked image is reconstructed closely enough to match ground truth.",
+      "from_visuals": [
+        [
+          46,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        46,
+        47
+      ],
+      "statement": "The heavy masking shown in the Input / MAE prediction / GT comparison is quantified as roughly 75% of an image being optimal, versus only about 15% of tokens in BERT-style language pretraining, because image information is far more redundant than linguistic information — so the masking ratio should be chosen per application.",
+      "from_visuals": [
+        [
+          46,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    },
+    {
+      "slides": [
+        51,
+        52
+      ],
+      "statement": "Diffusion models generate images by gradually adding Gaussian noise and learning to reverse it, and this same denoising chain becomes text-conditioned generation when a caption (e.g. 'A golden lab puppy, tongue hanging out, and wearing a blue collar') is passed through a frozen text encoder to produce an embedding that guides the process, trained on caption-image pairs.",
+      "from_visuals": [
+        [
+          51,
+          0
+        ],
+        [
+          52,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    }
+  ],
+  "candidates_proposed": 13,
+  "candidate_cap": 30,
+  "unreadable_notes": [],
+  "topic_cap_exceeded": false,
+  "question_budget": [
+    [
+      "bridged_fact",
+      1
+    ],
+    [
+      "Course Logistics and Speaker Background",
+      0
+    ],
+    [
+      "Recap: Foundation Models and LLM Generality",
+      0
+    ],
+    [
+      "Computer Vision Landscape and Representative Tasks",
+      1
+    ],
+    [
+      "From Rule-Based Design to Learned Visual Recognition",
+      1
+    ],
+    [
+      "Vision Encoders and Multimodal LLM Architecture",
+      1
+    ],
+    [
+      "Self-Supervised Learning: Contrastive Methods",
+      2
+    ],
+    [
+      "Self-Supervised Learning: Predictive and Masked Modeling",
+      2
+    ],
+    [
+      "Visual Generation with Diffusion Models",
+      1
+    ],
+    [
+      "Multimodal LLM Agents and Agentic Workflows",
+      1
+    ]
+  ],
+  "untested_topics": [
+    "Course Logistics and Speaker Background",
+    "Recap: Foundation Models and LLM Generality"
+  ],
+  "repair_attempted": true
+}

@@ -1,0 +1,18 @@
+{
+  "page_role": "content",
+  "title": "Computer-using agents (CUA)",
+  "reading": "A content page introducing computer-using agents, abbreviated CUA. Only the heading text is available on the text path; no body content, bullets, or figure captions were extracted, so the substantive claims of the slide cannot be recovered. The slide presumably opens a segment on agents that operate a computer interface (screen, mouse, keyboard) to carry out tasks.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Computer-using agent (CUA)",
+      "status": "named_only",
+      "why_it_matters": "Names a class of AI agents that act through a computer's graphical interface rather than through dedicated APIs."
+    }
+  ],
+  "verbatim_spans": [
+    "Computer-using agents (CUA)"
+  ],
+  "reader_note": "Only the title text was available; no body content extracted.",
+  "slide_number": 16
+}

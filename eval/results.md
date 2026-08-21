@@ -21,6 +21,12 @@ The Field column records where it landed for the image path.
 | **Total** | | **/3** | **/3** | |
 | Pinhole geometry (known-weak case) | 10 | | | |
 
+The interface shows this row too. It reads the scores from
+`figure-only-facts.json`, where a scored fact carries
+`"scored": {"image": true, "text": false}`, and shows "scored by hand" until
+every labelled fact carries one. Filling the table above means filling that
+field in the same pass.
+
 Slide 10 sits outside the headline denominator on purpose. Its labels extract,
 so a hit there does not mean the text path recovered the spatial relation that
 is the actual content of the slide.

@@ -1,0 +1,19 @@
+{
+  "query": "What is Reconstruction?",
+  "normalized_query": "what is reconstruction",
+  "asked_at": "2026-08-21T04:17:42Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Reconstruction",
+  "answer": "Reconstruction (1865–1877) was the era following the American Civil War in which the federal government worked to reintegrate the eleven seceded Confederate states into the Union and to define the status and rights of roughly four million newly freed people. Key measures included the Thirteenth, Fourteenth, and Fifteenth Amendments and the Military Reconstruction Acts of 1867, which imposed federal oversight and new state constitutions as conditions for readmission. The era ended in 1877 amid violent white Southern resistance and waning Northern political will, leaving many of its civil-rights gains rolled back until the twentieth century.",
+  "citations": [
+    {
+      "title": "Introduction - Reconstruction: A Resource Guide - Research Guides at Library of Congress",
+      "url": "https://guides.loc.gov/reconstruction"
+    },
+    {
+      "title": "Reconstruction | Definition, Summary, Timeline & Facts | Britannica",
+      "url": "https://www.britannica.com/event/Reconstruction-United-States-history"
+    }
+  ]
+}

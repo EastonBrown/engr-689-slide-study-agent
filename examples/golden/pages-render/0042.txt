@@ -1,0 +1,4 @@
+Predictive learning: computer vision
+• Masked image modeling (Masked Autoencoder)
+o Predict the masked patches using Transformers
+Masked Autoencoders Are Scalable Vision Learners , CVPR 2022

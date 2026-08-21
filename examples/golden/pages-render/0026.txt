@@ -1,0 +1,5 @@
+LLaVA (Large Language and Vision Assistant)
+• LLaVA uses the autoregressive nature of LLMs
+• Training: visual instruction tuning
+o Large amount of <visual, question, answer> data
+Liu et al., Visual Instruction Tuning, NeurIPS 2023

@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Three representative directions",
+  "reading": "The slide organizes computer vision tasks into three directions defined by the flow between semantics (the word \"tree\"), the image/video, and the underlying 3D/4D scene. Recognition maps images to labels, generation maps labels/text to images, and reconstruction maps images to scene geometry. A red caption notes that language can enter at any stage. A pinhole-camera figure credited to Torralba, Isola, and Freeman anchors the image-to-scene relationship.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left: the word \"tree\" with a yellow leftward arrow labeled \"1: Recognition\" and a rightward arrow labeled \"3: Generation\" pointing toward an image; below, a rightward arrow \"2: Reconstruction\" pointing from image/video to 3D/4D scene. Center-right: pinhole camera schematic with a tree scene projecting through a pinhole in a black plane onto a wall/projection surface, with green and brown rays crossing and forming an inverted image.",
+      "assertion": "Vision tasks are directional mappings among labels/language, images/video, and the 3D/4D scene; imaging itself is a pinhole projection from scene to image.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Recognition",
+      "status": "named_only",
+      "why_it_matters": "Image-to-semantics direction."
+    },
+    {
+      "name": "Reconstruction",
+      "status": "named_only",
+      "why_it_matters": "Image-to-3D/4D scene direction."
+    },
+    {
+      "name": "Generation",
+      "status": "named_only",
+      "why_it_matters": "Semantics-to-image direction."
+    },
+    {
+      "name": "Pinhole camera projection",
+      "status": "assumed_prior",
+      "why_it_matters": "Explains how a 3D scene forms a 2D image."
+    }
+  ],
+  "verbatim_spans": [
+    "Three representative directions",
+    "Language can play in the middle of any stages!",
+    "[Figure credit: A. Torralba, P. Isola, and W. T. Freeman, Foundations of Computer Vision.]"
+  ],
+  "reader_note": null,
+  "slide_number": 10
+}

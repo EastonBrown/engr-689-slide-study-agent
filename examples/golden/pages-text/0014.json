@@ -1,0 +1,23 @@
+{
+  "page_role": "section_break",
+  "title": "Depth estimation and 3D reconstruction",
+  "reading": "The page carries only a heading, marking the transition into a segment on depth estimation and 3D reconstruction. No body text, figures, or supporting detail are present on the text path.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Depth estimation",
+      "status": "named_only",
+      "why_it_matters": "Recovering per-pixel distance from images is the basis for reasoning about scene geometry."
+    },
+    {
+      "name": "3D reconstruction",
+      "status": "named_only",
+      "why_it_matters": "Building explicit 3D structure from images underpins mapping, modelling, and scene understanding."
+    }
+  ],
+  "verbatim_spans": [
+    "Depth estimation and 3D reconstruction"
+  ],
+  "reader_note": null,
+  "slide_number": 14
+}

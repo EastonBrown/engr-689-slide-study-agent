@@ -1,0 +1,33 @@
+{
+  "page_role": "content",
+  "title": "Agentic object detection",
+  "reading": "The slide illustrates agentic object detection with two side-by-side example outputs, each driven by a natural-language prompt rather than a fixed class label. The left example uses the prompt \"Detect unripe strawberries in the picture\" and the right uses \"Detect airplanes with two engines\". A LandingAI credit appears in the bottom right corner.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "Photo of a strawberry plant with many green bounding boxes labelled 'unripe strawberries (1.00)' placed on green, unripe fruit while ripe red berries are left unboxed.",
+      "assertion": "The system correctly localises only the unripe fruit, honouring the attribute constraint in the free-text prompt.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Photo of an airport apron with several parked airliners; green boxes labelled 'planes with 2 engin... (1.00)' surround twin-engine aircraft while the four-engine Lufthansa A380 is not boxed.",
+      "assertion": "Detection can apply a compositional, counting-based property (two engines) that no standard detector class encodes.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Agentic object detection",
+      "status": "explained_here",
+      "why_it_matters": "Enables detection from free-form language descriptions with attributes, instead of a fixed set of trained classes."
+    }
+  ],
+  "verbatim_spans": [
+    "Agentic object detection",
+    "\"Detect unripe strawberries in the picture\"",
+    "\"Detect airplanes with two engines\""
+  ],
+  "reader_note": null,
+  "slide_number": 64
+}

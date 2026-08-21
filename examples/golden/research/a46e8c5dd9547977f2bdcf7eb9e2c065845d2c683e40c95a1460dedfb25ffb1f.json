@@ -1,0 +1,23 @@
+{
+  "query": "What is Recognition?",
+  "normalized_query": "what is recognition",
+  "asked_at": "2026-08-21T04:14:46Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Recognition",
+  "answer": "In financial reporting, recognition is the process of formally capturing an item in the financial statements — recording it in the statement of financial position or the statement(s) of financial performance — because it meets the definition of an element (asset, liability, equity, income or expense). Under the IASB Conceptual Framework, an item is recognised only if doing so provides users with useful information, meaning the information is relevant and gives a faithful representation; uncertainty about existence, low probability of economic benefits flowing, or unreliable measurement can make recognition inappropriate. The mirror concept is derecognition, the removal of a previously recognised asset or liability once control or the present obligation ceases.",
+  "citations": [
+    {
+      "title": "IFRS Conceptual Framework Project Summary (Chapter 5 — Recognition and derecognition)",
+      "url": "https://www.ifrs.org/content/dam/ifrs/project/conceptual-framework/fact-sheet-project-summary-and-feedback-statement/conceptual-framework-project-summary.pdf"
+    },
+    {
+      "title": "Conceptual Framework for Financial Reporting",
+      "url": "https://www.ifrs.org/issued-standards/list-of-standards/conceptual-framework/"
+    },
+    {
+      "title": "The Conceptual Framework for Financial Reporting | ACCA Global",
+      "url": "https://www.accaglobal.com/gb/en/student/exam-support-resources/professional-exams-study-resources/strategic-business-reporting/technical-articles/conceptual-framework.html"
+    }
+  ]
+}

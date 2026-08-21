@@ -185,7 +185,6 @@ def structured_call(
     output_config: dict[str, Any] = {
         "format": {
             "type": "json_schema",
-            "name": response_model.__name__,
             "schema": schemas.strict_schema(response_model),
         }
     }
@@ -209,7 +208,12 @@ def structured_call(
                 kwargs["system"] = system
             if tools is not None:
                 kwargs["tools"] = tools
-            message = client.messages.create(**kwargs)
+            # Streaming, not a plain create(): the SDK refuses a non-streaming
+            # call whenever max_tokens implies a response that could run past
+            # 10 minutes (raised client-side, before any request is sent), and
+            # the outline/review/quiz stages ask for enough tokens to trip it.
+            with client.messages.stream(**kwargs) as stream:
+                message = stream.get_final_message()
             usage = _usage_from_message(message, stage=stage, calls=1)
             accumulated = _add_usage(accumulated, usage)
             payload = json.loads(_text_from_message(message))

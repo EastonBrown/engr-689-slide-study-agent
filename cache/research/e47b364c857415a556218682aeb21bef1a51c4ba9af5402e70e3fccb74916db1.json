@@ -1,0 +1,19 @@
+{
+  "query": "What is Multimodal LLM Agents?",
+  "normalized_query": "what is multimodal llm agents",
+  "asked_at": "2026-08-21T04:05:42Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Multimodal LLM Agents",
+  "answer": "Multimodal LLM agents (also called large multimodal agents) are AI systems in which a large language model acts as the reasoning \"brain\" of an agent that can perceive inputs beyond text — such as images, video, audio, or GUI screens — and then plan and take actions in an environment to accomplish a goal. They are typically described in terms of four core components: perception (encoding multimodal inputs), planning (decomposing the task and reasoning about steps), action (calling tools, APIs, or controlling software/robots), and memory (storing context and past experience). Compared with text-only LLM agents, this extension lets the system handle richer, more nuanced user queries — for example reading a chart, navigating a web page, or guiding a robot — which also raises harder evaluation and reliability challenges.",
+  "citations": [
+    {
+      "title": "Large Multimodal Agents: A Survey",
+      "url": "https://arxiv.org/abs/2402.15116"
+    },
+    {
+      "title": "Large multimodal agents: a survey (Visual Intelligence)",
+      "url": "https://link.springer.com/article/10.1007/s44267-025-00093-y"
+    }
+  ]
+}

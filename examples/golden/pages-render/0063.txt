@@ -1,0 +1,16 @@
+Multimodal LLM-based Agents
+Non-Agentic workflow (zero-shot)
+Agentic workflow
+1. Detect faces (bounding boxes)
+2. Detect bib numbers (text and bounding box)
+3. Find the closest face to each bib in vertical detection
+4. Add a record with face and corresponding bib numbers 
+to the database
+5. Iterate through Steps 1-4 for all frames in the video
+“Create a database of runner faces and 
+corresponding bib numbers”
+START
+FINISH
+Credit: Andrew Ng
+Planning
+/Testing Coding

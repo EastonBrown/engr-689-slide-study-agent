@@ -1,0 +1,19 @@
+{
+  "query": "What is Perception AI?",
+  "normalized_query": "what is perception ai",
+  "asked_at": "2026-08-21T04:09:48Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Perception AI",
+  "answer": "Perception AI is the first wave of modern AI: systems trained to sense and recognize patterns in raw data—images, speech, video, and other sensor signals—rather than create new content. It began with deep-learning breakthroughs like AlexNet (2012) and underpins applications such as computer vision, speech recognition, medical imaging, and recommendation and autonomous-vehicle sensing. In the commonly taught progression, it is followed by generative AI (producing text, images, and code), agentic AI (reasoning, planning, and acting), and physical AI (embodied robots acting in the real world).",
+  "citations": [
+    {
+      "title": "[Physical AI Series 1] Jensen Huang Declares \"Physical AI\" the Next Wave of AI—What Is It?",
+      "url": "https://superb-ai.com/en/resources/blog/physical-ai-series-1-what-is-it-en"
+    },
+    {
+      "title": "NVIDIA charts a course from agentic AI to physical AI",
+      "url": "https://www.rcrwireless.com/20250110/ai-ml/nvidia-charts-a-course-from-agentic-ai-to-physical-ai"
+    }
+  ]
+}

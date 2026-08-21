@@ -119,8 +119,13 @@ def _message_content(request: PageReadRequest) -> list[dict[str, object]]:
     return [
         intro,
         {
+            # The API rejects an empty text content block outright, and a
+            # slide with no extractable text (a title-only build frame, a
+            # section divider with no PDF text layer) is exactly the case
+            # `extracted_text` comes back empty for. Say so explicitly rather
+            # than send nothing.
             "type": "text",
-            "text": request.extracted_text or "",
+            "text": request.extracted_text or "(no extractable text on this slide)",
         },
     ]
 
@@ -243,31 +248,65 @@ def _load_manifest(run_dir: Path) -> Manifest | None:
     return Manifest.model_validate(payload) if payload is not None else None
 
 
+def _count_notes_on_disk(run_dir: Path, path_kind: PathKind) -> tuple[int, int, int]:
+    """Recount one path's notes from what is actually on disk.
+
+    A slice or a resume only ever touches some of a path's note files, so the
+    count this invocation produced is not the count that belongs in the
+    manifest: the other slides' notes are still there and still true. Reading
+    them back off disk is what makes a second invocation merge into the first
+    rather than overwrite it, and it is naturally correct for a first
+    invocation too, where "on disk" and "this invocation" are the same set.
+    """
+
+    attempted = 0
+    succeeded = 0
+    reader_notes = 0
+    for target in sorted(paths.notes_dir(run_dir, path_kind.value).glob("*.json")):
+        if not target.stem.isdigit():
+            continue
+        payload = paths.read_json(target)
+        if payload is None:
+            continue
+        try:
+            note = SlideNote.model_validate(payload)
+        except ValidationError:
+            continue
+        attempted += 1
+        if note.reader_note is None:
+            succeeded += 1
+        else:
+            reader_notes += 1
+    return attempted, succeeded, reader_notes
+
+
 def _update_manifest(
     run_dir: Path,
     manifest: Manifest | None,
-    counts: dict[PathKind, tuple[int, int, int]],
+    touched_paths: list[PathKind],
     usage: StageUsage,
-    aborted: bool = False,
 ) -> None:
-    """Record what this invocation read. `aborted` withholds the completion mark.
+    """Record what this run directory's notes now say, for the paths touched.
 
-    The counts and the usage are written either way, because they are what the
-    stage actually did and losing them is the bug this path exists to fix. What
-    an aborted run may not claim is that the stage finished: a manifest saying
-    `page_reader` completed with 40 of 66 slides is a worse artifact than one
-    that says the stage is still outstanding.
+    Counts are recounted from disk rather than carried from this invocation's
+    loop, so a slice or a resume merges into what an earlier invocation wrote
+    instead of overwriting it. A path is marked complete only once every slide
+    of the deck has a note file: a manifest saying `page_reader` finished with
+    40 of 66 slides attempted is a worse artifact than one that still says the
+    stage is outstanding.
     """
 
     if manifest is None:
         return
 
+    page_count = manifest.preflight.page_count
     stats_by_path = {stat.path: stat for stat in manifest.paths}
-    for path_kind, (attempted, succeeded, reader_notes) in counts.items():
+    for path_kind in touched_paths:
+        attempted, succeeded, reader_notes = _count_notes_on_disk(run_dir, path_kind)
         existing = stats_by_path.get(path_kind, PathStats(path=path_kind))
-        stages = list(existing.completed_stages)
-        if not aborted and "page_reader" not in stages:
-            stages.append("page_reader")
+        stages = [stage for stage in existing.completed_stages if stage != PAGE_READER_STAGE]
+        if attempted >= page_count:
+            stages.append(PAGE_READER_STAGE)
         stats_by_path[path_kind] = existing.model_copy(
             update={
                 "slides_attempted": attempted,
@@ -277,8 +316,22 @@ def _update_manifest(
             }
         )
 
-    stage_usage = [item for item in manifest.stage_usage if item.stage != PAGE_READER_STAGE]
-    stage_usage.append(usage)
+    # A zero-call invocation is the normal shape of resuming a run with no
+    # failed slides left (issue #31): nothing was read, so it must not touch
+    # the existing `page_reader` row at all. Replacing it with a zero-cost
+    # row, or dropping it outright, would erase real cost already spent for
+    # no reason.
+    #
+    # A non-zero invocation is added to whatever row is already there, not
+    # substituted for it: page reads are resumable per slide, so a partial
+    # resume (a slide or two left over from an earlier invocation) must not
+    # discard the cost that earlier invocation already paid for the rest.
+    stage_usage = list(manifest.stage_usage)
+    if usage.calls:
+        previous = next((item for item in stage_usage if item.stage == PAGE_READER_STAGE), None)
+        merged = _add_usage(previous, usage) if previous is not None else usage
+        stage_usage = [item for item in stage_usage if item.stage != PAGE_READER_STAGE]
+        stage_usage.append(merged)
     manifest = manifest.model_copy(
         update={
             "paths": list(stats_by_path.values()),
@@ -320,9 +373,6 @@ def read_run_pages(
         if _should_read(run_dir, path_kind, slide, resume)
     ]
     usage = StageUsage(stage=PAGE_READER_STAGE)
-    counts: dict[PathKind, list[int]] = {
-        path_kind: [0, 0, 0] for path_kind in selected_paths
-    }
 
     # An unexpected error is re-raised, but only after the manifest has been
     # written. A programmer bug still crashes the run loudly; it no longer also
@@ -336,24 +386,10 @@ def read_run_pages(
             except BaseException as error:  # noqa: BLE001 - re-raised below
                 unexpected = unexpected or error
                 continue
-            counts[path_kind][0] += 1
-            if note.reader_note is None:
-                counts[path_kind][1] += 1
-            else:
-                counts[path_kind][2] += 1
             usage = _add_usage(usage, item_usage)
             if log:
                 log(path_kind, _log_line(note))
 
-    _update_manifest(
-        run_dir,
-        _load_manifest(run_dir),
-        {
-            path_kind: (values[0], values[1], values[2])
-            for path_kind, values in counts.items()
-        },
-        usage,
-        aborted=unexpected is not None,
-    )
+    _update_manifest(run_dir, _load_manifest(run_dir), selected_paths, usage)
     if unexpected is not None:
         raise unexpected

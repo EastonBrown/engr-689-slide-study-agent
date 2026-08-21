@@ -1,0 +1,25 @@
+{
+  "page_role": "content",
+  "title": "Prelude of Foundation Models (early deep learning)",
+  "reading": "The slide frames early deep learning as the prelude to today's foundation models, citing a lineage of landmark convolutional network papers: AlexNet (Krizhevsky et al., 2012), VGG (Simonyan et al., 2015), GoogLeNet/Inception (Szegedy et al., 2015), ResNet (He et al., 2016), and DenseNet (Huang et al., 2017). The text path shows only the heading and citation list; any accompanying architecture figures are not available.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Foundation models",
+      "status": "named_only",
+      "why_it_matters": "The slide positions early deep learning architectures as their historical precursor."
+    },
+    {
+      "name": "Early deep CNN architectures (AlexNet, VGG, Inception, ResNet, DenseNet)",
+      "status": "named_only",
+      "why_it_matters": "These successive architectures established the depth-and-scale trajectory that foundation models later extended."
+    }
+  ],
+  "verbatim_spans": [
+    "Prelude of Foundation Models (early deep learning)",
+    "[Krizhevsky et al., 2012]",
+    "[He et al., 2016]"
+  ],
+  "reader_note": "Text-only extraction; slide likely contained architecture figures not represented here.",
+  "slide_number": 21
+}

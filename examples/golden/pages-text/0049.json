@@ -1,0 +1,30 @@
+{
+  "page_role": "agenda",
+  "title": "Agenda",
+  "reading": "An agenda slide listing the talk's structure: background on computer vision and agentic AI, multimodal (vision and language) models split into understanding and generation, and finally multimodal agents. Appearing at slide 49, it likely serves as a recurring roadmap marker signalling a transition between sections.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Agentic AI",
+      "status": "named_only",
+      "why_it_matters": "Framed as background context for the talk."
+    },
+    {
+      "name": "Multimodal (vision and language) models",
+      "status": "named_only",
+      "why_it_matters": "Core topic, divided into understanding and generation."
+    },
+    {
+      "name": "Multimodal agents",
+      "status": "named_only",
+      "why_it_matters": "Culminating topic of the presentation."
+    }
+  ],
+  "verbatim_spans": [
+    "Background on computer vision and agentic AI",
+    "Multimodal (vision and language) models",
+    "Multimodal agents"
+  ],
+  "reader_note": null,
+  "slide_number": 49
+}

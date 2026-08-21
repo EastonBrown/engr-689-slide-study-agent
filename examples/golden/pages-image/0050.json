@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "Foundation Models for visual generation (Generative AI)",
+  "reading": "The slide traces recent foundation models for visual/video generation along a timeline, naming Meta's Emu Video (2023), OpenAI's Sora (2024), and Google's Veo 2 (2025), each illustrated by a sample generated frame. A caption at the bottom quotes the Sora technical report's claim about scaling video generation, with a link to OpenAI's page on video generation models as world simulators.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Horizontal arrow timeline with three tick marks labelled by company logos: Meta / Emu Video 2023, OpenAI / Sora 2024, Google / Veo 2, 2025; right end labelled 'Timeline'. Below each tick is a sample generated image: an emu in ski goggles in snow, an astronaut in a red knit helmet, and a beekeeper among sunflowers and hives.",
+      "assertion": "Video generation foundation models have advanced rapidly and in visual fidelity from 2023 to 2025 across major labs.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Foundation models for visual generation",
+      "status": "named_only",
+      "why_it_matters": "Large-scale generative models are the current paradigm for image/video synthesis."
+    },
+    {
+      "name": "Video generation models as world simulators",
+      "status": "named_only",
+      "why_it_matters": "Framing scaling video generation as a route to general-purpose physical-world simulators."
+    }
+  ],
+  "verbatim_spans": [
+    "SORA: Scaling video generation model is a promising path towards building general purpose simulators of the physical world",
+    "Emu Video 2023",
+    "Veo 2, 2025"
+  ],
+  "reader_note": null,
+  "slide_number": 50
+}

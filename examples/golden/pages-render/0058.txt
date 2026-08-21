@@ -1,0 +1,4 @@
+Unifying multimodal understanding and generation
+• A unified autoregressive model capable of generating both text and 
+visual tokens
+Tong et al., MetaMorph: Multimodal Understanding and Generation via Instruction Tuning, 2024

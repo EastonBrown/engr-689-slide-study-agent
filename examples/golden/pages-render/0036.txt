@@ -1,0 +1,9 @@
+Contrastive learning
+• Maximize similarities of positive pairs
+• Minimize similarities of negative pairs 
+Query image
+key image Encoder
+Encoder
+loss
+Update both encoders
+Share weights for both encoder

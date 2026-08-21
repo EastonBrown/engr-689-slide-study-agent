@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "How does image generation work?",
+  "reading": "The slide introduces diffusion models as the mechanism behind image generation: Gaussian noise is gradually added to an image, and a model learns to reverse that corruption. A horizontal figure below illustrates the two directions of the process using a puppy photograph at varying noise levels.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A row of three images — pure colored noise on the left, a heavily noised puppy in the middle, a clean puppy photo on the right — separated by ellipses. A red arrow above points left-to-right labeled 'Denoising/generation process'; a red arrow below points right-to-left labeled 'Diffusion process'.",
+      "assertion": "The forward diffusion process destroys a clean image into noise step by step, while the learned reverse (denoising) process generates an image from noise.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Diffusion models",
+      "status": "explained_here",
+      "why_it_matters": "Core generative framework: add noise, then learn its reversal."
+    },
+    {
+      "name": "Gaussian noise",
+      "status": "assumed_prior",
+      "why_it_matters": "The corruption used in the forward process."
+    },
+    {
+      "name": "Denoising/generation process",
+      "status": "named_only",
+      "why_it_matters": "The learned reverse direction that produces samples."
+    }
+  ],
+  "verbatim_spans": [
+    "Diffusion models: Gradually add Gaussian noise and then learn to reverse",
+    "Denoising/generation process",
+    "Diffusion process"
+  ],
+  "reader_note": null,
+  "slide_number": 51
+}

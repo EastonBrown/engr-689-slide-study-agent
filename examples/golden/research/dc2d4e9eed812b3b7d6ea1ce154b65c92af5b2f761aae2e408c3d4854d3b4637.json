@@ -1,0 +1,19 @@
+{
+  "query": "What is Long-tailed / imbalanced data?",
+  "normalized_query": "what is long-tailed / imbalanced data",
+  "asked_at": "2026-08-21T04:06:34Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Long-tailed / imbalanced data",
+  "answer": "Long-tailed (imbalanced) data describes a dataset where a few \"head\" classes contain the vast majority of samples while many \"tail\" classes have very few examples each — a special, extreme case of class imbalance that is common in real-world collections like species, disease, or object-recognition datasets. Because standard training minimizes average error, models fit the head classes well and become biased against the rare tail classes, overfitting the abundant categories and generalizing poorly on the scarce ones. Typical remedies include re-sampling, re-weighting or margin-adjusted losses, decoupled representation/classifier training, data augmentation, and transfer of knowledge from head to tail classes.",
+  "citations": [
+    {
+      "title": "A Systematic Review on Long-Tailed Learning",
+      "url": "https://arxiv.org/abs/2408.00483"
+    },
+    {
+      "title": "A survey on imbalanced learning: latest research, applications and future directions",
+      "url": "https://link.springer.com/article/10.1007/s10462-024-10759-6"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "page_role": "agenda",
+  "title": "Agenda",
+  "reading": "An agenda page listing the three parts of the talk: background on computer vision and agentic AI, multimodal (vision and language) models, and multimodal agents. No elaboration is given for any item on this page.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Agentic AI",
+      "status": "named_only",
+      "why_it_matters": "Listed as background material for the talk."
+    },
+    {
+      "name": "Multimodal (vision and language) models",
+      "status": "named_only",
+      "why_it_matters": "A main topic section of the talk."
+    },
+    {
+      "name": "Multimodal agents",
+      "status": "named_only",
+      "why_it_matters": "The culminating topic of the talk."
+    }
+  ],
+  "verbatim_spans": [
+    "Background on computer vision and agentic AI",
+    "Multimodal (vision and language) models",
+    "Multimodal agents"
+  ],
+  "reader_note": null,
+  "slide_number": 8
+}

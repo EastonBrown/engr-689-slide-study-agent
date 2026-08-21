@@ -1,0 +1,3 @@
+Agentic object detection
+“Detect unripe strawberries in the picture” “Detect airplanes with two engines”
+LandingAI
