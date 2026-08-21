@@ -45,6 +45,11 @@ def _next_run_slot(
         moment = None
 
 
+def _load_manifest(run_dir: Path) -> Manifest | None:
+    payload = paths.read_json(paths.manifest_file(run_dir))
+    return Manifest.model_validate(payload) if payload is not None else None
+
+
 def _require_slides_in_deck(slide_numbers: list[int], page_count: int) -> None:
     """Refuse a slice naming a page the deck does not have.
 
@@ -107,49 +112,75 @@ def run_render_pipeline(
     deck_slug = paths.deck_slug(
         deck_path.name, deck_sha256, layout.deck_slugs_with_hashes(subject_slug)
     )
-    caller_started_at = started_at
-    if started_at is None:
-        started_at = datetime.now(timezone.utc)
-    run_timestamp, run_dir = _next_run_slot(
-        layout, subject_slug, deck_slug, started_at=caller_started_at
-    )
-    started_stamp = (
-        paths.utc_timestamp(started_at)
-        if caller_started_at is not None
-        else run_timestamp
-    )
 
-    if log:
-        log(f"creating run {subject_slug}/{deck_slug}/{run_timestamp}")
+    if resume:
+        # Re-entering an existing run, not allocating one. The run directory,
+        # its manifest, and the `latest` pointer are all left exactly as they
+        # were; only the stages below act, and page_reader is told to retry
+        # only what still needs it.
+        run_dir = layout.latest_run_dir(subject_slug, deck_slug)
+        if run_dir is None:
+            raise PipelineError(
+                f"no run to resume for {subject_slug}/{deck_slug}; "
+                "run once without --resume first"
+            )
+        manifest = _load_manifest(run_dir)
+        if manifest is None:
+            raise PipelineError(f"run directory has no manifest: {run_dir}")
+        if manifest.deck_sha256 != deck_sha256:
+            raise PipelineError(
+                f"{deck_path.name} does not match the deck run at {run_dir} "
+                "was rendered from"
+            )
+        run_timestamp = manifest.run_timestamp
+        superseded = manifest.preflight.superseded
+        if log:
+            log(f"resuming run {subject_slug}/{deck_slug}/{run_timestamp}")
+    else:
+        caller_started_at = started_at
+        if started_at is None:
+            started_at = datetime.now(timezone.utc)
+        run_timestamp, run_dir = _next_run_slot(
+            layout, subject_slug, deck_slug, started_at=caller_started_at
+        )
+        started_stamp = (
+            paths.utc_timestamp(started_at)
+            if caller_started_at is not None
+            else run_timestamp
+        )
 
-    try:
-        render_result = render.render_deck(deck_path, run_dir, log=log)
-    except render.DeckUnreadable as error:
-        raise PipelineError(str(error)) from error
+        if log:
+            log(f"creating run {subject_slug}/{deck_slug}/{run_timestamp}")
 
-    manifest = Manifest(
-        schema_version=config.SCHEMA_VERSION,
-        subject_slug=subject_slug,
-        deck_slug=deck_slug,
-        deck_sha256=deck_sha256,
-        deck_filename=deck_path.name,
-        run_timestamp=run_timestamp,
-        started_at=started_stamp,
-        ended_at=paths.utc_timestamp(),
-        model=config.MODEL_ID,
-        prompt_version=config.PROMPT_VERSION,
-        dpi=config.RENDER_DPI,
-        preflight=render_result.preflight,
-        paths=[
-            PathStats(path=PathKind.image, completed_stages=["render"]),
-            PathStats(path=PathKind.text, completed_stages=["render"]),
-        ],
-        stage_usage=[StageUsage(stage="render")],
-        total_cost_usd=0.0,
-    )
+        try:
+            render_result = render.render_deck(deck_path, run_dir, log=log)
+        except render.DeckUnreadable as error:
+            raise PipelineError(str(error)) from error
 
-    paths.write_model(paths.manifest_file(run_dir), manifest)
-    layout.write_latest(subject_slug, deck_slug, run_timestamp)
+        manifest = Manifest(
+            schema_version=config.SCHEMA_VERSION,
+            subject_slug=subject_slug,
+            deck_slug=deck_slug,
+            deck_sha256=deck_sha256,
+            deck_filename=deck_path.name,
+            run_timestamp=run_timestamp,
+            started_at=started_stamp,
+            ended_at=paths.utc_timestamp(),
+            model=config.MODEL_ID,
+            prompt_version=config.PROMPT_VERSION,
+            dpi=config.RENDER_DPI,
+            preflight=render_result.preflight,
+            paths=[
+                PathStats(path=PathKind.image, completed_stages=["render"]),
+                PathStats(path=PathKind.text, completed_stages=["render"]),
+            ],
+            stage_usage=[StageUsage(stage="render")],
+            total_cost_usd=0.0,
+        )
+
+        paths.write_model(paths.manifest_file(run_dir), manifest)
+        layout.write_latest(subject_slug, deck_slug, run_timestamp)
+        superseded = render_result.preflight.superseded
 
     if read_pages:
         page_reader.read_run_pages(
@@ -164,7 +195,7 @@ def run_render_pipeline(
         outline.outline_run(
             run_dir,
             deck_slug=deck_slug,
-            superseded=render_result.preflight.superseded,
+            superseded=superseded,
             subject_slug=subject_slug,
             layout=layout,
             outliner=outliner,
@@ -192,7 +223,8 @@ def run_render_pipeline(
 
     if log:
         log(f"wrote {paths.manifest_file(run_dir)}")
-        log(f"latest -> {run_timestamp}")
+        if not resume:
+            log(f"latest -> {run_timestamp}")
     return PipelineResult(run_dir=run_dir, manifest=manifest)
 
 
@@ -252,7 +284,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--resume",
         action="store_true",
-        help="With --read-pages, retry only notes whose reader_note is non-null.",
+        help=(
+            "Reopen the latest run for this deck instead of starting a new "
+            "one. With --read-pages, retry only notes whose reader_note is "
+            "non-null."
+        ),
     )
     parser.add_argument(
         "--slides",

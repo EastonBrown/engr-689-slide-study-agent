@@ -582,7 +582,7 @@ def _mark_outline_complete(run_dir: Path, usage: StageUsage) -> None:
         if "outline" not in stages:
             stages.append("outline")
         updated_paths.append(stat.model_copy(update={"completed_stages": stages}))
-    stage_usage = list(manifest.stage_usage)
+    stage_usage = [item for item in manifest.stage_usage if item.stage != "outline"]
     if usage.calls:
         stage_usage.append(usage)
     paths.write_model(
@@ -591,7 +591,7 @@ def _mark_outline_complete(run_dir: Path, usage: StageUsage) -> None:
             update={
                 "paths": updated_paths,
                 "stage_usage": stage_usage,
-                "total_cost_usd": manifest.total_cost_usd + usage.cost_usd,
+                "total_cost_usd": sum(item.cost_usd for item in stage_usage),
                 "topic_cap_exceeded": manifest.topic_cap_exceeded
                 or any(
                     Outline.model_validate(

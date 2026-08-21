@@ -411,6 +411,74 @@ def test_run_writes_outlines_for_both_paths(tmp_path):
     assert text.path == schemas.PathKind.text
 
 
+class TestRerunningOutlineReplacesItsUsageRowRatherThanAppending:
+    """Issue #31, the defect moved in from #32: a second `outline_run` call
+    used to append a second `stage_usage` row for "outline" and add its cost
+    on top of the first, roughly doubling the reported cost of a stage that
+    just reprocesses the same notes.
+    """
+
+    def a_manifest(self) -> schemas.Manifest:
+        return schemas.Manifest(
+            schema_version=1,
+            subject_slug="engr-689",
+            deck_slug="deck",
+            deck_sha256="a" * 64,
+            deck_filename="deck.pdf",
+            run_timestamp="2026-08-20T12-00-00Z",
+            started_at="2026-08-20T12-00-00Z",
+            ended_at="2026-08-20T12-00-00Z",
+            model="model",
+            prompt_version="p",
+            dpi=150,
+            preflight=schemas.Preflight(
+                readable=True,
+                page_count=1,
+                text_native_pages=1,
+                text_native_fraction=1.0,
+                image_only=False,
+                page_width_px=1,
+                page_height_px=1,
+                downscaled=False,
+                buildup_detection_ran=True,
+                superseded_count=0,
+                superseded=[],
+            ),
+            paths=[
+                schemas.PathStats(path=schemas.PathKind.image, completed_stages=["render"]),
+                schemas.PathStats(path=schemas.PathKind.text, completed_stages=["render"]),
+            ],
+            stage_usage=[schemas.StageUsage(stage="render")],
+            total_cost_usd=0.0,
+        )
+
+    def test_a_second_run_replaces_the_first_runs_outline_usage_row(self, tmp_path):
+        run_dir = tmp_path / "run"
+        paths.write_model(paths.manifest_file(run_dir), self.a_manifest())
+        for path_kind in ("image", "text"):
+            paths.write_model(paths.page_note(run_dir, path_kind, 1), note(1))
+
+        first_outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1])]))
+        first_outliner.usage = schemas.StageUsage(
+            stage="outline", calls=2, cost_usd=0.50
+        )
+        outline.outline_run(run_dir, deck_slug="deck", superseded=[], outliner=first_outliner)
+
+        second_outliner = FakeOutliner(schemas.GroupingDraft(topics=[topic("A", [1])]))
+        second_outliner.usage = schemas.StageUsage(
+            stage="outline", calls=2, cost_usd=0.60
+        )
+        outline.outline_run(run_dir, deck_slug="deck", superseded=[], outliner=second_outliner)
+
+        manifest = schemas.Manifest.model_validate(
+            paths.read_json(paths.manifest_file(run_dir))
+        )
+        outline_rows = [item for item in manifest.stage_usage if item.stage == "outline"]
+        assert len(outline_rows) == 1
+        assert outline_rows[0].cost_usd == 0.60
+        assert manifest.total_cost_usd == 0.60
+
+
 def test_run_loads_existing_topics_from_subject_profile_and_updates_manifest(tmp_path):
     layout = paths.Layout(tmp_path)
     memory.create_subject("ENGR 689", layout)
