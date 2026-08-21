@@ -16,8 +16,8 @@ stage can be implemented without reopening the question.
 Constraints carried in from elsewhere: page images are the ingestion path and
 text extraction exists only as the baseline; ADR 0001 pins one page image per
 request, which means the reader sees exactly one slide and no neighbours; the
-decks are text-native, uniformly sized, and free of animation-duplicate pages,
-so a PDF page number is a citable slide number.
+decks are text-native and uniformly sized. A PDF page number remains the
+citable slide number even when a build-up frame is later excluded from coverage.
 
 ## Decision
 

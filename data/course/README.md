@@ -22,6 +22,9 @@ Files are unmodified originals as posted to the course.
 | `Day3 Principle.pdf` | 66 | 138 | 157 chars |
 
 286 slides total, 66 of them in the Day 3 deck the eval targets.
+The Day 3 deck has 65 covered slides: render preflight detects slide 23 as a
+superseded build-up frame whose surviving page is slide 24. The other four
+course decks have no superseded frames.
 
 ### Nothing hostile about them
 

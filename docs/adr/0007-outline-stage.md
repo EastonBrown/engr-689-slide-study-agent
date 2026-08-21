@@ -17,7 +17,8 @@ question to name a topic and cite at least one slide, and both of those come
 from here. That makes the outline the largest unspecified stage in the pipeline
 and the one the rubric's Planning row is about.
 
-Five decks, 286 slides, 66 in the Day 3 deck the eval targets. Two things in
+Five decks, 286 pages, 66 in the Day 3 deck the eval targets, with 65 covered
+after one detected build-up frame (slide 23 superseded by slide 24). Two things in
 that deck constrain the design directly: the encoder-popularity chart appears on
 slide 28 and again on slide 48, twenty slides apart, and the generation-versus-
 retrieval comparison exists only across slides 55 and 56, where slide 56
@@ -49,7 +50,8 @@ partition, `exposure` is the length of the slide list and needs no explanation.
 
 ### Coverage is computed in code from `page_role`
 
-A slide is **covered** when its `page_role` is `content`. A slide is **skipped**
+A slide is **covered** when its `page_role` is `content` and it is not a
+superseded build-up frame. A slide is **skipped**
 when its role is `title`, `agenda`, `section_break`, `references`, or `blank`.
 The model does not get a vote.
 
@@ -73,7 +75,8 @@ subject's material touched a topic and the slide was really there. It is flagged
 `degraded` in the outline, the review marks it, and the quiz generator may not
 cite it at all.
 
-This follows from coverage being a function of `page_role` alone, so it is
+This follows from coverage being a function of `page_role` plus the code-owned
+superseded list, so it is
 stated rather than left to fall out of the rule by accident. It keeps a bad read
 out of a question that cannot be defended on camera, without pretending the
 slide did not exist.

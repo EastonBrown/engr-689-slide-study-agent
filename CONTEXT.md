@@ -10,8 +10,8 @@ buildable form, stage by stage, is [`docs/spec.md`](docs/spec.md).
 **Deck.** One PDF lecture slide deck. The unit a run operates on.
 
 **Slide.** One page of a deck. Slide numbers are 1-based and equal the PDF page
-number, which holds because the course decks contain no animation-duplicate
-pages.
+number. The Day 3 eval deck has one detected animation build-up: slide 23 is
+superseded by slide 24, leaving 65 covered slides out of 66 pages.
 
 **Page reader.** The stage that looks at one slide and returns one slide note.
 Runs once per slide, concurrently across the deck.
@@ -85,8 +85,9 @@ auditable against the deck length.
 
 **Build-up frame.** One of several consecutive pages showing the same slide
 with progressively more content revealed, produced by presentation software
-exporting animation steps. The course decks contain none, which is why slide
-numbers equal PDF page numbers. Another class's deck will contain them.
+exporting animation steps. The Day 3 eval deck has one detected pair: slide 23
+is superseded by slide 24. The other four course decks have none. Covered-slide
+counts exclude the superseded frame.
 
 **Superseded frame.** A build-up frame that a later page contains entirely.
 Detected at render time from extracted text alone, with no model call, and
@@ -307,6 +308,7 @@ Outline
   topic_cap_exceeded   bool
   question_budget      [(str, int)]   topic name to question count
   untested_topics      [str]          real, non-empty topics allocated zero questions
+  repair_attempted      bool          whether the one allowed repair call ran
 
 OutlineTopic
   name             str            reused verbatim or newly declared
@@ -333,7 +335,8 @@ BridgedFact
 - A topic's slides need not be contiguous. The same material recurring twenty
   slides later is one topic, not two.
 - Coverage is `page_role == content` minus superseded build-up frames, decided
-  in code. On the course decks the superseded list is always empty.
+  in code. The Day 3 eval deck has 65 covered slides: slide 23 is superseded by
+  slide 24; the other course decks have no superseded frames.
 - Non-course decks carry their own intake rules: preflight, build-up detection,
   page-geometry clamping, and eval labels keyed by deck slug. See
   `docs/spec.md`.

@@ -160,8 +160,9 @@ accumulates it.
 ## Any deck, not just the course decks
 
 Every decision on record was made against five course decks that are
-text-native, uniformly 960x540, and free of animation build-up pages. A deck
-from another class satisfies none of that by default. This whole section is
+text-native and uniformly 960x540. The Day 3 eval deck contains one detected
+animation build-up pair, with slide 23 superseded by slide 24. A deck from
+another class satisfies none of that by default. This whole section is
 spec-level, and it exists so that a chemistry or history deck produces a
 defensible run rather than a confident wrong one.
 
@@ -198,9 +199,9 @@ nothing changes, which means the course decks render exactly as before.
 ### Build-up frames
 
 A slide deck exported from presentation software often contains the same slide
-several times, each with more content revealed. `CONTEXT.md` records that the
-course decks contain none, which is why slide numbers equal PDF page numbers.
-Another class's deck will contain them, and the damage is entirely silent:
+several times, each with more content revealed. The Day 3 eval deck contains one
+such pair: slide 23 is superseded by slide 24. The other four course decks have
+none. Another class's deck may contain more, and the damage is entirely silent:
 exposure inflates on whichever topic animated the most, the question budget's
 proportional allocation follows that inflation, citations land on a partial
 build of a slide, and ADR 0007's "adjacent slide with a null or repeated title"
@@ -232,7 +233,8 @@ writes its `SlideNote`. Slide numbers must keep equaling PDF page numbers, and
 the interface should be able to show a dropped frame rather than have it vanish.
 
 The count is reported in the manifest and in the run summary, so a deck with 40
-build-up frames says so out loud.
+build-up frames says so out loud. Day 3 has 65 covered slides out of 66 pages;
+the other four course decks have no superseded frames.
 
 ### Scale
 
@@ -255,7 +257,8 @@ labeled for this deck**.
 
 This is a correctness requirement on the interface, not a nicety. The comparison
 scoreboard in issue #8 is stated with the Day 3 numbers in it, 3/4 against 0/4,
-112 visuals against 0, 66 slides read against 65. Two of those three are
+112 visuals against 0, and 65 covered slides on each path out of 66 rendered
+pages. Two of those three are
 computable from any run and must be computed from the run. The third is
 label-dependent and must render as "not labeled" when the labels are absent. No
 number on that screen is a literal.
@@ -569,9 +572,7 @@ Named rather than assumed.
 - **What the README becomes.** Still fog on the map, still waiting on what ships.
 - **Whether a second deck is processed.** The demo plan makes `Day1 Tool.pdf` on
   the image path a nice-to-have and the first thing cut.
-- **Whether the build-up detection thresholds hold on a real animated deck.**
-  They are chosen conservatively and have never been run against one, because
-  the course decks contain no build-up frames to test on. The first outside deck
-  is the test, and the `superseded` count in the run summary is how it is
-  checked: a plausible count on a visibly animated deck, and zero on the course
-  decks.
+- **Whether the build-up detection thresholds hold beyond the course decks.**
+  They are chosen conservatively. The Day 3 eval deck supplies one real pair
+  (slide 23 superseded by slide 24); the other course decks supply none. The
+  `superseded` count in the run summary remains the check on any outside deck.
