@@ -3,12 +3,15 @@
 Final project for ENGR 689 (SPTP: Multimodal LLM Agents), Texas A&M, fall 2026
 sprint session. Instructors: Yu Zhang and Cheng Zhang.
 
-**Status: end to end on one deck. Every stage in the table below runs, and one
-complete run over a 66-slide course deck is committed under `examples/golden/`,
-both paths, with the quiz it generated and the memory it wrote. The interface
-runs that pipeline and replays that run. What is not claimed is breadth: the
-system has been exercised on the course decks, not on arbitrary ones, and the
-limitations section is still being filled in.**
+**Status: the full pipeline runs — render, the page reader, outline, research,
+both lesson reviews, the image-path quiz, the deterministic grader, retakes,
+and the Streamlit interface. One complete run over a 66-slide course deck is
+committed under `examples/golden/`, both paths, with the quiz it generated and
+the memory it wrote; the interface runs that pipeline and replays that run.
+`eval/results.md` is the one open item: the protocol and labels are locked,
+but the figure-only-fact and citation-accuracy tables have not been
+hand-scored yet. The table below marks the whole target design, all of which
+is now built.**
 
 ## What it does
 
@@ -37,7 +40,7 @@ retrieval comparison.
 A text-only path is also planned, kept specifically so the two can be run against
 the same deck and compared directly.
 
-## Planned components
+## Components
 
 | Component | Role |
 |---|---|
@@ -49,6 +52,10 @@ the same deck and compared directly.
 | Quiz generator | Write the knowledge check from the outline and notes |
 | Grader | Score the attempt, explain each answer |
 | Memory | Per-deck artifacts and missed-question history that shape retakes |
+
+All eight run today, both from the CLI (`python -m study_agent.pipeline`) and
+from the Streamlit interface (`streamlit run app.py`), which also owns
+grading, retakes, and topic memory end to end.
 
 ## Setup
 
@@ -84,6 +91,12 @@ Render alone is the default. Add stages as needed:
 | `--slides 55-61` | Restricts the page reads to a slice, for a cheap check |
 | `--resume` | Reopens the latest run for this deck instead of starting a new one; with `--read-pages`, retries only the slides whose read failed |
 | `--outline` | Groups the notes into topics and writes `outline-{image,text}.json` |
+| `--research` | Looks up named-only concepts, capped at 15/deck, into the shared research cache |
+| `--review` | Writes both `review-{image,text}.md` lesson reviews |
+| `--quiz` | Writes the image-path `quiz.json`, up to 10 questions |
+
+Grading, retakes, and the topic mastery profile are driven from the Streamlit
+interface (`streamlit run app.py`), not the CLI.
 
 ## The interface, and replaying a finished run
 
@@ -123,10 +136,23 @@ The checks are `python -m pytest` and `python -m mypy`, both from the repo root.
 
 ## Limitations and failure cases
 
-To be documented as they are found. Failing outputs are kept rather than
-discarded.
+Failing and degraded outputs are kept on disk rather than discarded — a
+`reader_note` marks a failed or degraded slide read instead of silently
+dropping it.
+
+- Exercised on this class's five course decks, not on arbitrary decks.
+- The text path is a baseline only: it writes a review but generates no quiz
+  and makes no memory contribution.
+- Research lookups are capped at 15 per deck; the quiz is capped at 10
+  questions per deck, 3 per topic.
+- Memory is local to the machine — never merged or committed.
+- A model contract violation (for example, a slide claimed by two topics)
+  degrades gracefully after one repair attempt rather than aborting the run.
+- `eval/results.md` is not yet filled in — the protocol and labels are
+  locked and a golden run is committed, but hand-scoring hasn't happened.
 
 ## Acknowledgements
 
-External models, libraries, datasets, and any borrowed figures will be credited
-here as they are added.
+Model: Anthropic `claude-opus-5`, one page image per request, hosted web
+search for the research stage. Libraries: `pydantic`, `streamlit`,
+`pypdfium2`. Data: this course's own lecture decks, Fall 2026.
