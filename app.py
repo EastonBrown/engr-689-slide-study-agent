@@ -8,12 +8,17 @@ every later rerun reconstructs this screen from that directory.
 from __future__ import annotations
 
 from pathlib import Path
+import re
+from typing import Any
 
 import streamlit as st
 
 from study_agent import memory, paths, pipeline, run_view
-from study_agent.schemas import PathKind
-from study_agent.stages import outline, page_reader
+from study_agent.schemas import PathKind, Quiz, SlideNote
+from study_agent.stages import grade, outline, page_reader, retake
+
+
+_CITATION = re.compile(r"\[(?:slide|slides)\s+([0-9]+(?:\s*,\s*[0-9]+)*)\]", re.I)
 
 
 def _uploaded_pdf(uploaded: st.runtime.uploaded_file_manager.UploadedFile) -> Path:
@@ -97,6 +102,162 @@ def _render_failures(run_dir: Path) -> None:
                 st.image(str(item.image_path), caption=f"Slide {item.slide_number}")
 
 
+def _notes(run_dir: Path, path_kind: PathKind) -> dict[int, SlideNote]:
+    notes: dict[int, SlideNote] = {}
+    for target in sorted(paths.notes_dir(run_dir, path_kind.value).glob("*.json")):
+        payload = paths.read_json(target)
+        if payload is not None:
+            try:
+                note = SlideNote.model_validate(payload)
+            except Exception:
+                continue
+            notes[note.slide_number] = note
+    return notes
+
+
+def _review(run_dir: Path, path_kind: PathKind) -> str | None:
+    target = paths.review_file(run_dir, path_kind.value)
+    return paths.read_text(target) if target.is_file() else None
+
+
+def _cited_slides(markdown: str) -> list[int]:
+    return sorted({int(number) for match in _CITATION.findall(markdown) for number in match.split(",")})
+
+
+def _render_review(run_dir: Path, path_kind: PathKind, *, title: str) -> None:
+    markdown = _review(run_dir, path_kind)
+    if markdown is None:
+        st.info(f"{title} is not available yet.")
+        return
+    st.markdown(markdown)
+    cited = _cited_slides(markdown)
+    if not cited:
+        return
+    selected = st.selectbox(
+        f"Show cited slide ({path_kind.value} path)", cited,
+        key=f"citation-{path_kind.value}",
+    )
+    image = paths.page_render_png(run_dir, selected)
+    notes = _notes(run_dir, path_kind)
+    left, right = st.columns([2, 3])
+    with left:
+        if image.is_file():
+            st.image(str(image), caption=f"Slide {selected}")
+        else:
+            st.caption(f"Slide image {selected} is unavailable.")
+    with right:
+        note = notes.get(selected)
+        if note is None:
+            st.caption("The SlideNote for this citation is unavailable.")
+        else:
+            st.json(note.model_dump())
+
+
+def _fact_score(run_dir: Path, path_kind: PathKind, deck_slug: str) -> tuple[int, int, bool]:
+    payload = paths.read_json(paths.Layout().figure_only_facts_file())
+    if not isinstance(payload, dict) or payload.get("deck_slug") != deck_slug:
+        return 0, 0, False
+    facts = payload.get("facts", [])
+    notes = _notes(run_dir, path_kind)
+    hits = 0
+    for fact in facts:
+        fields = [notes[slide].model_dump() for slide in fact.get("slides", []) if slide in notes]
+        text = " ".join(str(value) for field in fields for value in field.values()).lower()
+        if str(fact.get("fact", "")).lower() in text:
+            hits += 1
+    return hits, len(facts), True
+
+
+def _render_comparison(run_dir: Path) -> None:
+    summary = run_view.run_summary(run_dir)
+    if summary is None:
+        return
+    st.subheader("Image path against text path")
+    image_notes = _notes(run_dir, PathKind.image)
+    text_notes = _notes(run_dir, PathKind.text)
+    image_visuals = sum(len(note.visuals) for note in image_notes.values())
+    text_visuals = sum(len(note.visuals) for note in text_notes.values())
+    image_hit, fact_total, labeled = _fact_score(run_dir, PathKind.image, summary.deck_slug)
+    text_hit, _, _ = _fact_score(run_dir, PathKind.text, summary.deck_slug)
+    columns = st.columns(3)
+    columns[0].metric("Slides read", f"{summary.slides_read} / {summary.slides_total}", f"baseline {summary.text_slides_read} / {summary.text_slides_total}")
+    columns[1].metric("Visuals found", f"{image_visuals}", f"baseline {text_visuals}")
+    if labeled:
+        columns[2].metric("Figure-only recovery", f"{image_hit} / {fact_total}", f"baseline {text_hit} / {fact_total}")
+    else:
+        columns[2].metric("Figure-only recovery", "not labeled for this deck")
+    if summary.image_only:
+        st.info("Text path not applicable, this deck is image-only.")
+    st.caption("Slide 10 is partial on both sides: its labels extract, but the spatial relation does not.")
+    image_review, text_review = st.columns(2)
+    with image_review:
+        _render_review(run_dir, PathKind.image, title="Image-path review")
+    with text_review:
+        _render_review(run_dir, PathKind.text, title="Text-path review")
+
+
+def _load_quiz(target: Path) -> Quiz | None:
+    payload = paths.read_json(target)
+    if payload is None:
+        return None
+    try:
+        return Quiz.model_validate(payload)
+    except Exception:
+        return None
+
+
+def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None:
+    quiz = _load_quiz(paths.quiz_file(run_dir))
+    if quiz is None:
+        return
+    st.subheader("Quiz")
+    st.caption(f"{len(quiz.questions)} questions drawn from {quiz.covered_slide_count} covered slides.")
+    answers: list[int | None] = []
+    for number, question in enumerate(quiz.questions):
+        answer = st.radio(question.stem, question.options, index=None, key=f"answer-{quiz.quiz_id}-{number}")
+        answers.append(question.options.index(answer) if answer is not None else None)
+    result_payload: Any = None
+    if st.button("Submit quiz", key=f"submit-{quiz.quiz_id}"):
+        try:
+            result = grade.grade_run(run_dir, answers, layout=layout)
+        except (grade.GradeError, memory.UnknownSubject) as error:
+            st.error(str(error))
+        else:
+            result_payload = result.model_dump()
+    if result_payload is None:
+        quiz_hash = paths.sha256_file(paths.quiz_file(run_dir))
+        for attempt in reversed(memory.read_attempts(subject_slug, layout).attempts):
+            if attempt.quiz_sha256 == quiz_hash:
+                chosen = [response.chosen_index if response.chosen_index >= 0 else None for response in attempt.responses]
+                result_payload = grade.grade_quiz(quiz, chosen, quiz_sha256=quiz_hash).model_dump()
+                break
+    if isinstance(result_payload, dict):
+        _render_grade(result_payload)
+    attempts = memory.read_attempts(subject_slug, layout).attempts
+    if attempts and st.button("Generate retake", key=f"retake-{subject_slug}"):
+        try:
+            retake.retake_run(subject_slug, layout=layout)
+        except retake.RetakeError as error:
+            st.warning(str(error))
+        else:
+            st.success("Retake written. Rerun the page to open it.")
+    elif not attempts:
+        st.caption("Retake unavailable until a quiz has been graded.")
+
+
+def _render_grade(payload: dict[str, Any]) -> None:
+    st.subheader("Grade")
+    st.write(f"{payload.get('correct', 0)} / {payload.get('total', 0)}")
+    for question in payload.get("questions", []):
+        verdict = "Correct" if question.get("correct") else "Incorrect"
+        st.markdown(f"**{verdict}:** {question.get('stem', '')}")
+        st.write(question.get("explanation", ""))
+        if question.get("chosen_rationale"):
+            st.caption(f"Chosen option: {question['chosen_rationale']}")
+    if payload.get("rollup"):
+        st.table(payload["rollup"])
+
+
 def _run(uploaded: st.runtime.uploaded_file_manager.UploadedFile, subject_slug: str) -> Path:
     """Run the available pipeline stages while their Streamlit boxes are open."""
 
@@ -152,10 +313,17 @@ def _run(uploaded: st.runtime.uploaded_file_manager.UploadedFile, subject_slug: 
         status.update(label="Outline: complete", state="complete", expanded=False)
     # Memory is derived only from the image-path outline. The text path remains
     # a baseline and never contributes exposure or topic citations.
+    with st.status("Research", expanded=True) as status:
+        from study_agent.stages import research, review, quiz
+        research.research_run(run_dir, layout=layout)
+        status.update(label="Research: complete", state="complete", expanded=False)
+    with st.status("Review", expanded=True) as status:
+        review.review_run(run_dir)
+        status.update(label="Review: complete", state="complete", expanded=False)
+    with st.status("Quiz", expanded=True) as status:
+        quiz.quiz_run(run_dir)
+        status.update(label="Quiz: complete", state="complete", expanded=False)
     memory.contribute_run(run_dir, layout)
-    for label in ("Research", "Review", "Quiz"):
-        with st.status(f"{label}: not run", expanded=True):
-            st.caption("Pending — this stage has not written artifacts yet.")
     return run_dir
 
 
@@ -204,6 +372,9 @@ def main() -> None:
     if run_dir is not None:
         _render_summary(run_dir)
         _render_failures(run_dir)
+        _render_comparison(run_dir)
+        if selected_slug:
+            _render_quiz(run_dir, selected_slug, layout)
 
 
 if __name__ == "__main__":
