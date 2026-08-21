@@ -1,0 +1,41 @@
+{
+  "page_role": "content",
+  "title": "How does image generation work?",
+  "reading": "The slide introduces diffusion-based image generation by contrasting two directions: a forward diffusion process that progressively corrupts an image, and a reverse denoising/generation process that reconstructs an image from noise. Ellipses indicate intermediate steps in each chain, implying many small incremental steps rather than a single transformation. The summary line states the core idea of diffusion models: Gaussian noise is gradually added, and a model is trained to reverse that corruption, which is what allows sampling new images from noise.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A two-directional chain of intermediate image states, labelled 'Diffusion process' in one direction and 'Denoising/generation process' in the other, with ellipses marking omitted intermediate steps.",
+      "assertion": "Image generation is the learned reverse of a stepwise noising process running between a clean image and pure noise.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Diffusion model",
+      "status": "explained_here",
+      "why_it_matters": "Underlying framework for modern image generation systems."
+    },
+    {
+      "name": "Forward diffusion (noising)",
+      "status": "explained_here",
+      "why_it_matters": "Defines the fixed corruption process that supplies training targets."
+    },
+    {
+      "name": "Denoising/generation process",
+      "status": "explained_here",
+      "why_it_matters": "The learned reverse chain that produces new samples from noise."
+    },
+    {
+      "name": "Gaussian noise",
+      "status": "assumed_prior",
+      "why_it_matters": "The specific noise distribution that makes the reversal tractable."
+    }
+  ],
+  "verbatim_spans": [
+    "How does image generation work?",
+    "Diffusion models: Gradually add Gaussian noise and then learn to reverse"
+  ],
+  "reader_note": null,
+  "slide_number": 51
+}

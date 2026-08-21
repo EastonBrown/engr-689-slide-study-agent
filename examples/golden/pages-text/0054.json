@@ -1,0 +1,34 @@
+{
+  "page_role": "content",
+  "title": "Reverse diffusion process",
+  "reading": "The slide introduces the reverse (denoising) direction of diffusion models: after noise has been progressively added in the forward process, a neural network known as a denoiser is trained to undo it step by step. The accompanying note emphasises that each individual denoising step can be framed as a supervised learning problem, since the noisy input and the corresponding clean (or less noisy) target are both known during training.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Reverse diffusion process",
+      "status": "explained_here",
+      "why_it_matters": "It is the generative half of a diffusion model, turning noise into data."
+    },
+    {
+      "name": "Denoiser network",
+      "status": "named_only",
+      "why_it_matters": "The learned component that performs each reverse step."
+    },
+    {
+      "name": "Supervised learning framing of denoising",
+      "status": "explained_here",
+      "why_it_matters": "Explains why diffusion training is stable and simple: paired noisy/clean data is generated for free."
+    },
+    {
+      "name": "Forward diffusion (noising) process",
+      "status": "assumed_prior",
+      "why_it_matters": "The reverse process is defined relative to it."
+    }
+  ],
+  "verbatim_spans": [
+    "Diffusion models then train a neural network (denoiser) to reverse this process",
+    "Each step is a supervised learning process!"
+  ],
+  "reader_note": null,
+  "slide_number": 54
+}

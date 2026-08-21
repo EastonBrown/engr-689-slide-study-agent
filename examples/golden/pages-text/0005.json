@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Recap: LLMs are General Purpose models",
+  "reading": "A recap slide framing large language models as general-purpose systems along three axes of generality. First, generality of architecture: a single architecture or system supports a wide range of tasks. Second, generality of concepts across skills: the model can perform tasks made of unseen skill-concept combinations. Third, generality of learning: new tasks can be learned efficiently from descriptions and in-context examples rather than retraining.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Three parallel labelled panels or columns, each pairing a short description with a heading: 'Generality of Architecture', 'Generality of Concepts across Skills', 'Generality of Learning'.",
+      "assertion": "LLM generality decomposes into three distinct dimensions: architectural breadth, compositional skill-concept transfer, and efficient task learning.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Generality of Architecture",
+      "status": "explained_here",
+      "why_it_matters": "One system handles many tasks without task-specific redesign."
+    },
+    {
+      "name": "Generality of Concepts across Skills",
+      "status": "explained_here",
+      "why_it_matters": "Captures compositional generalisation to unseen skill-concept pairings."
+    },
+    {
+      "name": "Generality of Learning",
+      "status": "explained_here",
+      "why_it_matters": "Underlies in-context learning and instruction following."
+    },
+    {
+      "name": "In-context examples",
+      "status": "named_only",
+      "why_it_matters": "Mechanism by which LLMs adapt without parameter updates."
+    }
+  ],
+  "verbatim_spans": [
+    "Recap: LLMs are General Purpose models",
+    "Performs tasks of unseen skill-concept combinations",
+    "Learning new tasks efficiently via descriptions and in-context examples"
+  ],
+  "reader_note": null,
+  "slide_number": 5
+}

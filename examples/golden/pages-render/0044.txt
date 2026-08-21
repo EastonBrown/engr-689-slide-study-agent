@@ -1,0 +1,11 @@
+Expand with 
+“mask tokens”
+Masked Autoencoder (MAE)
+Random masking
+Encode visible 
+patches with 
+Transformer
+Predict 
+unknown
+Computer L2 loss in 
+pixels

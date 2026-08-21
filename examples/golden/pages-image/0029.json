@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Self-supervised learning",
+  "reading": "The slide introduces self-supervised learning as using the data itself as supervision, listing example pretext tasks: predicting oneself, predicting image rotation, and solving a jigsaw puzzle, among others. It then states the goals: learning representations from large-scale unlabeled data and learning high-level semantic representations. An accompanying image strip illustrates a jigsaw-style pretext task.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Three panels of a tiger photo: the original with a green 3x3 grid of patches overlaid, then the extracted 3x3 patch grid, then a shuffled/permuted version of the patches.",
+      "assertion": "A jigsaw pretext task is created by cropping an image into a grid of patches and shuffling them, with the correct permutation acting as free supervision.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Self-supervised learning",
+      "status": "explained_here",
+      "why_it_matters": "Enables representation learning without human labels."
+    },
+    {
+      "name": "Pretext tasks (rotation, jigsaw)",
+      "status": "named_only",
+      "why_it_matters": "Concrete surrogate objectives that generate supervision from data."
+    },
+    {
+      "name": "Representation learning",
+      "status": "assumed_prior",
+      "why_it_matters": "The learned features transfer to downstream tasks."
+    }
+  ],
+  "verbatim_spans": [
+    "Using the data itself as supervision",
+    "Can we solve a jigsaw game?",
+    "Learn representations from large-scale unlabeled data"
+  ],
+  "reader_note": null,
+  "slide_number": 29
+}

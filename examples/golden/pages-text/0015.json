@@ -1,0 +1,18 @@
+{
+  "page_role": "section_break",
+  "title": "Text-to-image/video generation",
+  "reading": "A single heading marks a transition into the topic of generating images and videos from text prompts. No body text, figures, or supporting detail accompany the heading on the extracted text path.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Text-to-image/video generation",
+      "status": "named_only",
+      "why_it_matters": "Frames the upcoming section on generative models that synthesise visual content conditioned on natural-language input."
+    }
+  ],
+  "verbatim_spans": [
+    "Text-to-image/video generation"
+  ],
+  "reader_note": null,
+  "slide_number": 15
+}

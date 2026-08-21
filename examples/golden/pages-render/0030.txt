@@ -1,0 +1,4 @@
+Self-supervised learning
+• Modern self-supervised learning methods
+o Contrastive learning
+o Predictive learning

@@ -1,0 +1,251 @@
+{
+  "quiz_id": "day3-principle-2026-08-21T04-38-44Z",
+  "subject_slug": "engr-689",
+  "deck_slug": "day3-principle",
+  "run_timestamp": "2026-08-21T03-45-25Z",
+  "kind": "first_pass",
+  "generated_at": "2026-08-21T04-38-44Z",
+  "covered_slide_count": 57,
+  "questions": [
+    {
+      "stem": "A student learning contrastive methods asks why the lecture first re-describes ordinary supervised image classification in query–key terms before introducing self-supervised contrastive learning. Which explanation best captures the pedagogical bridge being made?",
+      "options": [
+        "Classification already is a contrastive setup — features before the last FC layer act as queries and the last FC layer's class weights act as keys, with the ground-truth label selecting the positive pair from a fixed vocabulary",
+        "Classification supplies the augmentation pipeline that contrastive learning reuses to build two views of each image",
+        "Classification is shown because the softmax temperature parameter was originally introduced for label-based training and is inherited unchanged",
+        "Classification demonstrates that a momentum encoder is required whenever keys come from a fixed dictionary"
+      ],
+      "correct_index": 0,
+      "explanation": "Slide 30 names contrastive learning as one of two modern self-supervised families, and slide 31 enters it by recasting supervised classification: pre-FC features are queries, last-FC class weights are keys, and the label picks the positive key from a fixed label vocabulary. This makes classification a special case of the contrastive objective with a predefined key dictionary.",
+      "distractor_rationale": [
+        null,
+        "Augmentation/two-view construction appears later (slide 33), not in the classification recasting on slide 31.",
+        "Temperature is introduced with the InfoNCE loss on slide 33; it is not the reason classification is recast.",
+        "The momentum encoder is a MoCo design choice (slides 34–35), unrelated to the fixed class-weight dictionary in classification."
+      ],
+      "slide_citations": [
+        30,
+        31
+      ],
+      "topic": "bridged_fact",
+      "source": "visual",
+      "question_id": "day3-principle-q01"
+    },
+    {
+      "stem": "A speaker uses an industry keynote framing to argue that robotics and autonomous vehicles represent the frontier beyond today's coding assistants and customer-service bots. In that staged framing, which progression of waves is being described?",
+      "options": [
+        "Perception AI, then generative AI, then agentic AI, then physical AI",
+        "Physical AI, then perception AI, then generative AI, then agentic AI",
+        "Generative AI, then perception AI, then physical AI, then agentic AI",
+        "Agentic AI, then perception AI, then generative AI, then physical AI"
+      ],
+      "correct_index": 0,
+      "explanation": "The keynote graphic charts an escalating curve starting from AlexNet through perception AI (speech recognition, medical imaging), generative AI (content creation), agentic AI (coding assistants, customer service), and finally physical AI (self-driving cars, general robotics) as the next frontier.",
+      "distractor_rationale": [
+        null,
+        "Physical AI is presented as the next frontier at the top of the curve, not the starting point.",
+        "Perception AI (from AlexNet) precedes generative AI in the staged view.",
+        "Agentic AI (coding assistants, customer service) comes after perception and generative waves, not first."
+      ],
+      "slide_citations": [
+        7
+      ],
+      "topic": "Foundation Models and the AI Landscape",
+      "source": "visual",
+      "question_id": "day3-principle-q02"
+    },
+    {
+      "stem": "An engineer must deliver, for a photo of a dog herding sheep, an output that assigns a class to every pixel while also keeping each individual sheep separable from its neighbours. Which task should be selected?",
+      "options": [
+        "Instance segmentation",
+        "Semantic segmentation",
+        "Object detection",
+        "Image recognition"
+      ],
+      "correct_index": 0,
+      "explanation": "The four tasks differ by output granularity. Instance segmentation gives per-pixel masks that are also separated per object instance, which is exactly the requirement of pixel-level labels plus per-sheep separation.",
+      "distractor_rationale": [
+        null,
+        "Semantic segmentation labels every pixel by class but merges all sheep into one region, losing instance separation.",
+        "Object detection localises each object with a bounding box, not with per-pixel labels.",
+        "Image recognition returns only whole-image class probabilities with no localisation at all."
+      ],
+      "slide_citations": [
+        12
+      ],
+      "topic": "Computer Vision Tasks and Directions",
+      "source": "visual",
+      "question_id": "day3-principle-q03"
+    },
+    {
+      "stem": "A team must build a database pairing runner faces with bib numbers from race video. Instead of issuing the whole request as one prompt, they have the model detect faces as boxes, read bib numbers as text with boxes, match each bib to the nearest face vertically, write a record, and repeat over frames. What distinguishes this approach from the alternative?",
+      "options": [
+        "It is an agentic workflow that decomposes the task into steps and iterates, rather than a zero-shot single pass from start to finish",
+        "It replaces the multimodal LLM with a fixed-class detector, removing any need for language reasoning",
+        "It trains a new end-to-end model on race footage rather than orchestrating existing perception tools",
+        "It eliminates the need for a stop condition because each frame terminates the loop automatically"
+      ],
+      "correct_index": 0,
+      "explanation": "The lecture contrasts a non-agentic zero-shot prompt (a single uninterrupted pass from start to finish) with an agentic workflow that decomposes the task into explicit steps and cycles between planning/testing and coding, iterating over all frames.",
+      "distractor_rationale": [
+        null,
+        "The agentic workflow still uses the multimodal LLM to orchestrate detection and OCR tool calls; it does not discard language reasoning.",
+        "No new end-to-end model is trained; the agent orchestrates detection and OCR primitives in code.",
+        "Agents still need an explicit halting criterion; per-frame iteration is not a substitute for a stop decision."
+      ],
+      "slide_citations": [
+        62,
+        63
+      ],
+      "topic": "Multimodal LLM Agents",
+      "source": "visual",
+      "question_id": "day3-principle-q04"
+    },
+    {
+      "stem": "An engineer is asked to write explicit rules that let a program recognise a cat, and finds the rules impossible to enumerate even though he identifies cats effortlessly. Which observation from the lecture best explains why collecting labelled cat images is the preferred route?",
+      "options": [
+        "Humans are often good at making decisions but poor at explaining them, so learning from collected examples replaces stating rules",
+        "Hand-coded rules always fail because perception is a percept–action loop, which cannot be expressed as a program",
+        "Rule-based systems cannot represent class labels, so their outputs cannot be compared against a benchmark",
+        "Learning is preferred only because labelled data is cheaper to obtain than programmer time"
+      ],
+      "correct_index": 0,
+      "explanation": "The slide contrasts a top-down 'Design' route with a bottom-up 'Learn' route and grounds the choice in tacit knowledge: humans make good perceptual decisions but cannot articulate the rules behind them, so supervision must come from collected labelled examples.",
+      "distractor_rationale": [
+        null,
+        "The percept–action framing describes recognition as an agent loop; it is not an argument that programs cannot implement such loops.",
+        "Rule-based systems can output class labels; the stated obstacle is articulating the rules, not representing labels.",
+        "Cost is not the argument given; the stated reason is the gap between deciding and explaining."
+      ],
+      "slide_citations": [
+        18,
+        19
+      ],
+      "topic": "From Hand-Coded Rules to Learned Recognition",
+      "source": "prose",
+      "question_id": "day3-principle-q05"
+    },
+    {
+      "stem": "A team assembling a multimodal assistant must pick a vision encoder pretraining objective. Surveying what is actually deployed inside multimodal LLMs, which family is by far the most commonly used, and why is that plausible?",
+      "options": [
+        "Image–text contrastive alignment (CLIP-style), because its features are already aligned with language",
+        "Masked reconstruction (MAE-style), because pixel-level reconstruction preserves the most detail for the LLM",
+        "Discrete-latent auto-encoding (VQ-VAE style), because codebook tokens plug directly into a token vocabulary",
+        "Label-supervised ViT, because classification supervision gives the cleanest semantic categories"
+      ],
+      "correct_index": 0,
+      "explanation": "The popularity chart shows multimodal-learning encoders such as CLIP with a very tall bar, far ahead of self-distillation (DINOv2), auto-encoding, and near-zero bars for masked modeling and supervised learning. CLIP's language-aligned embeddings are what make it the default choice for multimodal LLMs.",
+      "distractor_rationale": [
+        null,
+        "Masked-modeling encoders register a negligible bar in the popularity comparison.",
+        "Auto-encoding (VQ-VAE) has only a small bar, well below self-distillation and multimodal learning.",
+        "Supervised ViT encoders are also shown as negligible in deployed multimodal LLMs."
+      ],
+      "slide_citations": [
+        28,
+        48
+      ],
+      "topic": "Vision Encoders and Multimodal LLM Architecture",
+      "source": "visual",
+      "question_id": "day3-principle-q06"
+    },
+    {
+      "stem": "Two contrastive training setups both compute a query–key similarity matrix whose diagonal entries are the positives, but one backpropagates into both branches while the other sends gradients only to the query branch and sets θ_k := m·θ_k + (1−m)·θ_q. What is the purpose of that second arrangement?",
+      "options": [
+        "It keeps the key encoder a slowly-evolving copy of the query encoder, giving consistent key representations without backpropagating through it",
+        "It removes the need for negative pairs, since the momentum branch supplies its own positives",
+        "It guarantees the two branches embed into different spaces so that the diagonal cannot collapse",
+        "It replaces the temperature parameter in the InfoNCE loss with the momentum coefficient"
+      ],
+      "correct_index": 0,
+      "explanation": "In the momentum variant the key encoder is not trained by gradients; its parameters track the query encoder via an exponential moving average, which keeps key representations consistent across batches. The alternative simply shares weights and updates both encoders from the loss.",
+      "distractor_rationale": [
+        null,
+        "Negatives are still the off-diagonal cells of the similarity matrix; momentum does not remove them.",
+        "The momentum update makes the key encoder track the query encoder, i.e. stay in a compatible space, not a different one.",
+        "Temperature scales the InfoNCE softmax and is independent of the momentum coefficient m."
+      ],
+      "slide_citations": [
+        34,
+        35,
+        36
+      ],
+      "topic": "Self-Supervised Learning: Contrastive Methods",
+      "source": "visual",
+      "question_id": "day3-principle-q07"
+    },
+    {
+      "stem": "After contrastive pretraining, a practitioner wants to classify images into a label set that was never seen during training, using only class names written in natural language. How does the described model support this at test time?",
+      "options": [
+        "Class names are inserted into a prompt template and encoded by the text encoder, and the image embedding is matched to the highest-similarity text embedding",
+        "The image encoder's final fully connected layer is re-fit on a few labelled examples of each new class",
+        "The similarity matrix from pretraining is stored and the nearest training image's label is copied to the test image",
+        "A separate decoder generates a caption for the image, which is then string-matched against the candidate class names"
+      ],
+      "correct_index": 0,
+      "explanation": "Training maximises similarity of matched image–text pairs on the diagonal of the batch similarity matrix. At test time the same text encoder turns prompted class names ('A photo of a {object}.') into embeddings, and the test image is assigned the class whose text embedding has the highest similarity — zero-shot, open-vocabulary classification.",
+      "distractor_rationale": [
+        null,
+        "Zero-shot use requires no task-specific retraining of a classification layer.",
+        "Prediction compares the image embedding against prompted class-name embeddings, not against stored training images.",
+        "No caption generation or string matching is involved; matching happens in the shared embedding space."
+      ],
+      "slide_citations": [
+        38
+      ],
+      "topic": "Self-Supervised Learning: Contrastive Methods",
+      "source": "visual",
+      "question_id": "day3-principle-q08"
+    },
+    {
+      "stem": "A researcher adapting masked pretraining from text to images keeps the language convention of hiding only a small fraction of tokens and finds transfer accuracy disappointing. Based on the lecture's analysis, what should be changed and why?",
+      "options": [
+        "Raise the masking ratio substantially, because images are more redundant than language so a small hole can be filled from local low-level cues",
+        "Lower the masking ratio further, because reconstructing many patches makes the pixel-space L2 loss too noisy to learn from",
+        "Keep the ratio but replace the pixel-space L2 loss with a contrastive loss, since masking ratio does not affect representation quality",
+        "Keep the ratio but encode the mask tokens along with the visible patches, since the encoder needs the masked positions to build semantics"
+      ],
+      "correct_index": 0,
+      "explanation": "The lecture argues that hiding a small region can be solved with local low-level cues, whereas hiding a large portion forces semantic features. Because information in images is more redundant than in language, the optimal masking ratio for vision is far higher than the language convention, with transfer accuracy peaking near 75% and falling off on either side.",
+      "distractor_rationale": [
+        null,
+        "Transfer accuracy is lowest at low masking ratios; reducing masking makes the task more trivially local.",
+        "The plotted curve shows masking ratio strongly affects transfer accuracy, so the loss type is not the diagnosis.",
+        "In MAE only the visible patches are encoded; mask tokens are inserted afterwards before the decoder."
+      ],
+      "slide_citations": [
+        44,
+        45,
+        47
+      ],
+      "topic": "Self-Supervised Learning: Predictive and Masked Modeling",
+      "source": "visual",
+      "question_id": "day3-principle-q09"
+    },
+    {
+      "stem": "A team finds pixel-space text-to-image diffusion too slow for production. Which architectural change, as described for Stable Diffusion, addresses the cost while retaining text conditioning?",
+      "options": [
+        "Compress images with an autoencoder and run the conditioned denoising U-Net in the latent space, with text entering via cross-attention",
+        "Replace the iterative reverse process with a single forward noising pass that is inverted analytically",
+        "Freeze the denoising network and instead fine-tune the text encoder so fewer denoising steps are needed",
+        "Apply the diffusion steps directly to caption embeddings and decode them into pixels with a classifier"
+      ],
+      "correct_index": 0,
+      "explanation": "Stable Diffusion is a latent diffusion model: an encoder maps the image to a compressed latent code where the denoising U-Net runs the diffusion process, and a decoder returns pixels. Conditioning (text or other modalities) enters through cross-attention from a domain encoder, making generation much cheaper than operating on pixels.",
+      "distractor_rationale": [
+        null,
+        "The forward noising process is the destructive direction; generation still requires the learned iterative reverse process.",
+        "The described speedup comes from moving diffusion into latent space, not from fine-tuning the text encoder, which is frozen in the conditional pipeline.",
+        "Diffusion operates on the image latent; text embeddings serve as conditioning, not as the thing being denoised into pixels."
+      ],
+      "slide_citations": [
+        52,
+        57
+      ],
+      "topic": "Visual Generation and Diffusion Models",
+      "source": "visual",
+      "question_id": "day3-principle-q10"
+    }
+  ],
+  "dropped_count": 0
+}

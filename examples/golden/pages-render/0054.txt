@@ -1,0 +1,5 @@
+Reverse diffusion process
+• Diffusion models then train a neural network (denoiser) to reverse this process
+Each step is a 
+supervised learning 
+process!

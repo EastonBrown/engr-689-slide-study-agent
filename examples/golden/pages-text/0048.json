@@ -1,0 +1,46 @@
+{
+  "page_role": "content",
+  "title": "Variants of vision encoder",
+  "reading": "The slide surveys the main training paradigms used to produce vision encoders, each anchored to a canonical paper: supervised learning (ViT, Dosovitskiy et al.), masked modeling (MAE, He et al.), auto-encoding (VQVAE, Van den Oord et al.), self-distillation (DINO, Caron et al.), and multimodal learning (CLIP, Radford et al.). A side element refers to the relative popularity of these different vision encoders when used inside multimodal LLMs.",
+  "visuals": [
+    {
+      "kind": "chart",
+      "description": "An accompanying figure labelled 'Popularity of different vision encoders in Multimodal LLMs', presumably comparing usage frequency across the listed encoder families.",
+      "assertion": "Vision encoder families are not equally adopted in multimodal LLMs; some (typically CLIP-style contrastive encoders) dominate usage.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Vision Transformer (ViT)",
+      "status": "named_only",
+      "why_it_matters": "Canonical supervised-trained vision encoder backbone."
+    },
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised masked-modeling pretraining for vision."
+    },
+    {
+      "name": "VQVAE",
+      "status": "named_only",
+      "why_it_matters": "Auto-encoding approach producing discrete visual tokens."
+    },
+    {
+      "name": "DINO",
+      "status": "named_only",
+      "why_it_matters": "Self-distillation yields strong label-free visual features."
+    },
+    {
+      "name": "CLIP",
+      "status": "named_only",
+      "why_it_matters": "Multimodal contrastive training gives language-aligned visual features, the common choice for MLLMs."
+    }
+  ],
+  "verbatim_spans": [
+    "Variants of vision encoder",
+    "Popularity of different vision encoders in Multimodal LLMs"
+  ],
+  "reader_note": null,
+  "slide_number": 48
+}

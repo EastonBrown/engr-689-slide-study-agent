@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide motivates contrastive learning by asking what to do when no label vocabulary exists: the data itself supplies the vocabulary. A large schematic occupies the lower portion, showing two image-encoder branches producing keys and queries, a similarity matrix, and the InfoNCE loss expression.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Two parallel branches: a batch of images fed to a purple 'image encoder' yielding keys k0..kN, and the same images fed to a green 'image encoder' yielding queries q0..qN. A grid of all query-key dot products is shown with the diagonal entries (q0k0, q1k1, q2k2, ..., qNkN) highlighted in blue. Beside it a boxed equation: L = -log exp(qk+/τ) / Σ_i exp(qk_i/τ).",
+      "assertion": "Matching query-key pairs (the diagonal) are the positives; the loss maximizes their similarity relative to all other pairs via a temperature-scaled softmax, so supervision comes from the data itself.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "explained_here",
+      "why_it_matters": "Provides self-supervision without a predefined label vocabulary."
+    },
+    {
+      "name": "Queries and keys",
+      "status": "explained_here",
+      "why_it_matters": "Two encoded views define the positive pair versus in-batch negatives."
+    },
+    {
+      "name": "InfoNCE loss with temperature τ",
+      "status": "named_only",
+      "why_it_matters": "Formalizes the objective of pulling positives together and pushing negatives apart."
+    }
+  ],
+  "verbatim_spans": [
+    "What if we don't have vocabulary? From a vocabulary with data itself",
+    "image encoder",
+    "queries"
+  ],
+  "reader_note": null,
+  "slide_number": 33
+}

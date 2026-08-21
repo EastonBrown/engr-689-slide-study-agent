@@ -1,0 +1,9 @@
+Momentum Contrastive Learning (MoCo) 
+• Maximize similarities of positive pairs
+• Minimize similarities of negative pairs 
+Query image
+key image Encoder
+Encoder
+loss
+Update encoder q
+Update encoder k by moving average

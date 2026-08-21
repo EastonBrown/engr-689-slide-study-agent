@@ -490,6 +490,51 @@ class TestASliceOrResumeMergesIntoTheManifestRatherThanOverwriting:
         assert page_reader_rows[0].cost_usd == 0.70
         assert updated.total_cost_usd == 0.70
 
+    def test_a_partial_resume_adds_to_the_earlier_invocations_cost(self, tmp_path):
+        """A resume that reads one leftover slide must not erase the rest.
+
+        The sibling bug to the zero-call case above: `_update_manifest` used to
+        replace the `page_reader` row with only this invocation's usage even
+        when calls were made, so a resume that retried one failed slide out of
+        many silently dropped every dollar an earlier invocation already spent
+        reading the rest.
+        """
+
+        run_dir = tmp_path / "run"
+        for slide in (1, 2):
+            write_rendered_page(run_dir, slide)
+        clean = schemas.SlideNote(slide_number=1, **draft("one").model_dump())
+        paths.write_model(paths.page_note(run_dir, "image", 1), clean)
+        # Slide 2 still needs a read: no note file for it yet.
+        manifest = a_manifest(page_count=2).model_copy(
+            update={
+                "stage_usage": [
+                    schemas.StageUsage(stage="page_reader", calls=4, cost_usd=0.70)
+                ],
+                "total_cost_usd": 0.70,
+            }
+        )
+        paths.write_model(paths.manifest_file(run_dir), manifest)
+
+        page_reader.read_run_pages(
+            run_dir,
+            reader=FakeReader({("image", 2): draft("two")}),
+            paths_to_read=[schemas.PathKind.image],
+            slide_numbers=[1, 2],
+            resume=True,
+        )
+
+        updated = schemas.Manifest.model_validate(
+            paths.read_json(paths.manifest_file(run_dir))
+        )
+        page_reader_rows = [
+            item for item in updated.stage_usage if item.stage == "page_reader"
+        ]
+        assert len(page_reader_rows) == 1
+        assert page_reader_rows[0].calls == 5
+        assert page_reader_rows[0].cost_usd == pytest.approx(0.700175)
+        assert updated.total_cost_usd == pytest.approx(0.700175)
+
 
 class TestAMissingRenderArtifactDegradesRatherThanAborting:
     """Ticket 17's invariant: a missing file never means anything.

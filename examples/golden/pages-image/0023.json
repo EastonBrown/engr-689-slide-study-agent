@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "From Transformer to Vision Transformer (ViT)",
+  "reading": "The slide introduces the Vision Transformer as a building block for vision foundation models, framing images as sequences of patches processed by a standard Transformer. The accompanying ViT architecture figure from Dosovitskiy et al. (ICLR 2021) is reproduced on the right, and the paper is cited at the bottom.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "The canonical ViT architecture: an image is split into a 3x3 grid of patches, flattened and passed through a 'Linear Projection of Flattened Patches', producing tokens 1–9 plus an extra learnable [class] token at position 0, each combined with patch+position embeddings; these feed a Transformer Encoder, whose class-token output goes to an MLP Head predicting classes (Bird, Ball, Car, ...).",
+      "assertion": "An image can be classified by a standard Transformer encoder applied to a sequence of linearly embedded patches with position embeddings and a prepended learnable class token.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Vision Transformer (ViT)",
+      "status": "explained_here",
+      "why_it_matters": "Adapts the Transformer to images by tokenizing patches, underpinning vision foundation models."
+    },
+    {
+      "name": "Patch + position embedding",
+      "status": "named_only",
+      "why_it_matters": "Supplies token representations and spatial order to a permutation-invariant encoder."
+    },
+    {
+      "name": "[class] token",
+      "status": "named_only",
+      "why_it_matters": "Aggregates global image information for classification."
+    },
+    {
+      "name": "Transformer encoder",
+      "status": "assumed_prior",
+      "why_it_matters": "Core self-attention backbone reused unchanged for vision."
+    }
+  ],
+  "verbatim_spans": [
+    "A building block for vision foundation models",
+    "Sequences of image patches",
+    "Dosovitskiy et al.,  An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, ICLR 2021"
+  ],
+  "reader_note": null,
+  "slide_number": 23
+}

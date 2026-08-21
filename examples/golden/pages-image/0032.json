@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide frames supervised classification as an instance of contrastive learning: the objective maximizes similarity for positive pairs and minimizes it for negative pairs. A diagram on the right illustrates this with image embeddings as queries and class-label embeddings as keys, forming a query-key similarity matrix.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Five images (polar bear, shark, chess pieces, dog, flower) pass through a green trapezoid 'image encoder' producing a column of queries q0...qN. Above, a vocabulary row (chess, bear, dog, ..., flower, ..., shark) maps to a purple row of keys k0...kK. A grid of dot products q_i k_j is shown, with the correct (positive) pairs highlighted in blue: q0k1, q1kK, q2k0, ..., qNk9.",
+      "assertion": "Classification is a similarity matrix between image queries and class-name keys, where the labeled ground-truth cells are the positive pairs to maximize and all other cells are negatives to minimize.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "explained_here",
+      "why_it_matters": "Defines the objective of pulling positive pairs together and pushing negatives apart."
+    },
+    {
+      "name": "Queries and keys",
+      "status": "explained_here",
+      "why_it_matters": "Framing image embeddings vs. class embeddings sets up CLIP-style dual-encoder methods."
+    },
+    {
+      "name": "Supervised classification",
+      "status": "assumed_prior",
+      "why_it_matters": "Reinterpreted here as a special case of contrastive objectives."
+    }
+  ],
+  "verbatim_spans": [
+    "Supervised classification is contrastive learning",
+    "Maximize similarities of positive pairs",
+    "Minimize similarities of negative pairs"
+  ],
+  "reader_note": null,
+  "slide_number": 32
+}

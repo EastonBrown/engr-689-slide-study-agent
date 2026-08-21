@@ -1,0 +1,18 @@
+{
+  "page_role": "section_break",
+  "title": "Agentic robot policy learning",
+  "reading": "A single heading with no supporting body text, marking the transition into a segment on agentic robot policy learning. No detail is given here about what the term covers; the topic is only named.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Agentic robot policy learning",
+      "status": "named_only",
+      "why_it_matters": "Signals the lecture's shift toward robot policies that act with agency rather than purely reactive control."
+    }
+  ],
+  "verbatim_spans": [
+    "Agentic robot policy learning"
+  ],
+  "reader_note": null,
+  "slide_number": 17
+}

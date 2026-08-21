@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "Compositionality in large pre-trained models",
+  "reading": "The slide asks whether large pre-trained generative models compose concepts correctly. It shows DALL-E 2 outputs for three prompts — 'A cup of coffee', 'A cat', and 'A cup of cat' — the last being a novel composition of familiar concepts. Credit is given to A. Torralba.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Three columns of DALL-E 2 generated images, labelled by the prompts 'A cup of coffee', 'A cat', and 'A cup of cat'.",
+      "assertion": "A model that renders familiar concepts well can also combine them into novel, unseen compositions such as 'a cup of cat'.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Compositionality",
+      "status": "named_only",
+      "why_it_matters": "Ability to combine known concepts into novel meanings is a test of generalization."
+    },
+    {
+      "name": "DALL-E 2",
+      "status": "named_only",
+      "why_it_matters": "Large pre-trained text-to-image model used here as evidence of compositional generation."
+    }
+  ],
+  "verbatim_spans": [
+    "Compositionality in large pre-trained models",
+    "A cup of cat",
+    "Credit: A. Torralba"
+  ],
+  "reader_note": null,
+  "slide_number": 55
+}

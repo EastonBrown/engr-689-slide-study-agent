@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "Predictive learning: computer vision",
+  "reading": "The slide transfers the predictive-learning idea to vision through masked image modeling, i.e. the Masked Autoencoder, where a Transformer predicts the content of masked image patches. A before/after figure of a flamingo photo illustrates the setup, and the slide credits 'Masked Autoencoders Are Scalable Vision Learners, CVPR 2022'.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left: a flamingo photo split into a 5x5 patch grid with most patches greyed out; an arrow points right to the full unmasked patch grid showing the complete flamingo image.",
+      "assertion": "Given a heavily masked patch grid as input, the model reconstructs the full image, so the training signal comes from predicting hidden patches.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked image modeling / Masked Autoencoder (MAE)",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised pretraining for vision by reconstructing masked patches."
+    },
+    {
+      "name": "Transformer",
+      "status": "assumed_prior",
+      "why_it_matters": "Backbone architecture that operates over image patch tokens."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked image modeling (Masked Autoencoder)",
+    "Predict the masked patches using Transformers",
+    "Masked Autoencoders Are Scalable Vision Learners , CVPR 2022"
+  ],
+  "reader_note": null,
+  "slide_number": 42
+}

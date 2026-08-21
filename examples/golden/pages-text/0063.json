@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Multimodal LLM-based Agents",
+  "reading": "The slide contrasts a non-agentic, zero-shot workflow with an agentic workflow for a multimodal task. The prompt given is to create a database of runner faces and corresponding bib numbers. Under the agentic framing, the task decomposes into a numbered plan: detect faces as bounding boxes, detect bib numbers as text plus bounding boxes, match each bib to the vertically closest face, write a record pairing face and bib into the database, and repeat across all frames of the video. Surrounding labels (START, FINISH, Planning/Testing, Coding) evoke an iterative agent loop over a race scene. Credited to Andrew Ng.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Race-imagery layout with START and FINISH markers and cycle labels 'Planning', 'Testing', 'Coding' framing the two workflow columns (zero-shot vs. agentic step list).",
+      "assertion": "Agentic workflows replace a single zero-shot pass with an iterative plan-code-test loop over decomposed subtasks.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Non-agentic (zero-shot) workflow",
+      "status": "named_only",
+      "why_it_matters": "Baseline where the model answers in one pass without decomposition or iteration."
+    },
+    {
+      "name": "Agentic workflow",
+      "status": "explained_here",
+      "why_it_matters": "Decomposing a multimodal task into ordered, verifiable steps improves reliability."
+    },
+    {
+      "name": "Multimodal LLM-based agents",
+      "status": "named_only",
+      "why_it_matters": "Agents combining vision (face/text detection) with language planning."
+    }
+  ],
+  "verbatim_spans": [
+    "\"Create a database of runner faces and corresponding bib numbers\"",
+    "Find the closest face to each bib in vertical detection",
+    "Credit: Andrew Ng"
+  ],
+  "reader_note": null,
+  "slide_number": 63
+}

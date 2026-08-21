@@ -1,0 +1,14 @@
+Human design vs. machine learning for AI
+cat
+Design
+cat cat cat
+Data
+collection
+“Learn”
+“Coding” the rules:
+Can you list the rules of 
+recognizing a cat?
+Underlying idea:
+Humans sometimes are good at 
+“making decisions” BUT are not good 
+at “explaining decisions”

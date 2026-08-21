@@ -1,0 +1,29 @@
+{
+  "page_role": "content",
+  "title": "Self-supervised learning",
+  "reading": "The slide introduces self-supervised learning as the idea of using the data itself as the supervisory signal, rather than external labels. It lists example pretext tasks posed as questions: predicting the data itself (reconstruction), predicting the rotation applied to an image, and solving a jigsaw puzzle of shuffled image patches, with an ellipsis indicating other variants. It then states the goal of these tasks: to learn representations from large-scale unlabeled data and, specifically, to learn high-level semantic representations.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Self-supervised learning",
+      "status": "explained_here",
+      "why_it_matters": "Supervision derived from the data itself lets models exploit large unlabeled corpora."
+    },
+    {
+      "name": "Pretext tasks (reconstruction, rotation prediction, jigsaw)",
+      "status": "named_only",
+      "why_it_matters": "Concrete surrogate objectives that force a network to learn useful structure."
+    },
+    {
+      "name": "High-level semantic representations",
+      "status": "named_only",
+      "why_it_matters": "The quality criterion for pretraining: features must transfer to downstream tasks."
+    }
+  ],
+  "verbatim_spans": [
+    "Using the data itself as supervision",
+    "Learn representations from large-scale unlabeled data"
+  ],
+  "reader_note": null,
+  "slide_number": 29
+}

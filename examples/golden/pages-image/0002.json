@@ -1,0 +1,55 @@
+{
+  "page_role": "content",
+  "title": "Research Interests",
+  "reading": "An overview slide listing three research directions: multimodal generative AI infused with domain-specific knowledge (human, environment, biology), learning with imperfect data and supervision (noisy, imbalanced, long-tailed data), and 2D/3D/4D perception and reconstruction for robotics and AR/VR. A strip of four project figures runs across the bottom, each illustrating one of these threads.",
+  "visuals": [
+    {
+      "kind": "chart",
+      "description": "Long-tailed class frequency plot (log scale) flanked by example images for classes such as tennis racket, teacup, bird feeder.",
+      "assertion": "Real-world recognition datasets follow a long-tailed class distribution, motivating learning with imbalanced data.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "A street photo with a yellow arrow labelled 'OVO' pointing to a voxelized 3D semantic scene with magenta road and blue/grey structures.",
+      "assertion": "A single image can be lifted into a semantically labelled 3D voxel occupancy reconstruction.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "comparison",
+      "description": "A colored skeleton pose plus the prompt 'photo of a famous woman' next to a grid of six generated portraits of women of varied ethnicity in ornate dress.",
+      "assertion": "Pose-conditioned generative models can produce diverse controlled human images from a prompt.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "Multi-view photos of a standing person on planes, an arrow to a grey 3D body mesh with rainbow inner-to-outer color scale legend.",
+      "assertion": "Multi-view images can be reconstructed into a 3D human body model with inner/outer surface depth encoding.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal generative AI",
+      "status": "named_only",
+      "why_it_matters": "Framing for combining modalities with domain knowledge."
+    },
+    {
+      "name": "Long-tailed / imbalanced data",
+      "status": "named_only",
+      "why_it_matters": "Core challenge in learning with imperfect supervision."
+    },
+    {
+      "name": "2D/3D/4D perception and reconstruction",
+      "status": "named_only",
+      "why_it_matters": "Underpins robotics and AR/VR applications."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal generative AI with domain-specific knowledge",
+    "Noisy, imbalanced, long-tailed data",
+    "2D/3D/4D perception and reconstruction"
+  ],
+  "reader_note": null,
+  "slide_number": 2
+}

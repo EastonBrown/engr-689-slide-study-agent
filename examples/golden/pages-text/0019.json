@@ -1,0 +1,36 @@
+{
+  "page_role": "content",
+  "title": "Human design vs. machine learning for AI",
+  "reading": "The slide contrasts two routes to building an AI system that recognizes a cat. On the human-design route, a developer 'codes' the rules explicitly, prompting the question of whether one can actually list the rules for recognizing a cat. On the machine-learning route, many cat examples are gathered through data collection and the system 'learns' from them. The stated underlying idea is that humans are often good at making decisions but poor at explaining how they make them, which motivates learning from data instead of hand-written rules.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Two parallel tracks: a single 'cat' feeding into 'Design' / 'Coding the rules', versus multiple 'cat cat cat' examples feeding into 'Data collection' and 'Learn'.",
+      "assertion": "Rule-based design starts from human-articulated knowledge, while machine learning starts from many collected examples.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Human design (rule coding)",
+      "status": "explained_here",
+      "why_it_matters": "Baseline approach where a programmer specifies explicit rules, which breaks down for perceptual tasks."
+    },
+    {
+      "name": "Machine learning from data",
+      "status": "explained_here",
+      "why_it_matters": "Alternative that induces behavior from collected examples."
+    },
+    {
+      "name": "Tacit knowledge / inability to explain decisions",
+      "status": "explained_here",
+      "why_it_matters": "Core justification for learning-based AI."
+    }
+  ],
+  "verbatim_spans": [
+    "Can you list the rules of recognizing a cat?",
+    "Humans sometimes are good at \"making decisions\" BUT are not good at \"explaining decisions\""
+  ],
+  "reader_note": null,
+  "slide_number": 19
+}

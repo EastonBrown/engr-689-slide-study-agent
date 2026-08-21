@@ -1,0 +1,46 @@
+{
+  "page_role": "content",
+  "title": "Variants of vision encoder",
+  "reading": "The slide surveys the main training paradigms used to produce vision encoders, each tagged with a canonical model and its authors: supervised learning (ViT, Dosovitskiy et al.), masked modeling (MAE, He et al.), auto-encoding (VQVAE, Van den Oord et al.), self-distillation (DINO, Caron et al.), and multimodal learning (CLIP, Radford et al.). A caption indicates an accompanying visual comparing how popular each of these encoder types is within multimodal LLMs.",
+  "visuals": [
+    {
+      "kind": "chart",
+      "description": "A figure captioned 'Popularity of different vision encoders in Multimodal LLMs', presumably comparing usage frequency across the five encoder families listed.",
+      "assertion": "Vision encoder families differ substantially in adoption within multimodal LLMs.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "ViT (supervised learning)",
+      "status": "named_only",
+      "why_it_matters": "Baseline transformer vision encoder trained with labels."
+    },
+    {
+      "name": "MAE (masked modeling)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised pretraining by reconstructing masked patches."
+    },
+    {
+      "name": "VQVAE (auto-encoding)",
+      "status": "named_only",
+      "why_it_matters": "Discrete latent auto-encoding used for tokenized visual representations."
+    },
+    {
+      "name": "DINO (self-distillation)",
+      "status": "named_only",
+      "why_it_matters": "Label-free representation learning via teacher-student distillation."
+    },
+    {
+      "name": "CLIP (multimodal learning)",
+      "status": "named_only",
+      "why_it_matters": "Image-text contrastive training yields encoders aligned with language, common in MLLMs."
+    }
+  ],
+  "verbatim_spans": [
+    "Variants of vision encoder",
+    "Popularity of different vision encoders in Multimodal LLMs"
+  ],
+  "reader_note": null,
+  "slide_number": 28
+}

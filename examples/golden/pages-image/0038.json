@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "CLIP: Contrastive Language-Image Pre-training",
+  "reading": "The slide introduces CLIP, which trains an image encoder and a text encoder jointly so that the model predicts which captions go with which images in a batch. At test time this enables zero-shot, open-vocabulary classification of an image. The canonical three-panel CLIP figure from Radford et al. (ICML 2021) is reproduced beneath the bullets, and the paper is cited at the bottom.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Three-panel CLIP figure: (1) Contrastive pre-training, where a batch of texts goes through a Text Encoder into T1..TN and images through an Image Encoder into I1..IN, forming an N×N dot-product similarity matrix with the diagonal highlighted; (2) Create dataset classifier from label text, where class names (plane, car, dog, ... bird) are inserted into the prompt template 'A photo of a {object}.' and encoded into T1..TN; (3) Use for zero-shot prediction, where a test image is encoded to I1, compared against all Ti, and the highest similarity (I1·T3) yields 'A photo of a dog.'",
+      "assertion": "Contrastive training maximizes similarity of matched image-text pairs on the diagonal and minimizes off-diagonal pairs; the same text encoder then builds a classifier from prompted label names, letting the model classify unseen images without task-specific training.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "CLIP",
+      "status": "explained_here",
+      "why_it_matters": "Foundational vision-language model linking images and text in a shared embedding space."
+    },
+    {
+      "name": "Contrastive learning",
+      "status": "named_only",
+      "why_it_matters": "Training objective that pulls matched pairs together and pushes mismatched pairs apart."
+    },
+    {
+      "name": "Zero-shot / open-vocabulary classification",
+      "status": "explained_here",
+      "why_it_matters": "Allows classifying into arbitrary label sets specified in natural language at test time."
+    },
+    {
+      "name": "Prompt template",
+      "status": "named_only",
+      "why_it_matters": "'A photo of a {object}.' converts class names into text usable by the text encoder."
+    }
+  ],
+  "verbatim_spans": [
+    "Training: trains an image encoder and a text encoder to predict the correct pairings of a batch of (image, text) training examples",
+    "Testing: zero-shot, open-vocabulary classification of an image",
+    "Radford et al., Learning Transferable Visual Models From Natural Language Supervision, ICML 2021"
+  ],
+  "reader_note": null,
+  "slide_number": 38
+}

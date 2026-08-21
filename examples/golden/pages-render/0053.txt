@@ -1,0 +1,6 @@
+• First, let us treat the diffusion model as a reverse way of the autoregressive model
+o Starting with the complete image, we remove one pixel, then the next, and the next
+o This is called signal corruption
+Diffusion model
+• Diffusion model: adding noise to produce a noisier signal
+• Most commonly, the noise is isotropic Gaussian noise 

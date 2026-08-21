@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Self-supervised learning",
+  "reading": "A brief content slide listing the two families of modern self-supervised learning methods: contrastive learning and predictive learning. Both are named as bullet items without further elaboration on this page, suggesting they are unpacked in subsequent slides.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Self-supervised learning",
+      "status": "named_only",
+      "why_it_matters": "Framing topic: learning representations from unlabelled data."
+    },
+    {
+      "name": "Contrastive learning",
+      "status": "named_only",
+      "why_it_matters": "One of the two major modern SSL paradigms introduced here."
+    },
+    {
+      "name": "Predictive learning",
+      "status": "named_only",
+      "why_it_matters": "The complementary SSL paradigm to contrastive methods."
+    }
+  ],
+  "verbatim_spans": [
+    "Modern self-supervised learning methods",
+    "Contrastive learning",
+    "Predictive learning"
+  ],
+  "reader_note": null,
+  "slide_number": 30
+}

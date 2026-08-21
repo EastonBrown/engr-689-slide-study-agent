@@ -1,0 +1,19 @@
+{
+  "query": "What is Consumer Electronics Show (CES)?",
+  "normalized_query": "what is consumer electronics show (ces)",
+  "asked_at": "2026-08-21T04:25:21Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Consumer Electronics Show (CES)",
+  "answer": "CES (originally the Consumer Electronics Show) is a large annual technology trade show organized by the Consumer Technology Association, held each January at the Las Vegas Convention Center and surrounding venues in Nevada. First held in 1967, it is where companies — from global giants to startups — unveil new consumer-technology products, prototypes, and industry announcements, drawing well over 100,000 attendees. For your slide deck, think of it as the industry's flagship launchpad and bellwether: what debuts at CES often signals the coming year's consumer tech trends.",
+  "citations": [
+    {
+      "title": "Consumer Electronics Show - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Consumer_Electronics_Show"
+    },
+    {
+      "title": "CES Consumer Electronics Show Las Vegas 2027",
+      "url": "https://www.tradefairdates.com/CES-Consumer-Electronics-Show-M11423/Las-Vegas.html"
+    }
+  ]
+}

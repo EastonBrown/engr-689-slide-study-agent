@@ -1,0 +1,43 @@
+{
+  "page_role": "content",
+  "title": "How LLMs influence computer vision",
+  "reading": "The slide illustrates how large language models are reshaping computer vision by presenting the architecture of a typical multimodal LLM: an image passes through a vision encoder whose features are fed, alongside a text prompt, into a large language model that produces a natural-language answer. The worked example asks where a tower building is in an image, and the model (attributed to OpenAI GPT-4o) replies with a detailed grounded description identifying the Texas A&M water tower bearing 'WELCOME TO AGGIELAND', placed slightly left of center in the foreground with Kyle Field behind it.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline schematic: input image -> Vision Encoder -> Large Language Model, with a Text Prompt also entering the LLM; output is the descriptive answer text shown at right.",
+      "assertion": "A typical multimodal LLM couples a vision encoder to an LLM so that visual features and a text prompt jointly produce a language response.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "screenshot",
+      "description": "Example GPT-4o response text describing the Texas A&M water tower and Kyle Field.",
+      "assertion": "The model can localize and identify objects in an image with contextual, world-knowledge-rich language.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal LLM",
+      "status": "explained_here",
+      "why_it_matters": "Core architecture combining vision and language for open-ended visual understanding."
+    },
+    {
+      "name": "Vision encoder",
+      "status": "named_only",
+      "why_it_matters": "Converts pixels into features the LLM can consume."
+    },
+    {
+      "name": "Text prompt / grounding",
+      "status": "named_only",
+      "why_it_matters": "Prompts steer the model toward localization and description tasks."
+    }
+  ],
+  "verbatim_spans": [
+    "A typical Multimodal LLM:",
+    "Where is the tower building in the image?",
+    "By OpenAI GPT 4o"
+  ],
+  "reader_note": null,
+  "slide_number": 27
+}

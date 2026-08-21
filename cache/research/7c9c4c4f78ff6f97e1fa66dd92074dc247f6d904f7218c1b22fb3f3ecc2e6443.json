@@ -1,0 +1,19 @@
+{
+  "query": "What is Foundation models?",
+  "normalized_query": "what is foundation models",
+  "asked_at": "2026-08-21T04:25:08Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Foundation models",
+  "answer": "A foundation model is a large AI model trained on broad, mostly unlabeled data at scale (typically via self-supervised learning) that can then be adapted — through fine-tuning, prompting, or in-context learning — to many different downstream tasks. The term was coined by Stanford's Center for Research on Foundation Models in 2021 to describe examples such as BERT, GPT-3, and DALL·E, which can span multiple modalities like text, images, and code. The key idea for your slides: instead of building a separate model per task, one general-purpose model serves as the shared \"foundation,\" which brings big efficiency gains but also concentrates risks like bias and errors that propagate to every application built on it.",
+  "citations": [
+    {
+      "title": "Workshop on Foundation Models - Stanford CRFM",
+      "url": "https://crfm.stanford.edu/workshop.html"
+    },
+    {
+      "title": "Reflections on Foundation Models - The Gradient",
+      "url": "https://thegradient.pub/reflections-on-foundation-models/"
+    }
+  ]
+}

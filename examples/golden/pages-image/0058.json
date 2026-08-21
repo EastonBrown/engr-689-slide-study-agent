@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Unifying multimodal understanding and generation",
+  "reading": "The slide presents MetaMorph (Tong et al., 2024) as an example of unifying multimodal understanding and generation: a single autoregressive model that can emit both text and visual tokens. A three-panel figure from the paper illustrates the VPiT training setup, the inference pipeline, and qualitative examples; the citation appears at the bottom.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Three panels. Left, 'VPiT': text and image inputs go through a frozen vision encoder plus trainable adapter into a trainable Autoregressive Model with trainable Text Head and Vision Head (flame icons mark trainable parts, snowflake marks frozen). Middle, 'Inference': text/image inputs via adapter and encoder into the Autoregressive Model, whose Text Head emits text and Vision Head emits visual tokens that pass through a Projector into an Adapted Diffusion Model producing an image. Right, 'Examples': a chat where the user asks to generate the animal resulting from a monarch caterpillar's metamorphosis, the model returns a butterfly image with <image_start><image_end> tokens, and then correctly answers that the animal is a butterfly.",
+      "assertion": "Instruction tuning on visual prediction (VPiT) lets one autoregressive backbone predict both text and continuous visual tokens, which a separately adapted diffusion model decodes into images, supporting both generation and understanding in one conversation.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "VPiT (Visual Predictive Instruction Tuning)",
+      "status": "named_only",
+      "why_it_matters": "Training recipe that gives an LLM the ability to predict visual tokens."
+    },
+    {
+      "name": "Unified autoregressive multimodal model",
+      "status": "explained_here",
+      "why_it_matters": "Single model handles both understanding and generation instead of separate systems."
+    },
+    {
+      "name": "Adapted diffusion model as visual decoder",
+      "status": "named_only",
+      "why_it_matters": "Converts predicted visual tokens into actual pixels."
+    }
+  ],
+  "verbatim_spans": [
+    "A unified autoregressive model capable of generating both text and visual tokens",
+    "Tong et al., MetaMorph: Multimodal Understanding and Generation via Instruction Tuning, 2024",
+    "Adapted Diffusion Model"
+  ],
+  "reader_note": null,
+  "slide_number": 58
+}

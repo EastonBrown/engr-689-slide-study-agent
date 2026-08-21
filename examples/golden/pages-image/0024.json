@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "From Transformer to Vision Transformer (ViT)",
+  "reading": "The slide presents the Vision Transformer as a building block for vision foundation models: images are cut into sequences of patches and a standard Transformer is applied over those patches. It stresses that this yields a unified architecture usable across language, vision, and audio/3D/other sequence modalities. The canonical ViT architecture figure from Dosovitskiy et al. accompanies the text, and the paper is cited at the bottom.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "ViT architecture: an image split into a 3x3 grid of patches, flattened and passed through a Linear Projection of Flattened Patches, producing tokens 1–9 plus an extra learnable [class] token 0, each combined with a patch+position embedding; these feed a Transformer Encoder whose class-token output goes to an MLP Head producing class labels (Bird, Ball, Car, ...).",
+      "assertion": "An image can be treated as a token sequence: patch embeddings plus position embeddings feed a standard Transformer encoder, and a prepended learnable class token's output drives classification via an MLP head.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Vision Transformer (ViT)",
+      "status": "explained_here",
+      "why_it_matters": "Applies transformers directly to image patches, unifying architectures across modalities."
+    },
+    {
+      "name": "Patch + position embedding",
+      "status": "named_only",
+      "why_it_matters": "Converts a 2D image into an ordered token sequence the transformer can consume."
+    },
+    {
+      "name": "[class] token / MLP head",
+      "status": "named_only",
+      "why_it_matters": "Provides an aggregate representation used for classification."
+    },
+    {
+      "name": "Vision foundation models",
+      "status": "assumed_prior",
+      "why_it_matters": "ViT is the backbone underlying them."
+    }
+  ],
+  "verbatim_spans": [
+    "A building block for vision foundation models",
+    "Unified architecture",
+    "Dosovitskiy et al.,  An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, ICLR 2021"
+  ],
+  "reader_note": null,
+  "slide_number": 24
+}

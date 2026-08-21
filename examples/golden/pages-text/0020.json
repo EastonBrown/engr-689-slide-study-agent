@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "How to build an AI model to recognize objects",
+  "reading": "The slide frames object recognition as a pipeline: an input picture is passed to an image classifier, which outputs a label such as 'dog' or 'cat'. The analogy given is human perception — see a picture, tell the object class. The classifier itself is characterized as a sequence of 'learnable' computation, hinting that its internal parameters are fit from data rather than hand-designed.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Implied pipeline flow from an input image, through a box labelled 'Image Classifier', to an output label (e.g., dog or cat), with an annotation that the classifier is a sequence of learnable computation.",
+      "assertion": "An image classifier maps raw image input to a class label via composed learnable operations.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Image classifier",
+      "status": "explained_here",
+      "why_it_matters": "Core abstraction mapping pixels to object categories."
+    },
+    {
+      "name": "Learnable computation",
+      "status": "named_only",
+      "why_it_matters": "Motivates parameters learned from data, the basis of neural networks."
+    }
+  ],
+  "verbatim_spans": [
+    "Image Classifier",
+    "A sequence of “learnable” computation",
+    "Label (e.g., dog or cat)"
+  ],
+  "reader_note": null,
+  "slide_number": 20
+}

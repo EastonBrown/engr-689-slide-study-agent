@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Visual recognition",
+  "reading": "A single-figure slide contrasting four core visual recognition tasks, all illustrated on the same photograph of a dog herding three sheep in a field. The four panels are labelled Image Recognition, Semantic Segmentation, Object Detection and Instance Segmentation.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Two-by-two grid of the same sheep-and-dog photo annotated four ways: top-left shows class probabilities (P 0.6 sheep, P 0.3 dog, P 0.1 cat, P 0.0 horse); top-right colours all sheep pixels one blue and the dog red; bottom-left draws coloured bounding boxes around the dog and each sheep; bottom-right gives each sheep a distinct colour mask plus a red dog mask.",
+      "assertion": "The tasks differ in output granularity: whole-image labels, per-pixel class labels, per-object boxes, and per-pixel labels separated per object instance.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Image recognition (classification)",
+      "status": "explained_here",
+      "why_it_matters": "Baseline task producing a class distribution for the whole image."
+    },
+    {
+      "name": "Semantic segmentation",
+      "status": "explained_here",
+      "why_it_matters": "Labels every pixel by class but merges instances of the same class."
+    },
+    {
+      "name": "Object detection",
+      "status": "explained_here",
+      "why_it_matters": "Localises individual objects with bounding boxes."
+    },
+    {
+      "name": "Instance segmentation",
+      "status": "explained_here",
+      "why_it_matters": "Combines pixel-level masks with instance separation."
+    }
+  ],
+  "verbatim_spans": [
+    "P 0.6 sheep",
+    "Semantic Segmentation",
+    "Instance Segmentation"
+  ],
+  "reader_note": null,
+  "slide_number": 12
+}

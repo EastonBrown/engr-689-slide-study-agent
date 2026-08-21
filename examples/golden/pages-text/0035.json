@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide states the core objective of contrastive learning: similarities between positive pairs are maximized while similarities between negative pairs are minimized. Alongside the bullets, a schematic sketches a two-branch setup in which a query image and a key image are each passed through an encoder, and their representations feed a loss. Annotations note that the query encoder is updated directly, that weights may be shared across both encoders, and that the key encoder can instead be updated by a moving average (momentum update).",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Two-branch pipeline: 'Query image' → Encoder and 'key image' → Encoder, both feeding into a 'loss' block, with side notes on update rules.",
+      "assertion": "Encoder q is updated by the loss gradient, while encoder k either shares weights with q or is updated as a moving average of q.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised objective that structures the embedding space by pulling positives together and pushing negatives apart."
+    },
+    {
+      "name": "Positive and negative pairs",
+      "status": "named_only",
+      "why_it_matters": "Define what counts as similar vs dissimilar and thus drive the entire learning signal."
+    },
+    {
+      "name": "Momentum / moving-average encoder update",
+      "status": "named_only",
+      "why_it_matters": "Keeps key representations consistent over training, as in MoCo-style methods."
+    },
+    {
+      "name": "Weight sharing between encoders",
+      "status": "named_only",
+      "why_it_matters": "Alternative design choice (siamese networks) to the momentum encoder."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Update encoder k by moving average",
+    "Share weights for both encoder"
+  ],
+  "reader_note": null,
+  "slide_number": 35
+}

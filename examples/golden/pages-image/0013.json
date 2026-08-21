@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Retrieval, text/image-to-image search",
+  "reading": "A single full-width figure illustrates visual search as an application of learned embeddings: image crops or product photos are encoded by a CNN into a shared embedding space where nearest neighbours give retrieval results. No body text beyond the figure captions.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline: (a) Query 1 is a kitchen scene with a blue box around a pendant lamp, cropped; (a) Query 2 is a product photo of an Eames lounge chair. Both feed into a box labelled 'Convolutional Neural Network' with 'Learned Parameters θ'. (b) Outputs are projected into a 256D embedding, shown as a dense cloud of thumbnails with two marked points. Arrows lead to (c) Results 1: visually similar pendant lamp products, and (c) Results 2: interior photos with the chair boxed in green in-situ.",
+      "assertion": "A CNN trained to embed crops and products into a common 256D space supports both scene-crop-to-product and product-to-scene retrieval via nearest neighbours in that space.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Image embedding space",
+      "status": "explained_here",
+      "why_it_matters": "Retrieval reduces to nearest-neighbour search once images map to a common vector space."
+    },
+    {
+      "name": "Convolutional Neural Network",
+      "status": "assumed_prior",
+      "why_it_matters": "Serves as the encoder producing the embedding."
+    },
+    {
+      "name": "Cross-domain retrieval (scene ↔ product)",
+      "status": "named_only",
+      "why_it_matters": "Shows the same embedding serves two directions of search."
+    }
+  ],
+  "verbatim_spans": [
+    "(b) Project into 256D embedding",
+    "(c) Results 2: use of product in-situ",
+    "Learned Parameters θ"
+  ],
+  "reader_note": null,
+  "slide_number": 13
+}

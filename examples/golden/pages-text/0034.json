@@ -1,0 +1,36 @@
+{
+  "page_role": "content",
+  "title": "Momentum Contrastive Learning (MoCo)",
+  "reading": "The slide introduces MoCo as a contrastive self-supervised method whose objective is to maximize similarity between positive pairs while minimizing similarity between negative pairs. A pipeline sketch accompanies the bullets, showing a query image and a key image each passed through their own encoder before a contrastive loss is computed; the text notes that the query encoder is updated directly while the key encoder is updated by a moving average.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Two-branch pipeline: a query image and a key image each feed into an encoder; outputs meet at a loss node. Annotations indicate 'Update encoder q' and 'Update encoder k by moving average'.",
+      "assertion": "MoCo uses asymmetric encoders — the query encoder is trained by gradients while the key encoder is a momentum (moving-average) copy.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "MoCo (Momentum Contrast)",
+      "status": "explained_here",
+      "why_it_matters": "A foundational self-supervised representation learning method."
+    },
+    {
+      "name": "Positive and negative pairs",
+      "status": "named_only",
+      "why_it_matters": "Defines the contrastive objective."
+    },
+    {
+      "name": "Momentum / moving-average encoder update",
+      "status": "named_only",
+      "why_it_matters": "Keeps key representations consistent across training steps."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Update encoder k by moving average"
+  ],
+  "reader_note": null,
+  "slide_number": 34
+}

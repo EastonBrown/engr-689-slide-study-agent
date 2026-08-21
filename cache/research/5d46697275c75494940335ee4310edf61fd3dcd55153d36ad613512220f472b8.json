@@ -1,0 +1,19 @@
+{
+  "query": "What is Generation?",
+  "normalized_query": "what is generation",
+  "asked_at": "2026-08-21T04:19:36Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Generation",
+  "answer": "A generation is a birth cohort — a group of people born within roughly the same 15–20 year span (e.g., Millennials, born 1981–1996) who move through history together and are shaped by shared formative events, technologies, and social conditions during their youth. Researchers use generations as an analytic grouping to compare attitudes and behaviors across cohorts, distinguishing cohort effects from age effects (changes that come with getting older) and period effects (events that affect everyone at once). Because the boundaries are conventions rather than natural facts, generational labels can be arbitrary and are best treated as a rough analytical tool rather than a precise explanation of behavior.",
+  "citations": [
+    {
+      "title": "The Whys and Hows of Generations Research | Pew Research Center",
+      "url": "https://www.pewresearch.org/politics/2015/09/03/the-whys-and-hows-of-generations-research/"
+    },
+    {
+      "title": "How Pew Research Center will report on generations moving forward",
+      "url": "https://www.pewresearch.org/short-reads/2023/05/22/how-pew-research-center-will-report-on-generations-moving-forward/"
+    }
+  ]
+}

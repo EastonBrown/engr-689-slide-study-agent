@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Masked Autoencoder (MAE)",
+  "reading": "The slide introduces the Masked Autoencoder (MAE) and shows a single figure of a flamingo photograph divided into a grid, captioned as patches serving as visual tokens in the Vision Transformer sense. No further text appears; the point is the tokenization step that precedes masking.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A flamingo photo cut into a 5x5 grid of square patches separated by white gutters, captioned 'Patches as visual tokens (Vision Transformer)'.",
+      "assertion": "An image can be split into a grid of non-overlapping patches, each treated as a token analogous to a word token in a transformer.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised vision pretraining by reconstructing masked image patches."
+    },
+    {
+      "name": "Patches as visual tokens",
+      "status": "explained_here",
+      "why_it_matters": "Turns an image into a token sequence so transformer machinery and masking apply."
+    },
+    {
+      "name": "Vision Transformer",
+      "status": "assumed_prior",
+      "why_it_matters": "Provides the patch-token backbone MAE builds on."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked Autoencoder (MAE)",
+    "Patches as visual tokens",
+    "(Vision Transformer)"
+  ],
+  "reader_note": null,
+  "slide_number": 43
+}

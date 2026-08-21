@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Human design vs. machine learning for AI",
+  "reading": "The slide contrasts hand-coding rules with learning from data for building AI systems. On the left it poses the challenge of \"coding\" the rules — asking whether one could actually enumerate the rules for recognizing a cat — and states the underlying idea that humans are often good at making decisions but poor at explaining them. On the right a diagram illustrates the two routes by which a cat-recognizing robot can be built.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Center-right: a cat photo with the label \"cat\" cycles via yellow circular arrows to a robot icon. A blue arrow labeled \"Design\" points down into the robot from above; a blue arrow labeled \"Learn\" points up into the robot from a dashed box below containing three labeled cat photos and the text \"Data collection\".",
+      "assertion": "A cat recognizer can be obtained either top-down by human design (coding rules) or bottom-up by learning from a collection of labeled cat images.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Rule-based (hand-coded) AI",
+      "status": "explained_here",
+      "why_it_matters": "Requires humans to articulate explicit rules, which is hard for perceptual tasks."
+    },
+    {
+      "name": "Machine learning from labeled data",
+      "status": "explained_here",
+      "why_it_matters": "Sidesteps the need to state rules by learning them from collected examples."
+    },
+    {
+      "name": "Tacit knowledge (deciding vs. explaining)",
+      "status": "explained_here",
+      "why_it_matters": "Motivates why learning replaces manual rule specification."
+    }
+  ],
+  "verbatim_spans": [
+    "\"Coding\" the rules: Can you list the rules of recognizing a cat?",
+    "Humans sometimes are good at \"making decisions\" BUT are not good at \"explaining decisions\"",
+    "Data collection"
+  ],
+  "reader_note": null,
+  "slide_number": 19
+}

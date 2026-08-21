@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide frames supervised classification as a form of contrastive learning. It decomposes a standard network into two parts: the classifier, which is the weight matrix of the final fully-connected layer, and the features, which are the representations produced just before that layer. The implication is that comparing features against class weight vectors is itself a contrastive comparison, so ordinary supervised training already performs the kind of pull-together/push-apart operation contrastive methods make explicit.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "named_only",
+      "why_it_matters": "The organising idea the slide claims supervised classification is an instance of."
+    },
+    {
+      "name": "Last FC layer as classifier",
+      "status": "explained_here",
+      "why_it_matters": "Interpreting final-layer weights as per-class prototypes links classification logits to similarity scores."
+    },
+    {
+      "name": "Feature representation",
+      "status": "explained_here",
+      "why_it_matters": "The pre-final-layer embedding is the object being compared, and what contrastive methods aim to learn."
+    }
+  ],
+  "verbatim_spans": [
+    "Supervised classification is contrastive learning",
+    "Classifier: weights in the last FC layer",
+    "Features: representations before the last FC layer"
+  ],
+  "reader_note": null,
+  "slide_number": 31
+}

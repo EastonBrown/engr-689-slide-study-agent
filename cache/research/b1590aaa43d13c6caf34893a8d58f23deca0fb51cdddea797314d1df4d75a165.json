@@ -1,0 +1,19 @@
+{
+  "query": "What is Large Vision and Language Models?",
+  "normalized_query": "what is large vision and language models",
+  "asked_at": "2026-08-21T04:05:58Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Large Vision and Language Models",
+  "answer": "Large Vision and Language Models (LVLMs) are multimodal AI systems that pair a high-capacity visual encoder (typically a Vision Transformer, often from CLIP) with a large language model backbone, so the system can interpret images and generate or reason about text conditioned on them. A connector or adapter module (e.g., a linear projection or Q-Former) maps visual features into tokens the language model can consume, and the whole system is refined through visual instruction tuning and alignment methods like RLHF. This design lets one model handle open-ended tasks such as image captioning, visual question answering, and grounded multimodal reasoning, though hallucination — describing things not actually in the image — remains a known weakness.",
+  "citations": [
+    {
+      "title": "A Survey on Hallucination in Large Vision-Language Models",
+      "url": "https://arxiv.org/pdf/2402.00253"
+    },
+    {
+      "title": "Large Vision & Language Models (LVLMs)",
+      "url": "https://www.emergentmind.com/topics/large-vision-and-language-models-lvlms"
+    }
+  ]
+}

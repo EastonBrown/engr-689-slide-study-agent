@@ -1,0 +1,35 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide compares optimal masking ratios across modalities for masked-prediction representation learning: roughly 75% of an image should be masked, while only about 15% of tokens are masked in BERT-style language pretraining. The explanation offered is that image information is far more redundant than linguistic information, so much more can be removed while still leaving a solvable but nontrivial prediction task. The practical takeaway is that the masking ratio is a design choice to be tuned to the application/modality.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Masking ratio",
+      "status": "explained_here",
+      "why_it_matters": "Controls task difficulty in masked prediction; 75% for images vs 15% for text."
+    },
+    {
+      "name": "Masked image modeling (e.g., MAE)",
+      "status": "named_only",
+      "why_it_matters": "Source of the 75% figure for visual representation learning."
+    },
+    {
+      "name": "BERT masked language modeling",
+      "status": "named_only",
+      "why_it_matters": "Canonical 15% token masking baseline in NLP."
+    },
+    {
+      "name": "Information redundancy across modalities",
+      "status": "explained_here",
+      "why_it_matters": "Explains why images tolerate much heavier masking than text."
+    }
+  ],
+  "verbatim_spans": [
+    "In images, masking 75% is optimal for representation learning.",
+    "Information in images is more redundant than in languages",
+    "Select a masking ratio based on the application"
+  ],
+  "reader_note": null,
+  "slide_number": 47
+}

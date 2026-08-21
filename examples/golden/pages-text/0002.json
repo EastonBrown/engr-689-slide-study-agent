@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Research Interests",
+  "reading": "A bulleted overview of the speaker's research interests across three areas: multimodal generative AI informed by domain-specific knowledge (human, environment, biology), learning under imperfect data and supervision (noisy, imbalanced, long-tailed data), and 2D/3D/4D perception and reconstruction with applications in robotics and AR/VR. Each area is listed with illustrative sub-examples rather than elaborated.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Multimodal generative AI",
+      "status": "named_only",
+      "why_it_matters": "Framed as the speaker's primary research thrust, augmented with domain-specific knowledge."
+    },
+    {
+      "name": "Learning with imperfect data and supervision",
+      "status": "named_only",
+      "why_it_matters": "Addresses noisy, imbalanced, and long-tailed data common in real-world datasets."
+    },
+    {
+      "name": "2D/3D/4D perception and reconstruction",
+      "status": "named_only",
+      "why_it_matters": "Underpins robotics and AR/VR applications."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal generative AI with domain-specific knowledge",
+    "Noisy, imbalanced, long-tailed data",
+    "Robotics, AR/VR"
+  ],
+  "reader_note": null,
+  "slide_number": 2
+}

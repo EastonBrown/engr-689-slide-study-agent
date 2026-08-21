@@ -1,0 +1,20 @@
+{
+  "page_role": "content",
+  "title": "Course project",
+  "reading": "Administrative slide outlining the course project. Projects may be on any interesting topic related to AI and agents, whether theoretical or applied, with teams of 2 to 3 students; examples are drawn from CSCE 625 Artificial Intelligence (Spring 2026). Links are given to a shared Google Slides presentation deck and a Google Sheets team sign-up form. Teams must sign up by 11:59 pm today (Wednesday), and the presentation order will be decided the following day.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Course project on AI and agents",
+      "status": "explained_here",
+      "why_it_matters": "Defines the deliverable, team size, and deadlines students must follow."
+    }
+  ],
+  "verbatim_spans": [
+    "Any interesting projects related to AI and agents",
+    "2 to 3 students to form a team",
+    "Please sign up your team by 11:59 pm today (Wednesday)"
+  ],
+  "reader_note": null,
+  "slide_number": 3
+}

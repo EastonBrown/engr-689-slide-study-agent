@@ -1,0 +1,15 @@
+{
+  "query": "What is Learning with imperfect data and supervision?",
+  "normalized_query": "what is learning with imperfect data and supervision",
+  "asked_at": "2026-08-21T04:15:08Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Learning with imperfect data and supervision",
+  "answer": "\"Learning with imperfect data and supervision\" refers to training models when labels or data fall short of the clean, fully-labeled ideal assumed by standard supervised learning — commonly framed as weakly supervised learning. Zhi-Hua Zhou's canonical taxonomy distinguishes three types of weak supervision: incomplete supervision (only a subset of examples is labeled, addressed by semi-supervised and active learning), inexact supervision (labels are only coarse-grained, as in multi-instance learning), and inaccurate supervision (labels are noisy or wrong, addressed by label-noise-robust methods). Imperfect data adds related issues such as missing features, class imbalance, and distribution shift, so the practical goal is to build models that stay accurate despite these deficiencies rather than assuming perfect annotation.",
+  "citations": [
+    {
+      "title": "A brief introduction to weakly supervised learning | National Science Review",
+      "url": "https://academic.oup.com/nsr/article/5/1/44/4093912"
+    }
+  ]
+}

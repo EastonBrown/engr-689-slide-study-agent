@@ -1,0 +1,19 @@
+{
+  "query": "What is In-context examples?",
+  "normalized_query": "what is in-context examples",
+  "asked_at": "2026-08-21T04:16:53Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "In-context examples",
+  "answer": "In-context examples (also called demonstrations or \"shots\") are sample input–output pairs placed directly inside the prompt so a large language model can infer the task pattern and format at inference time. This is the basis of in-context learning / few-shot prompting: the model adapts to a new task purely from the examples and instructions in the prompt, with no retraining or weight updates. Their number, quality, ordering, and relevance to the query strongly affect performance, which is why example selection is a core prompt-engineering skill.",
+  "citations": [
+    {
+      "title": "LLMs to Support a Domain Specific Knowledge Assistant",
+      "url": "https://arxiv.org/pdf/2502.04095"
+    },
+    {
+      "title": "On the Potential of Large Language Models to Solve Semantics-Aware Process Mining Tasks",
+      "url": "https://arxiv.org/pdf/2504.21074"
+    }
+  ]
+}

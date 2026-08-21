@@ -53,7 +53,13 @@ class AnthropicResearcher:
             max_tokens=config.MAX_TOKENS_RESEARCH,
             effort=config.EFFORT_RESEARCH,
             stage=RESEARCH_STAGE,
-            tools=[{"type": config.WEB_SEARCH_TOOL_TYPE, "max_uses": config.WEB_SEARCH_MAX_USES}],
+            tools=[
+                {
+                    "type": config.WEB_SEARCH_TOOL_TYPE,
+                    "name": config.WEB_SEARCH_TOOL_NAME,
+                    "max_uses": config.WEB_SEARCH_MAX_USES,
+                }
+            ],
         )
         self.usage = _add_usage(self.usage, result.usage)
         return CacheEntry(
@@ -134,8 +140,18 @@ def _update_manifest(
             "research_cap_exceeded": capped,
             "completed_stages": stages,
         })
+    # Same shape as the page-reader fix for issue #31: a zero-call invocation
+    # (every concept this time was already cached) must not erase a row an
+    # earlier invocation paid for, and a non-zero invocation adds to that row
+    # rather than replacing it — research lookups are cached per concept
+    # across the whole subject, so a later resume often pays for only a few
+    # new concepts on top of ones an earlier invocation already bought.
+    previous = next((item for item in manifest.stage_usage if item.stage == RESEARCH_STAGE), None)
     stage_usage = [item for item in manifest.stage_usage if item.stage != RESEARCH_STAGE]
-    stage_usage.append(usage)
+    if usage.calls:
+        stage_usage.append(_add_usage(previous, usage) if previous is not None else usage)
+    elif previous is not None:
+        stage_usage.append(previous)
     paths.write_model(paths.manifest_file(run_dir), manifest.model_copy(update={
         "paths": list(stats_by_path.values()),
         "stage_usage": stage_usage,

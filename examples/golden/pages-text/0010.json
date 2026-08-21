@@ -1,0 +1,47 @@
+{
+  "page_role": "content",
+  "title": "Three representative directions",
+  "reading": "The slide lays out three representative directions in computer vision, organized around the relationship between an image/video and a 3D/4D scene: recognition, reconstruction, and generation. A figure credited to Torralba, Isola, and Freeman illustrates the mapping between a scene and its projection surface. A note adds that language can enter at the middle of any of these stages.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Diagram contrasting image/video with 3D/4D scene, with a projection surface between them, annotated with three numbered arrows/paths: 1 Recognition, 2 Reconstruction, 3 Generation. Credited to Torralba, Isola, and Freeman, Foundations of Computer Vision.",
+      "assertion": "Recognition, reconstruction, and generation are three directions of mapping between images/videos and 3D/4D scenes via a projection surface.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Recognition",
+      "status": "named_only",
+      "why_it_matters": "One of the three core directions: inferring semantic content from images."
+    },
+    {
+      "name": "Reconstruction",
+      "status": "named_only",
+      "why_it_matters": "Recovering 3D/4D scene structure from observations."
+    },
+    {
+      "name": "Generation",
+      "status": "named_only",
+      "why_it_matters": "Synthesizing images/videos from scenes or other inputs."
+    },
+    {
+      "name": "Projection surface",
+      "status": "named_only",
+      "why_it_matters": "The imaging plane linking 3D scenes to 2D observations."
+    },
+    {
+      "name": "Role of language",
+      "status": "named_only",
+      "why_it_matters": "Language can be injected at intermediate stages of any of the three directions."
+    }
+  ],
+  "verbatim_spans": [
+    "Three representative directions",
+    "Language can play in the middle of any stages!",
+    "Projection surface"
+  ],
+  "reader_note": null,
+  "slide_number": 10
+}

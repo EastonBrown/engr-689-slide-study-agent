@@ -1,0 +1,48 @@
+{
+  "page_role": "content",
+  "title": "Task decomposition for robot manipulation",
+  "reading": "The slide presents the MOKA pipeline as an example of using a vision-language model to decompose a natural-language manipulation instruction into subtasks and then into concrete robot motions. A photo of a Franka arm on a cluttered table sits alongside a multi-stage pipeline figure showing text prompts, VLM responses, segmentation, mark-based visual prompting and generated motion. Attribution is to Liu et al., MOKA: Open-World Robotic Manipulation through Mark-Based Visual Prompting, 2024.",
+  "visuals": [
+    {
+      "kind": "photo",
+      "description": "Franka Emika robot arm with wrist camera above a table holding eyeglasses, a brush/broom, a snack package and a yellow case; a shaded orange region marks the camera's field of view.",
+      "assertion": "The real-world setup corresponds to the instruction about wiping trash and moving eyeglasses into a case.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "Two-stage pipeline: a user message ('Use the broom to wipe the trash to the right side of the table after moving the eyeglasses into the case.') plus image goes to a VLM for high-level reasoning with a text prompt asking to decompose the task into subtasks; the response is a JSON subtask with instruction, object_inhand 'broom', object_unattached 'trash', motion_direction 'to the right'. Segmentation masks are drawn on the input image, then a grid-marked image serves as a visual prompt to a second VLM for low-level reasoning, whose response gives affordance keypoints (grasp_keypoint P5, function_keypoint P3, target_keypoint Q1, pre/post_contact_tile c4/e4), producing a generated motion trajectory overlaid on the scene.",
+      "assertion": "Manipulation can be solved by a VLM first decomposing language into structured subtasks, then selecting keypoints/waypoints on a marked image to yield executable motions.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Task decomposition into subtasks",
+      "status": "explained_here",
+      "why_it_matters": "Turns a long-horizon language command into tractable steps a policy can execute."
+    },
+    {
+      "name": "Mark-based visual prompting",
+      "status": "explained_here",
+      "why_it_matters": "Overlaying grids and candidate keypoints lets a VLM output spatially grounded actions."
+    },
+    {
+      "name": "Affordance keypoints and waypoints",
+      "status": "named_only",
+      "why_it_matters": "Provide the interface between VLM output and low-level motion generation."
+    },
+    {
+      "name": "Vision-language model (VLM)",
+      "status": "assumed_prior",
+      "why_it_matters": "Core reasoning engine at both hierarchy levels."
+    }
+  ],
+  "verbatim_spans": [
+    "Task decomposition for robot manipulation",
+    "high-level reasoning",
+    "Liu et al., MOKA: Open-World Robotic Manipulation through Mark-Based Visual Prompting, 2024"
+  ],
+  "reader_note": null,
+  "slide_number": 65
+}

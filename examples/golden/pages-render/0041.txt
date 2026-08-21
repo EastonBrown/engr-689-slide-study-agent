@@ -1,0 +1,4 @@
+Predictive learning: computer vision
+• Masked image modeling (context encoder)
+o Predict the masked patches using ConvNets
+Context Encoders: Feature Learning by Inpainting, CVPR 2016 

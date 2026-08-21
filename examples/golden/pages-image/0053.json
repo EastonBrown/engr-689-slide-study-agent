@@ -1,0 +1,54 @@
+{
+  "page_role": "content",
+  "title": "Diffusion model",
+  "reading": "The slide introduces diffusion models by analogy to autoregressive models run in reverse: starting from a complete image and successively removing pixels, a process called signal corruption. It then contrasts this with the actual diffusion mechanism, which corrupts by adding noise (most commonly isotropic Gaussian) to produce progressively noisier signals, with the per-step update given in a boxed equation. Two horizontal filmstrips illustrate the reverse autoregressive sequence and the forward diffusion process.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Top filmstrip labelled 'Reverse autoregressive sequence': a pixel-art bird image progressively blacked out row by row until the frame is entirely black, with ellipses between groups.",
+      "assertion": "Autoregressive generation reversed amounts to deleting pixels one at a time until nothing remains.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "equation",
+      "description": "Red-boxed equations: x_t = sqrt(1-beta_t) x_{t-1} + sqrt(beta_t) eps_t, with eps_t ~ N(0, I).",
+      "assertion": "Each forward diffusion step rescales the previous sample and adds isotropic Gaussian noise with variance beta_t.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "Bottom filmstrip labelled 'Forward diffusion process': the same bird image degrades across eight frames into colourful random noise.",
+      "assertion": "Repeated Gaussian noise addition drives a clean image toward pure noise.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Signal corruption",
+      "status": "explained_here",
+      "why_it_matters": "Frames diffusion's forward direction as progressive destruction of information."
+    },
+    {
+      "name": "Forward diffusion process",
+      "status": "explained_here",
+      "why_it_matters": "Defines the noising schedule that the model later learns to invert."
+    },
+    {
+      "name": "Isotropic Gaussian noise",
+      "status": "named_only",
+      "why_it_matters": "Standard noise choice making the forward kernel analytically tractable."
+    },
+    {
+      "name": "Autoregressive model",
+      "status": "assumed_prior",
+      "why_it_matters": "Provides the comparison baseline for the pixel-removal analogy."
+    }
+  ],
+  "verbatim_spans": [
+    "This is called signal corruption",
+    "Diffusion model: adding noise to produce a noisier signal",
+    "Forward diffusion process"
+  ],
+  "reader_note": null,
+  "slide_number": 53
+}

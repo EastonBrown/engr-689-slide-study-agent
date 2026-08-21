@@ -1,0 +1,4 @@
+Foundation Models for visual generation (Generative AI)
+Emu Video 2023 Sora 2024 Veo 2, 2025 Timeline
+SORA: Scaling video generation model is a promising path towards building general purpose simulators of the physical world
+https://openai.com/index/video-generation-models-as-world-simulators/

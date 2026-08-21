@@ -1,0 +1,24 @@
+{
+  "page_role": "content",
+  "title": "Can Multimodal LLMs solve complex tasks?",
+  "reading": "The slide poses a question about whether multimodal LLMs can handle complex, compound tasks, illustrated with a concrete example prompt: building a database that links runner faces to their corresponding bib numbers. This implies a pipeline requiring face detection, text/number recognition on bibs, and association between the two within images.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Multimodal LLMs",
+      "status": "assumed_prior",
+      "why_it_matters": "The slide assumes familiarity with models that process both images and text."
+    },
+    {
+      "name": "Complex compound vision tasks",
+      "status": "named_only",
+      "why_it_matters": "Tasks like face-to-bib-number association require chaining detection, OCR, and reasoning."
+    }
+  ],
+  "verbatim_spans": [
+    "Can Multimodal LLMs solve complex tasks?",
+    "“Create a database of runner faces and corresponding bib numbers”"
+  ],
+  "reader_note": null,
+  "slide_number": 60
+}

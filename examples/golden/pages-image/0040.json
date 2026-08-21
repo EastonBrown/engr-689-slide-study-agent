@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "Predictive learning: NLP",
+  "reading": "The slide presents predictive (self-supervised) learning in natural language processing, using masked language modeling as exemplified by BERT: words or tokens are hidden in a sentence and the model is trained to predict them. A schematic below illustrates the pipeline with a blanked sentence.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "A left-to-right flow: a handwritten-style sentence 'The __ opened their __ and began to__' feeds through an arrow into a rounded box labelled 'model', which outputs 'students .. books .. read'.",
+      "assertion": "Given a sentence with masked tokens, the model recovers the missing words.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked language modeling (BERT)",
+      "status": "explained_here",
+      "why_it_matters": "Core self-supervised pretraining objective for NLP models."
+    },
+    {
+      "name": "Tokens",
+      "status": "assumed_prior",
+      "why_it_matters": "Units of text the model predicts."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked language modeling (BERT)",
+    "Predict the masked words (tokens) in the text",
+    "The __ opened their __ and began to__"
+  ],
+  "reader_note": null,
+  "slide_number": 40
+}

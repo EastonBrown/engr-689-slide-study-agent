@@ -1,0 +1,23 @@
+{
+  "query": "What is Multimodal (vision and language) models?",
+  "normalized_query": "what is multimodal (vision and language) models",
+  "asked_at": "2026-08-21T04:10:49Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Multimodal (vision and language) models",
+  "answer": "Multimodal (vision and language) models, often called vision-language models (VLMs), are AI systems that take both images and text as input and learn to map them into a shared representation space so the two modalities can be reasoned about jointly. Architecturally they typically pair a visual encoder (e.g., a CNN or Vision Transformer) with a language model, connected either through dual encoders trained to align image-text pairs or through a fusion/projection layer that feeds visual features into a text generator. This enables tasks such as image captioning, visual question answering, text-to-image retrieval, and document understanding, often with strong zero-shot generalization to new image types.",
+  "citations": [
+    {
+      "title": "Vision-Language Models: How They Work & Overcoming Key Challenges",
+      "url": "https://encord.com/blog/vision-language-models-guide/"
+    },
+    {
+      "title": "Investigating Vision-Language Model for Point Cloud-based Vehicle Classification",
+      "url": "https://arxiv.org/pdf/2504.08154"
+    },
+    {
+      "title": "A systematic review of vision language models: architectures, applications, datasets and challenges",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2590005626000627"
+    }
+  ]
+}

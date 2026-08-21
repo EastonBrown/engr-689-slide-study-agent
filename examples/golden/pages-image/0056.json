@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": null,
+  "reading": "The slide is a full-bleed screenshot of a Google Images results page for the query \"a cup of cat\", shown without any overlaid commentary or caption. It presents the search UI (query bar, tabs such as All/Images/Maps, refinement chips, and a grid of thumbnail results with source attributions). Used as an illustrative example, likely of image retrieval from a natural-language query.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "Google Images search results for the query \"a cup of cat\". Refinement chips read Drawing, Cute, Measuring cup, Cafe, Toy, Kitten, Coffee cup, Pop up, Cartoon. Two rows of thumbnails show kittens sitting in cups and mugs, with captions and sources including Reddit, Freepik, iStock, Posterlounge, Pixoto, Shutterstock, Design Ireland, Amazon.com, and Pinterest.",
+      "assertion": "A text query for \"a cup of cat\" retrieves images of cats inside cups, showing that image search maps a compositional phrase to visually matching results across many web sources.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Image search / text-to-image retrieval",
+      "status": "named_only",
+      "why_it_matters": "Demonstrates matching a natural-language phrase to relevant images."
+    },
+    {
+      "name": "Query refinement chips",
+      "status": "named_only",
+      "why_it_matters": "Shows how results are subdivided into related visual categories."
+    }
+  ],
+  "verbatim_spans": [
+    "a cup of cat",
+    "Measuring cup",
+    "Cat in a cup store"
+  ],
+  "reader_note": null,
+  "slide_number": 56
+}

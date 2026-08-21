@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Masked Autoencoder (MAE)",
+  "reading": "The slide presents the Masked Autoencoder architecture as a single annotated pipeline figure, running from a randomly masked image of a flamingo, through a Transformer encoder over visible patches, to a decoder that fills in masked positions and a reconstruction compared against the original image. Stage captions along the bottom label each step of the process.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Left-to-right pipeline: a 5x5 patch grid of a flamingo photo with most patches greyed out ('Random masking'); the surviving visible patches stacked into a column feeding a rounded 'encoder' box ('Encode visible patches with Transformer'); the encoder's teal token column interleaved with grey mask tokens ('Expand with \"mask tokens\"'); a 'decoder' box producing a red token column ('Predict unknown'); and finally the reconstructed patch-grid flamingo image ('Computer L2 loss in pixels').",
+      "assertion": "MAE encodes only the small visible subset of patches with a Transformer, then re-inserts learned mask tokens before a lightweight decoder reconstructs the full image, with training loss computed as L2 error in pixel space.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised pretraining method for vision Transformers based on reconstructing masked image patches."
+    },
+    {
+      "name": "Mask tokens",
+      "status": "explained_here",
+      "why_it_matters": "Placeholders inserted at masked positions so the decoder knows where to predict."
+    },
+    {
+      "name": "Pixel-space L2 reconstruction loss",
+      "status": "named_only",
+      "why_it_matters": "Defines the training signal without needing labels."
+    },
+    {
+      "name": "Vision Transformer patch tokenization",
+      "status": "assumed_prior",
+      "why_it_matters": "The patch grid and token columns presuppose ViT-style image tokenization."
+    }
+  ],
+  "verbatim_spans": [
+    "Random masking",
+    "Expand with \"mask tokens\"",
+    "Computer L2 loss in pixels"
+  ],
+  "reader_note": null,
+  "slide_number": 44
+}

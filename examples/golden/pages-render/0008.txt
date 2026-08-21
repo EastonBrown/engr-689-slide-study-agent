@@ -1,0 +1,4 @@
+Agenda
+• Background on computer vision and agentic AI
+• Multimodal (vision and language) models
+• Multimodal agents

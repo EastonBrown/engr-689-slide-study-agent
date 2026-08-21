@@ -1,0 +1,7 @@
+How to learn good representations by prediction?
+Small portion:
+May not require a high-level 
+understanding
+Large portion:
+Encourage to learn semantic 
+features

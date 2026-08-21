@@ -84,6 +84,7 @@ CANDIDATE_CAP = 30
 
 RESEARCH_LOOKUP_CAP = 15  # per path per deck
 WEB_SEARCH_TOOL_TYPE = "web_search_20260209"
+WEB_SEARCH_TOOL_NAME = "web_search"
 WEB_SEARCH_MAX_USES = 4  # per request
 
 # --- Quiz, ADR 0005 ---------------------------------------------------------

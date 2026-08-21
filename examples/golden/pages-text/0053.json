@@ -1,0 +1,35 @@
+{
+  "page_role": "content",
+  "title": "Diffusion model",
+  "reading": "The slide introduces diffusion models by analogy to autoregressive models run in reverse: beginning from a complete image, pixels are removed one after another, a process described as signal corruption. It then states that a diffusion model adds noise to produce a progressively noisier signal, and notes that the noise used is most commonly isotropic Gaussian noise.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Diffusion model",
+      "status": "explained_here",
+      "why_it_matters": "Framed as progressive corruption of a signal by added noise, the basis of the generative process."
+    },
+    {
+      "name": "Signal corruption",
+      "status": "explained_here",
+      "why_it_matters": "The forward destruction process that diffusion later learns to reverse."
+    },
+    {
+      "name": "Isotropic Gaussian noise",
+      "status": "named_only",
+      "why_it_matters": "The standard noise choice that makes the forward process tractable."
+    },
+    {
+      "name": "Autoregressive model",
+      "status": "assumed_prior",
+      "why_it_matters": "Used as the comparison point for understanding diffusion as its reverse."
+    }
+  ],
+  "verbatim_spans": [
+    "This is called signal corruption",
+    "Diffusion model: adding noise to produce a noisier signal",
+    "Most commonly, the noise is isotropic Gaussian noise"
+  ],
+  "reader_note": null,
+  "slide_number": 53
+}

@@ -1,0 +1,6 @@
+Quite a lot of variants
+• Compare samples in the latent space
+o Different data augmentation
+o Different loss function
+o With or without negative samples
+o With or without momentum encoder
