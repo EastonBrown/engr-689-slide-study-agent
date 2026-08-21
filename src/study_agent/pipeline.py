@@ -12,7 +12,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import outline, page_reader, research
+from .stages import outline, page_reader, research, review
 
 
 class PipelineError(RuntimeError):
@@ -75,11 +75,15 @@ def run_render_pipeline(
     outliner: outline.Outliner | None = None,
     research_concepts: bool = False,
     researcher: research.Researcher | None = None,
+    review_pages: bool = False,
+    reviewer: review.Reviewer | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
 
     if research_concepts and not (read_pages and outline_pages):
         raise PipelineError("--research requires --read-pages and --outline")
+    if review_pages and not (read_pages and outline_pages):
+        raise PipelineError("--review requires --read-pages and --outline")
 
     deck_path = Path(deck_path)
     if not deck_path.is_file():
@@ -167,6 +171,10 @@ def run_render_pipeline(
         research.research_run(run_dir, layout=layout, researcher=researcher)
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
+    if review_pages:
+        review.review_run(run_dir, reviewer=reviewer)
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
     # Re-stamped last, because every stage above rewrites the manifest from
     # its own copy and would otherwise leave `ended_at` at the moment render
     # finished. A run's recorded duration has to cover the model stages, which
@@ -252,6 +260,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Look up named-only concepts and populate the shared research cache.",
     )
+    parser.add_argument(
+        "--review",
+        action="store_true",
+        help="Continue after outlining and write both Markdown lesson reviews.",
+    )
     return parser
 
 
@@ -269,6 +282,7 @@ def main(argv: list[str] | None = None) -> int:
             slide_numbers=slide_numbers,
             outline_pages=args.outline,
             research_concepts=args.research,
+            review_pages=args.review,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

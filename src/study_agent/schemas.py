@@ -199,6 +199,12 @@ class BridgeDraft(Strict):
     confirmations: list[BridgeConfirmationDraft]
 
 
+class ReviewDraft(Strict):
+    """The model-authored Markdown body for one path's lesson review."""
+
+    markdown: str
+
+
 # --- The quiz, ADR 0005 -----------------------------------------------------
 
 
