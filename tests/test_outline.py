@@ -342,8 +342,9 @@ def test_schema_violation_gets_one_repair_then_degrades():
     )
 
     assert outliner.repair_called is True
+    assert len(result.topics) == 1
     assert result.topics[0].slides == [1, 2]
-    assert result.topics[1].slides == []
+    assert result.unassigned == []
 
 
 def test_invalid_topic_reuse_gets_one_repair_then_degrades_to_unassigned():
@@ -372,7 +373,7 @@ def test_invalid_topic_reuse_gets_one_repair_then_degrades_to_unassigned():
 
     assert outliner.repair_called is True
     assert result.unassigned == [1]
-    assert result.topics[0].slides == []
+    assert result.topics == []
 
 
 def test_deck_over_twelve_topics_keeps_them_and_sets_flag():
