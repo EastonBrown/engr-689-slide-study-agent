@@ -8,7 +8,7 @@ from typing import Any, Protocol
 
 from pydantic import ValidationError
 
-from .. import config, llm, paths
+from .. import config, llm, memory, paths
 from ..prompts import outline as outline_prompts
 from ..schemas import (
     BridgeConfirmationDraft,
@@ -365,6 +365,8 @@ def _topics_from_grouping(
                     slides.append(slide)
                     assigned.add(slide)
         slides.sort()
+        if not slides:
+            continue
         topics.append(
             OutlineTopic(
                 name=draft.name,
@@ -427,6 +429,7 @@ def allocate_question_budget(
     budget: list[tuple[str, int]] = []
     if has_bridged_facts:
         budget.append((BRIDGED_FACT_BUDGET_TOPIC, 1))
+    topics = [topic for topic in topics if topic.slides]
     if not topics:
         return budget, []
 
@@ -568,16 +571,6 @@ def _load_notes(
     return notes, unreadable
 
 
-def _load_existing_topic_names(layout: paths.Layout, subject_slug: str) -> list[str]:
-    payload = paths.read_json(layout.profile_file(subject_slug))
-    if payload is None:
-        return []
-    from ..schemas import Profile
-
-    profile = Profile.model_validate(payload)
-    return [topic.name for topic in profile.topics]
-
-
 def _mark_outline_complete(run_dir: Path, usage: StageUsage) -> None:
     manifest_payload = paths.read_json(paths.manifest_file(run_dir))
     if manifest_payload is None:
@@ -627,7 +620,8 @@ def outline_run(
     if existing_topics is not None:
         topics = existing_topics
     elif subject_slug is not None:
-        topics = _load_existing_topic_names(layout or paths.Layout(), subject_slug)
+        profile = memory.load_profile(subject_slug, layout or paths.Layout())
+        topics = [topic.name for topic in profile.topics]
     else:
         topics = []
     for path_kind in (PathKind.image, PathKind.text):

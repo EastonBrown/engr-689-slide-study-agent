@@ -306,6 +306,7 @@ Outline
   unreadable_notes     [int]          note files on disk that would not parse
   topic_cap_exceeded   bool
   question_budget      [(str, int)]   topic name to question count
+  untested_topics      [str]          real, non-empty topics allocated zero questions
 
 OutlineTopic
   name             str            reused verbatim or newly declared

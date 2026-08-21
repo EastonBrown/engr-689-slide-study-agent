@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from study_agent import paths, schemas
+import pytest
+
+from study_agent import memory, paths, schemas
 from study_agent.stages import outline
 
 
@@ -410,6 +412,7 @@ def test_run_writes_outlines_for_both_paths(tmp_path):
 
 def test_run_loads_existing_topics_from_subject_profile_and_updates_manifest(tmp_path):
     layout = paths.Layout(tmp_path)
+    memory.create_subject("ENGR 689", layout)
     run_dir = layout.run_dir("engr-689", "deck", "2026-08-20T12-00-00Z")
     manifest = schemas.Manifest(
         schema_version=1,
@@ -492,6 +495,25 @@ def test_run_loads_existing_topics_from_subject_profile_and_updates_manifest(tmp
     )
     assert outliner.seen_existing_topics == [["Existing"], ["Existing"]]
     assert all("outline" in stat.completed_stages for stat in manifest_after.paths)
+
+
+def test_run_refuses_an_unregistered_subject_before_grouping(tmp_path):
+    layout = paths.Layout(tmp_path)
+    run_dir = layout.run_dir("engr-689", "deck", "2026-08-20T12-00-00Z")
+    for path_kind in ("image", "text"):
+        paths.write_model(paths.page_note(run_dir, path_kind, 1), note(1))
+
+    with pytest.raises(memory.UnknownSubject):
+        outline.outline_run(
+            run_dir,
+            deck_slug="deck",
+            superseded=[],
+            subject_slug="engr-689",
+            layout=layout,
+            outliner=FakeOutliner(
+                schemas.GroupingDraft(topics=[topic("A", [1])])
+            ),
+        )
 
 
 def test_one_slide_pair_consumes_one_candidate_slot_whatever_proposed_it():
@@ -577,6 +599,73 @@ def test_topic_slides_and_degraded_slides_are_sorted_ascending():
 
     assert result.topics[0].slides == [1, 3, 5]
     assert result.topics[0].degraded_slides == [1, 5]
+
+
+def test_invalid_topics_are_degraded_to_unassigned_instead_of_emitted():
+    notes = [note(1), note(2)]
+    outliner = FakeOutliner(
+        schemas.GroupingDraft(
+            topics=[
+                schemas.TopicAssignmentDraft(
+                    name="Invented", slides=[1], is_new=False, created_reason=None
+                ),
+                topic("Real", [2]),
+            ]
+        )
+    )
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=["Real"],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert [(item.name, item.slides) for item in result.topics] == [("Real", [2])]
+    assert result.unassigned == [1]
+
+
+def test_topics_that_lose_all_slides_are_not_emitted():
+    notes = [note(1), note(2)]
+    outliner = FakeOutliner(
+        schemas.GroupingDraft(
+            topics=[topic("First", [1]), topic("Second", [1, 2])]
+        )
+    )
+
+    result = outline.build_outline(
+        deck_slug="deck",
+        path_kind=schemas.PathKind.image,
+        notes=notes,
+        existing_topics=[],
+        superseded=[],
+        outliner=outliner,
+    )
+
+    assert [(item.name, item.slides) for item in result.topics] == [
+        ("First", [1]),
+        ("Second", [2]),
+    ]
+
+
+def test_question_budget_never_allocates_to_an_empty_topic():
+    topics = [
+        schemas.OutlineTopic(
+            name="Empty", slides=[], is_new=True, created_reason="new"
+        ),
+        schemas.OutlineTopic(
+            name="Real", slides=[1], is_new=True, created_reason="new"
+        ),
+    ]
+
+    budget, untested = outline.allocate_question_budget(
+        topics, has_bridged_facts=False, total_questions=3, max_per_topic=3
+    )
+
+    assert budget == [("Real", 3)]
+    assert untested == []
 
 
 def test_topics_are_ordered_by_first_assigned_slide_not_first_drafted_slide():
