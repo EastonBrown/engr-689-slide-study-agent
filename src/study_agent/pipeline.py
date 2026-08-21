@@ -1,9 +1,4 @@
-"""Headless pipeline orchestration.
-
-Issue #16 stops after render: it creates a run directory, writes rendered page
-artifacts and a manifest, and updates the latest pointer. No model client is
-imported here.
-"""
+"""Headless pipeline orchestration from render through optional research."""
 
 from __future__ import annotations
 
@@ -17,7 +12,7 @@ from typing import Callable
 
 from . import config, paths, render
 from .schemas import Manifest, PathKind, PathStats, StageUsage
-from .stages import outline, page_reader
+from .stages import outline, page_reader, research
 
 
 class PipelineError(RuntimeError):
@@ -78,8 +73,13 @@ def run_render_pipeline(
     reader: page_reader.PageReader | None = None,
     outline_pages: bool = False,
     outliner: outline.Outliner | None = None,
+    research_concepts: bool = False,
+    researcher: research.Researcher | None = None,
 ) -> PipelineResult:
     """Run render/preflight, and optionally the page-reader stage."""
+
+    if research_concepts and not (read_pages and outline_pages):
+        raise PipelineError("--research requires --read-pages and --outline")
 
     deck_path = Path(deck_path)
     if not deck_path.is_file():
@@ -163,6 +163,10 @@ def run_render_pipeline(
         )
         manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
 
+    if research_concepts:
+        research.research_run(run_dir, layout=layout, researcher=researcher)
+        manifest = Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+
     # Re-stamped last, because every stage above rewrites the manifest from
     # its own copy and would otherwise leave `ended_at` at the moment render
     # finished. A run's recorded duration has to cover the model stages, which
@@ -243,6 +247,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Continue after page reading and write outline-image/text.json.",
     )
+    parser.add_argument(
+        "--research",
+        action="store_true",
+        help="Look up named-only concepts and populate the shared research cache.",
+    )
     return parser
 
 
@@ -259,6 +268,7 @@ def main(argv: list[str] | None = None) -> int:
             resume=args.resume,
             slide_numbers=slide_numbers,
             outline_pages=args.outline,
+            research_concepts=args.research,
             log=lambda message: print(message, file=sys.stderr),
         )
     except PipelineError as error:

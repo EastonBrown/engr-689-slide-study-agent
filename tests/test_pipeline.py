@@ -254,6 +254,14 @@ def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypa
     assert all("outline" in stat.completed_stages for stat in result.manifest.paths)
 
 
+def test_research_requires_its_page_reader_and_outline_prerequisites(tmp_path):
+    deck = tmp_path / "Day3 Principle.pdf"
+    deck.write_bytes(b"pdf bytes")
+
+    with pytest.raises(pipeline.PipelineError, match="--research requires"):
+        pipeline.run_render_pipeline(deck, "engr-689", research_concepts=True)
+
+
 class TestASlideSelectionIsCheckedAgainstTheDeck:
     """A slice naming a page the deck does not have is a typo, not a read.
 
