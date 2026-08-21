@@ -80,7 +80,7 @@ Render alone is the default. Add stages as needed:
 |---|---|
 | `--read-pages` | The vision and text passes, one `SlideNote` per slide per path |
 | `--slides 55-61` | Restricts the page reads to a slice, for a cheap check |
-| `--resume` | With `--read-pages`, retries only the slides whose read failed |
+| `--resume` | Reopens the latest run for this deck instead of starting a new one; with `--read-pages`, retries only the slides whose read failed |
 | `--outline` | Groups the notes into topics and writes `outline-{image,text}.json` |
 
 Then score the image path's quoted spans against the text the renderer

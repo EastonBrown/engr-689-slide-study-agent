@@ -233,6 +233,139 @@ def test_pipeline_can_continue_into_page_reader_for_a_slide_slice(tmp_path, monk
     assert "page_reader" in image.completed_stages
 
 
+class TestResumeReentersTheExistingRunDirectory:
+    """Issue #31: `--resume` used to always allocate a fresh run directory,
+    so it could never retry only the slides that still needed it. Resuming
+    now resolves the existing run through the `latest` pointer instead.
+    """
+
+    def test_resume_reads_only_the_failed_slides_in_the_existing_run(
+        self, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+        layout = paths.Layout(tmp_path)
+
+        first = pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+            read_pages=True,
+            reader=Reader(),
+        )
+        # Slide 2's note is degraded, as if its read had failed the first time.
+        degraded = schemas.SlideNote(
+            slide_number=2,
+            page_role=schemas.PageRole.content,
+            title=None,
+            reading="",
+            visuals=[],
+            concepts=[],
+            verbatim_spans=[],
+            reader_note="bad",
+        )
+        paths.write_model(paths.page_note(first.run_dir, "image", 2), degraded)
+        paths.write_model(paths.page_note(first.run_dir, "text", 2), degraded)
+
+        class RecordingReader(Reader):
+            def __init__(self) -> None:
+                self.calls: list[int] = []
+
+            def read(self, request: page_reader.PageReadRequest) -> page_reader.PageReadResult:
+                self.calls.append(request.slide_number)
+                return super().read(request)
+
+        reader = RecordingReader()
+        second = pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            read_pages=True,
+            resume=True,
+            reader=reader,
+        )
+
+        assert second.run_dir == first.run_dir
+        assert reader.calls == [2, 2]
+
+    def test_resume_does_not_create_a_run_or_move_latest(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+        layout = paths.Layout(tmp_path)
+
+        first = pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+            read_pages=True,
+            reader=Reader(),
+        )
+        before = layout.read_latest("engr-689", "day3-principle")
+        run_dirs_before = sorted(p.name for p in first.run_dir.parent.iterdir())
+
+        pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            read_pages=True,
+            resume=True,
+            reader=Reader(),
+        )
+
+        assert layout.read_latest("engr-689", "day3-principle") == before
+        run_dirs_after = sorted(p.name for p in first.run_dir.parent.iterdir())
+        assert run_dirs_after == run_dirs_before
+
+    def test_resuming_a_run_with_no_failed_slides_makes_no_model_call(
+        self, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+        layout = paths.Layout(tmp_path)
+
+        pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            started_at=datetime(2026, 8, 20, 12, 0, 0, tzinfo=timezone.utc),
+            read_pages=True,
+            reader=Reader(),
+        )
+
+        class ExplodingReader:
+            def read(self, request: page_reader.PageReadRequest) -> page_reader.PageReadResult:
+                raise AssertionError("resuming a clean run must not call the model")
+
+        pipeline.run_render_pipeline(
+            deck,
+            "engr-689",
+            layout=layout,
+            read_pages=True,
+            resume=True,
+            reader=ExplodingReader(),
+        )
+
+    def test_resume_with_no_prior_run_is_refused(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(render, "render_deck", fake_render)
+        deck = tmp_path / "Day3 Principle.pdf"
+        deck.write_bytes(b"pdf bytes")
+
+        with pytest.raises(pipeline.PipelineError, match="no run to resume"):
+            pipeline.run_render_pipeline(
+                deck,
+                "engr-689",
+                layout=paths.Layout(tmp_path),
+                read_pages=True,
+                resume=True,
+                reader=Reader(),
+            )
+
+
 def test_pipeline_can_continue_into_outline_after_page_reader(tmp_path, monkeypatch):
     monkeypatch.setattr(render, "render_deck", fake_render)
     deck = tmp_path / "Day3 Principle.pdf"
