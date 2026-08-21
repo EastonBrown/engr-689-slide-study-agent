@@ -61,21 +61,19 @@ for what one run like this costs going forward.
 ## Browsing this run locally
 
 The interface (`app.py`) reads from `runs/<subject>/<deck>/<timestamp>/` and
-`memory/`, both gitignored, not from `examples/golden/` directly — there is no
-replay tooling yet (issue #27). To browse this run through the interface
-after a fresh clone:
+`memory/`, both gitignored, not from `examples/golden/` directly. Replay mode
+(issue #27) does the copying, so no manual setup is needed after a fresh
+clone. Start the interface and select `data/course/slides/Day3 Principle.pdf`:
+the upload is matched to this run by the sha256 in its `manifest.json`, and
+the button replays it rather than calling the API.
 
-```
-mkdir -p runs/engr-689/day3-principle/2026-08-21T03-45-25Z
-cp -r examples/golden/*.json examples/golden/*.md examples/golden/pages-* examples/golden/research \
-  runs/engr-689/day3-principle/2026-08-21T03-45-25Z/
-echo 2026-08-21T03-45-25Z > runs/engr-689/day3-principle/latest
-mkdir -p memory/engr-689
-cp examples/golden/memory/subjects.json memory/subjects.json
-cp -r examples/golden/memory/engr-689/. memory/engr-689/
-```
+`study_agent.replay.install_run` is what puts the files in place. It installs
+the run under the subject, deck, and timestamp recorded in the manifest above,
+writes the `latest` pointer, and copies `memory/` into place without
+overwriting anything already there, since that tree is where a local user's
+own attempts accumulate.
 
-No `ANTHROPIC_API_KEY` is needed for this: viewing an existing run's stages,
-summary, failures, and quiz never instantiates an API client, only the "Run
-pipeline" button does. Verified directly against `study_agent.run_view` with
-the key unset before committing this run.
+No `ANTHROPIC_API_KEY` is needed for any of this: viewing an existing run's
+stages, summary, failures, and quiz never instantiates an API client, only a
+live run does. Asserted in `tests/test_replay.py` by detonating
+`llm.create_client` and `llm.load_api_key` for the whole replay path.

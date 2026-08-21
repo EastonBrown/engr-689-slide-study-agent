@@ -7,13 +7,14 @@ every later rerun reconstructs this screen from that directory.
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 import re
 from typing import Any
 
 import streamlit as st
 
-from study_agent import memory, paths, pipeline, run_view
+from study_agent import memory, paths, pipeline, replay, run_view
 from study_agent.schemas import PathKind, Quiz, SlideNote
 from study_agent.stages import grade, outline, page_reader, retake
 
@@ -327,6 +328,56 @@ def _run(uploaded: st.runtime.uploaded_file_manager.UploadedFile, subject_slug: 
     return run_dir
 
 
+def _replay(source: Path, layout: paths.Layout) -> Path:
+    """Animate a completed run into the same seven boxes the live path fills.
+
+    The boxes, their labels, their summaries, and their lines all come from
+    `run_view`, so this is the live screen replayed rather than a second screen
+    that resembles it. No model client is constructed on this path.
+    """
+
+    run_dir = replay.install_run(source, layout)
+    stages = replay.replay_stages(run_dir)
+    boxes: dict[str, Any] = {}
+    logs: dict[str, Any] = {}
+    lines: dict[str, list[str]] = {}
+
+    def start(stage: replay.ReplayStage) -> None:
+        if stage.absent:
+            with st.status(f"{stage.label}: {stage.summary}", expanded=False, state="running"):
+                st.caption("Pending — this stage has not written artifacts yet.")
+            return
+        boxes[stage.key] = st.status(stage.label, expanded=True)
+        logs[stage.key] = st.empty()
+        lines[stage.key] = []
+
+    def line(stage: replay.ReplayStage, message: str) -> None:
+        lines[stage.key].append(message)
+        logs[stage.key].code("\n".join(lines[stage.key][-20:]), language=None)
+
+    def end(stage: replay.ReplayStage) -> None:
+        if stage.absent:
+            return
+        boxes[stage.key].update(
+            label=f"{stage.label}: {stage.summary}",
+            state=_status_state(stage.state),
+            expanded=False,
+        )
+
+    replay.drive(stages, on_line=line, on_stage_start=start, on_stage_end=end)
+    st.caption(f"Replayed from the committed run in {source}. No API calls were made.")
+    return run_dir
+
+
+def _replay_source(uploaded: Any, layout: paths.Layout) -> Path | None:
+    """The committed run this upload is a replay of, matched by content hash."""
+
+    if uploaded is None:
+        return None
+    digest = hashlib.sha256(uploaded.getvalue()).hexdigest()
+    return replay.source_for_deck(digest, layout)
+
+
 def main() -> None:
     st.set_page_config(page_title="Slide deck to study guide", layout="wide")
     st.title("Slide deck to study guide")
@@ -337,14 +388,29 @@ def main() -> None:
     names = [subject.display_name for subject in subjects]
     lookup = {subject.display_name: subject.slug for subject in subjects}
 
+    try:
+        pointed_at = replay.replay_run_from_env(layout)
+    except replay.ReplayError as error:
+        st.error(str(error))
+        pointed_at = None
+
     controls = st.columns([2, 2, 1])
     with controls[0]:
         selected_name = st.selectbox("Subject", names, index=None, placeholder="Choose a subject")
     with controls[1]:
-        uploaded = st.file_uploader("Deck (PDF)", type="pdf")
+        if pointed_at is None:
+            uploaded = st.file_uploader("Deck (PDF)", type="pdf")
+        else:
+            uploaded = None
+            st.caption(f"Replay mode: {pointed_at}")
     with controls[2]:
         st.write("")
-        run = st.button("Run pipeline", type="primary", disabled=not (selected_name and uploaded))
+        # A deck the committed run was produced from replays that run instead
+        # of spending the API again, which is what the demo is pointed at.
+        source = pointed_at or _replay_source(uploaded, layout)
+        label = "Run pipeline" if source is None else "Generate study guide"
+        ready = bool(source) or bool(selected_name and uploaded)
+        run = st.button(label, type="primary", disabled=not ready)
 
     with st.expander("Create a subject"):
         display_name = st.text_input("New subject name")
@@ -356,10 +422,44 @@ def main() -> None:
             else:
                 st.success(f"Created {created.display_name}. Choose it above.")
 
+    if source is not None:
+        with st.expander("Replay controls"):
+            st.caption(
+                "This deck matches a run that is already committed, so pressing "
+                "the button replays that run from disk instead of calling the "
+                "API. A rehearsal leaves a graded attempt behind, which makes "
+                "the quiz open with its answer key already showing."
+            )
+            manifest_subject = replay.run_subject(source)
+            if manifest_subject and st.button("Clear previous quiz attempts"):
+                removed = replay.clear_attempts(manifest_subject, layout)
+                st.success(f"Cleared {removed} attempt(s) for {manifest_subject}.")
+
     selected_slug = lookup.get(selected_name or "")
     run_dir = run_view.latest_run(layout, selected_slug) if selected_slug else None
-    ran_this_request = bool(run and uploaded and selected_slug)
-    if ran_this_request:
+    replaying = bool(run and source is not None)
+    ran_this_request = replaying or bool(run and uploaded and selected_slug)
+    if replaying and source is not None:
+        try:
+            run_dir = _replay(source, layout)
+        except replay.ReplayError as error:
+            st.error(str(error))
+        else:
+            # The run names its own subject. Honour it, so the quiz and the
+            # attempt history below belong to the run that is on screen.
+            summary = run_view.run_summary(run_dir)
+            if summary is not None:
+                selected_slug = summary.subject_slug
+    elif source is not None:
+        # A rerun after the animation has already played: show the same run
+        # again without replaying it, and without needing a subject chosen.
+        installed = replay.installed_run(source, layout)
+        if installed is not None:
+            run_dir = installed
+            summary = run_view.run_summary(installed)
+            if summary is not None and not selected_slug:
+                selected_slug = summary.subject_slug
+    if ran_this_request and not replaying and selected_slug:
         try:
             run_dir = _run(uploaded, selected_slug)
         except (pipeline.PipelineError, page_reader.PageReadFailed) as error:
