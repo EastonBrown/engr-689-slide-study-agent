@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Stable Diffusion – much faster!",
+  "reading": "The slide introduces Stable Diffusion as a latent diffusion model: the diffusion process is applied in the latent space rather than pixel space, and it is presented as the first large-scale, open-sourced text-to-image generative model. The canonical latent diffusion architecture figure from Rombach et al. occupies the lower portion, annotated in red to separate the image-to-latent encoding stage from the diffusion stage. The citation Rombach et al., CVPR 2022 appears at the bottom.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Latent diffusion architecture: pixel space (pink) with encoder E mapping x to z and decoder D producing x̃; latent space (green) containing the diffusion process producing z_T and a denoising U-Net ε_θ with repeated ×(T−1) denoising steps and cross-attention Q/KV blocks; conditioning panel (grey) with semantic map, text, representations, images fed through τ_θ. Legend shows denoising step, crossattention, switch, skip connection, concat. Red overlay boxes label 'Image to latent' (top) and 'Diffusion model in the latent space' (bottom).",
+      "assertion": "An autoencoder compresses images to a latent code where the conditioned denoising U-Net runs diffusion, so generation is cheaper than operating on pixels; conditioning enters via cross-attention from a domain encoder τ_θ.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Latent diffusion",
+      "status": "explained_here",
+      "why_it_matters": "Running diffusion in a compressed latent space is what makes Stable Diffusion fast."
+    },
+    {
+      "name": "Cross-attention conditioning",
+      "status": "named_only",
+      "why_it_matters": "Mechanism by which text or other modalities steer generation."
+    },
+    {
+      "name": "Denoising U-Net",
+      "status": "assumed_prior",
+      "why_it_matters": "Backbone predicting noise at each step."
+    }
+  ],
+  "verbatim_spans": [
+    "Apply the diffusion model in the latent space instead of pixel space",
+    "The first large-scale, open-sourced text-to-image generative model",
+    "Rombach et al., High-Resolution Image Synthesis with Latent Diffusion Models, CVPR 2022"
+  ],
+  "reader_note": null,
+  "slide_number": 57
+}

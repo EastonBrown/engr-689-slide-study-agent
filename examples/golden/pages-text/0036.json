@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide introduces contrastive learning as an objective that maximizes the similarity of positive pairs while minimizing the similarity of negative pairs. It accompanies this with a schematic of a two-branch architecture in which a query image and a key image are each passed through an encoder, and a loss is computed on the resulting representations. Annotations note that both encoders are updated and that they share weights.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Two-branch pipeline: a query image and a key image each feed into an Encoder block; outputs meet at a loss node. Labels indicate both encoders are updated and weights are shared between them.",
+      "assertion": "Contrastive training uses a siamese, weight-shared two-encoder setup where query and key embeddings are compared through a contrastive loss and both branches receive gradient updates.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "explained_here",
+      "why_it_matters": "Core self-supervised objective that learns representations by pulling positives together and pushing negatives apart."
+    },
+    {
+      "name": "Positive and negative pairs",
+      "status": "named_only",
+      "why_it_matters": "Defines what the loss treats as similar or dissimilar, determining the learned invariances."
+    },
+    {
+      "name": "Query and key encoders",
+      "status": "named_only",
+      "why_it_matters": "The two-branch structure underlying siamese contrastive frameworks."
+    },
+    {
+      "name": "Weight sharing",
+      "status": "named_only",
+      "why_it_matters": "Keeps the two branches in one embedding space; contrasts with momentum-encoder variants."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Minimize similarities of negative pairs",
+    "Share weights for both encoder"
+  ],
+  "reader_note": null,
+  "slide_number": 36
+}

@@ -1,0 +1,3 @@
+Predictive learning: NLP
+• Masked language modeling (BERT)
+• Predict the masked words (tokens) in the text

@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide poses the question of how prediction can yield good representations, and answers visually with a masked autoencoder example on a cheetah photograph: a heavily masked input, the model's reconstruction, and the ground-truth image, labelled Input, MAE prediction, and GT.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Three side-by-side images of a cheetah: left, the image with most patches greyed out (masked); centre, a blurry but structurally correct MAE reconstruction; right, the original sharp photograph. Captions: Input, MAE prediction, GT.",
+      "assertion": "A masked autoencoder can reconstruct plausible global structure and semantics of an image from a small fraction of visible patches, though fine detail is blurred — evidence that predicting masked content forces useful representation learning.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised pretraining by reconstructing masked image patches."
+    },
+    {
+      "name": "Representation learning by prediction",
+      "status": "named_only",
+      "why_it_matters": "Framing motive: predicting hidden parts of data induces semantic features."
+    },
+    {
+      "name": "Ground truth (GT)",
+      "status": "assumed_prior",
+      "why_it_matters": "Reference for judging reconstruction quality."
+    }
+  ],
+  "verbatim_spans": [
+    "How to learn good representations by prediction?",
+    "MAE prediction",
+    "GT"
+  ],
+  "reader_note": null,
+  "slide_number": 46
+}

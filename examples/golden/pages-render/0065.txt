@@ -1,0 +1,2 @@
+Task decomposition for robot manipulation
+Liu et al., MOKA: Open-World Robotic Manipulation through Mark-Based Visual Prompting, 2024

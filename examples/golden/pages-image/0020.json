@@ -1,0 +1,43 @@
+{
+  "page_role": "content",
+  "title": "How to build an AI model to recognize objects",
+  "reading": "The slide frames object recognition as a classifier: a robot 'sees a picture' and 'tells the object class', formalized as an image-in / label-out block diagram, with the classifier internals shown as a neural network. The caption describes the model as a sequence of \"learnable\" computation.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Robot icon with yellow arrows labelled 'See a picture' (in) and 'Tell the object class' (out); below, a pipeline: Image → black box labelled 'Classifier' → Label (e.g., dog or cat).",
+      "assertion": "Object recognition is a function mapping an input image to a class label, performed by a classifier.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "Sketch of a fully connected feedforward neural network with red input nodes, four columns of blue hidden nodes, and two green output nodes, with a legend Input/Hidden/Output.",
+      "assertion": "The classifier is implemented as a multi-layer neural network, i.e. a sequence of learnable computations.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Classifier",
+      "status": "explained_here",
+      "why_it_matters": "Core abstraction mapping images to labels."
+    },
+    {
+      "name": "Neural network (input/hidden/output layers)",
+      "status": "named_only",
+      "why_it_matters": "The learnable model realizing the classifier."
+    },
+    {
+      "name": "Learnable computation",
+      "status": "named_only",
+      "why_it_matters": "Emphasizes parameters fitted from data rather than hand-coded rules."
+    }
+  ],
+  "verbatim_spans": [
+    "See a picture",
+    "Label (e.g., dog or cat)",
+    "A sequence of \"learnable\" computation"
+  ],
+  "reader_note": null,
+  "slide_number": 20
+}

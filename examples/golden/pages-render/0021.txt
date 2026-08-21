@@ -1,0 +1,3 @@
+Prelude of Foundation Models (early deep learning)
+[Simonyan et al., 2015]
+[Krizhevsky et al., 2012] [Szegedy et al., 2015] [He et al., 2016] [Huang et al., 2017]

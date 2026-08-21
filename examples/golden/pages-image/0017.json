@@ -1,0 +1,48 @@
+{
+  "page_role": "content",
+  "title": "Agentic robot policy learning",
+  "reading": "A single full-page system figure illustrates an agentic loop for robot policy learning: a human user gives a task objective and feedback to a coding agent, which uses tool APIs for perception, planning and control, builds a simulated/real environment (ENPIRE), and runs a policy-improvement cycle. A timeline strip at the bottom tracks incremental gains over research wall-clock time. No body prose accompanies the figure.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Three-panel pipeline. Left: 'CONSTRUCT ENVIRONMENT' panel showing env.py code (class InsertionEnv with reset, get_reward using sam3/boundlsdf, get_observation, step) plus ACTION/OBS/REWARD tags. Center: Human User → Coding Agent → Tool APIs (perception, planning, control thumbnails) and the ENPIRE environment photo of a robot lab. Right: 'POLICY IMPROVEMENT' panel with numbered steps 01 Literature review (PLD, RL-Token, CaP-X), 02 Propose algorithm variant (Heuristics, Off2On RL, Code-as-policy, BC), 03 Optimize Infra (Data Sampler, Param Sweep), 04 Summarize experiment result; arrows labelled rollouts and logs, and BUILD/RUN arrows from the coding agent.",
+      "assertion": "A coding agent, driven by human objectives and feedback, closes a loop: it writes the environment code, runs rollouts in ENPIRE, and iteratively improves the policy via literature-informed algorithm variants, infra tuning and result summarization.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "chart",
+      "description": "'HILLCLIMB TIMELINE' step chart: team-avg best success rate (0–100%) vs research wall-clock time (0 to >3h), annotated with Online RL mix Demo +3.8 pp, BC regularization +10.8 pp, Tweak BC term weight +0.4 pp, Tune batch size 1024→512 +0.9 pp, Compensate controller +1.3 pp.",
+      "assertion": "Success rate climbs in discrete jumps over ~3 hours, with early changes (BC regularization +10.8 pp) contributing most and later tweaks yielding sub-pp gains as performance saturates near 100%.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Agentic policy learning loop",
+      "status": "explained_here",
+      "why_it_matters": "Frames the coding agent as the researcher that builds environments and iterates on algorithms."
+    },
+    {
+      "name": "ENPIRE",
+      "status": "named_only",
+      "why_it_matters": "The environment/system in which rollouts are executed."
+    },
+    {
+      "name": "Off2On RL / BC regularization",
+      "status": "named_only",
+      "why_it_matters": "Candidate algorithm variants the agent proposes and evaluates."
+    },
+    {
+      "name": "Code-as-policy",
+      "status": "named_only",
+      "why_it_matters": "One proposed policy representation among the variants."
+    }
+  ],
+  "verbatim_spans": [
+    "Agentic robot policy learning",
+    "HILLCLIMB TIMELINE",
+    "Propose algorithm variant"
+  ],
+  "reader_note": null,
+  "slide_number": 17
+}

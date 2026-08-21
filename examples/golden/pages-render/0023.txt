@@ -1,0 +1,5 @@
+From Transformer to Vision Transformer (ViT)
+A building block for vision foundation models
+• Sequences of image patches
+• Transformers on patches
+Dosovitskiy et al., An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale, ICLR 2021

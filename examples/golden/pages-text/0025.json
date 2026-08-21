@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "How LLMs influence computer vision",
+  "reading": "The slide illustrates how large language models are reshaping computer vision by showing the structure of a typical multimodal LLM: an image is passed through a vision encoder whose features are fed, alongside a text prompt, into a large language model that produces a free-form natural-language answer. The worked example asks where the tower building is in an image, and GPT-4o replies with a detailed description identifying the Texas A&M water tower bearing \"WELCOME TO AGGIELAND\", its position slightly left of center in the foreground, and Kyle Field behind it as corroborating evidence. The point is that visual grounding and localization questions can now be answered in open-ended language rather than by fixed-category detectors.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline schematic of a multimodal LLM: an input image goes to a Vision Encoder, whose output plus a text prompt feeds a Large Language Model block, which emits a textual answer; an example prompt and GPT-4o response are shown alongside.",
+      "assertion": "A multimodal LLM couples a vision encoder to an LLM so that image content can be queried and described through natural-language prompts.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal LLM",
+      "status": "explained_here",
+      "why_it_matters": "Defines the architecture combining vision encoding with language modeling that underlies modern vision-language systems."
+    },
+    {
+      "name": "Vision encoder",
+      "status": "named_only",
+      "why_it_matters": "Converts pixels into representations the language model can consume."
+    },
+    {
+      "name": "Text prompt / visual question answering",
+      "status": "explained_here",
+      "why_it_matters": "Shows open-vocabulary querying replacing fixed-label vision tasks."
+    },
+    {
+      "name": "GPT-4o",
+      "status": "named_only",
+      "why_it_matters": "Concrete state-of-the-art system used as the demonstration."
+    }
+  ],
+  "verbatim_spans": [
+    "A typical Multimodal LLM:",
+    "Where is the tower building in the image?",
+    "By OpenAI GPT 4o"
+  ],
+  "reader_note": null,
+  "slide_number": 25
+}

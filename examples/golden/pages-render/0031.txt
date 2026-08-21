@@ -1,0 +1,4 @@
+Contrastive learning
+• Supervised classification is contrastive learning
+Classifier: weights in the last FC layer
+Features: representations before the last FC layer

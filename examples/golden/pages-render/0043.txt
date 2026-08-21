@@ -1,0 +1,3 @@
+Masked Autoencoder (MAE)
+Patches as visual tokens
+(Vision Transformer)

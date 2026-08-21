@@ -1,0 +1,23 @@
+{
+  "query": "What is Computer vision?",
+  "normalized_query": "what is computer vision",
+  "asked_at": "2026-08-21T04:17:29Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Computer vision",
+  "answer": "Computer vision is the branch of artificial intelligence that enables computers to extract meaningful information from digital images and video, essentially approximating what the human visual system does. Systems are typically trained on large sets of labeled images using deep learning models (especially convolutional neural networks) that learn visual features layer by layer rather than relying on hand-coded rules. Core tasks include image classification (what is in the image), object detection (what and where, via bounding boxes), and segmentation, powering applications from medical imaging to self-driving cars.",
+  "citations": [
+    {
+      "title": "What Is Computer Vision? | IBM",
+      "url": "https://www.ibm.com/think/topics/computer-vision"
+    },
+    {
+      "title": "Computer Vision Definition | DeepAI",
+      "url": "https://deepai.org/machine-learning-glossary-and-terms/computer-vision"
+    },
+    {
+      "title": "What is Object Detection? | IBM",
+      "url": "https://www.ibm.com/think/topics/object-detection"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+Self-supervised learning
+• Using the data itself as supervision
+o Can we predict myself? 
+o Can we know how to rotate the image?
+o Can we solve a jigsaw game? 
+o ……
+• The goal is to
+o Learn representations from large-scale unlabeled data
+o Learn high-level semantic representations

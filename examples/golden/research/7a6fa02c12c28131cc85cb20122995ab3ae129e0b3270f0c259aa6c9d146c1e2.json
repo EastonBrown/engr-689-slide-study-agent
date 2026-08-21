@@ -1,0 +1,19 @@
+{
+  "query": "What is 2D/3D/4D perception and reconstruction?",
+  "normalized_query": "what is 2d/3d/4d perception and reconstruction",
+  "asked_at": "2026-08-21T04:07:02Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "2D/3D/4D perception and reconstruction",
+  "answer": "In vision, the dimensionality label describes what a system recovers from images: 2D perception works in the image plane (low-level cues like depth maps, optical flow, segmentation and camera parameters), 3D perception/reconstruction lifts those cues into spatial geometry of a static scene (point clouds, meshes, neural fields or Gaussian splats), and 4D adds time, recovering a temporally consistent 3D representation of a moving, deforming scene. A useful mental model is a hierarchy: 2D cues feed 3D reconstruction, and 4D methods extend 3D either by learning a canonical shape plus a deformation field over time or by making the representation itself time-dependent. Typical tasks per level are depth/flow estimation (2D), multi-view stereo, SfM/SLAM and 3D Gaussian splatting (3D), and dynamic novel-view synthesis, non-rigid tracking and motion capture (4D).",
+  "citations": [
+    {
+      "title": "Reconstructing 4D Spatial Intelligence: A Survey",
+      "url": "https://arxiv.org/abs/2507.21045"
+    },
+    {
+      "title": "General 4D Dynamic Scene Reconstruction from Multiple View Video (thesis)",
+      "url": "https://arminmustafa.github.io/docs/Thesis_ArminMustafa.pdf"
+    }
+  ]
+}

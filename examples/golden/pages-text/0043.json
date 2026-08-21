@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Masked Autoencoder (MAE)",
+  "reading": "The slide introduces the Masked Autoencoder (MAE) and notes that images are split into patches which serve as visual tokens, following the Vision Transformer formulation. The text is terse: no mechanism, loss, or masking ratio is given here, only the framing that MAE operates over patch tokens rather than pixels directly.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised pretraining approach that reconstructs masked image regions."
+    },
+    {
+      "name": "Patches as visual tokens",
+      "status": "named_only",
+      "why_it_matters": "Turns an image into a token sequence so transformer machinery applies."
+    },
+    {
+      "name": "Vision Transformer",
+      "status": "assumed_prior",
+      "why_it_matters": "Provides the patch-embedding backbone MAE builds on."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked Autoencoder (MAE)",
+    "Patches as visual tokens",
+    "(Vision Transformer)"
+  ],
+  "reader_note": null,
+  "slide_number": 43
+}

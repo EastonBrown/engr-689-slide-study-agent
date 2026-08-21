@@ -1,0 +1,31 @@
+{
+  "page_role": "content",
+  "title": "Computer vision",
+  "reading": "The slide defines computer vision as the setting where the data consist of images, videos, or signals captured by 3D sensors. A montage of application photographs surrounds the single bullet, illustrating the breadth of domains in which such visual data arise.",
+  "visuals": [
+    {
+      "kind": "photo",
+      "description": "Seven-image montage: industrial machine-vision cameras on a rail, a smartphone photographing a flower, a self-driving car, a camera-equipped drone over farmland, a clinician reviewing medical brain scans on multiple monitors, people playing Kinect Sports in front of a TV, and a VR/AR headset.",
+      "assertion": "Computer vision underpins applications across industrial inspection, mobile photography, autonomous driving, aerial imaging, medical imaging, gesture-based gaming, and virtual/augmented reality.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Computer vision",
+      "status": "explained_here",
+      "why_it_matters": "Frames the subfield handled when data are visual rather than tabular or textual."
+    },
+    {
+      "name": "3D sensors",
+      "status": "named_only",
+      "why_it_matters": "Extends visual data beyond 2D images to depth/range measurements."
+    }
+  ],
+  "verbatim_spans": [
+    "Computer vision",
+    "When the data are about images, videos, or signals captured by 3D sensors …"
+  ],
+  "reader_note": null,
+  "slide_number": 9
+}

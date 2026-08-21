@@ -1,0 +1,18 @@
+{
+  "page_role": "section_break",
+  "title": "Visual recognition",
+  "reading": "The page carries only the phrase \"Visual recognition\", with no body text supplied on the text path. It reads as a section marker introducing a segment of the lecture on visual recognition; any accompanying imagery or bullet content is not available in the extracted text.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Visual recognition",
+      "status": "named_only",
+      "why_it_matters": "Names the topic of the upcoming section — identifying objects, scenes or categories from images — but the page gives no definition or detail."
+    }
+  ],
+  "verbatim_spans": [
+    "Visual recognition"
+  ],
+  "reader_note": "Text path supplied only a title string; no body content available to read.",
+  "slide_number": 12
+}

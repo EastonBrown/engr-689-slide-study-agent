@@ -1,0 +1,47 @@
+{
+  "page_role": "content",
+  "title": "Masked Autoencoder (MAE)",
+  "reading": "The slide walks through the Masked Autoencoder pipeline as a sequence of stages: an input image undergoes random masking of patches; only the visible patches are encoded with a Transformer encoder; the encoded latents are then expanded with learnable 'mask tokens' so the decoder sees a full-length token sequence; the decoder predicts the unknown (masked) content; and training minimises an L2 loss computed in pixel space on the masked regions. The text is essentially labels on a left-to-right pipeline figure.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Pipeline schematic with stage labels: random masking → encode visible patches with Transformer → expand with mask tokens → predict unknown → compute L2 loss in pixels.",
+      "assertion": "MAE encodes only visible patches and reconstructs masked patches from mask tokens, supervised by pixel-space L2 loss.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masked Autoencoder (MAE)",
+      "status": "explained_here",
+      "why_it_matters": "Self-supervised pretraining method for vision Transformers."
+    },
+    {
+      "name": "Mask tokens",
+      "status": "named_only",
+      "why_it_matters": "Placeholders that let the decoder reconstruct positions dropped by the encoder."
+    },
+    {
+      "name": "Random masking",
+      "status": "named_only",
+      "why_it_matters": "Creates the reconstruction task and reduces encoder compute."
+    },
+    {
+      "name": "Pixel-space L2 reconstruction loss",
+      "status": "named_only",
+      "why_it_matters": "Simple objective avoiding tokenizers or discrete targets."
+    },
+    {
+      "name": "Transformer encoder / patches",
+      "status": "assumed_prior",
+      "why_it_matters": "Underlying ViT architecture assumed known."
+    }
+  ],
+  "verbatim_spans": [
+    "Expand with “mask tokens”",
+    "Encode visible patches with Transformer",
+    "Computer L2 loss in pixels"
+  ],
+  "reader_note": null,
+  "slide_number": 44
+}

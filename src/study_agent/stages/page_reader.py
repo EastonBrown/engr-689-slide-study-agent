@@ -119,8 +119,13 @@ def _message_content(request: PageReadRequest) -> list[dict[str, object]]:
     return [
         intro,
         {
+            # The API rejects an empty text content block outright, and a
+            # slide with no extractable text (a title-only build frame, a
+            # section divider with no PDF text layer) is exactly the case
+            # `extracted_text` comes back empty for. Say so explicitly rather
+            # than send nothing.
             "type": "text",
-            "text": request.extracted_text or "",
+            "text": request.extracted_text or "(no extractable text on this slide)",
         },
     ]
 
@@ -316,10 +321,17 @@ def _update_manifest(
     # the existing `page_reader` row at all. Replacing it with a zero-cost
     # row, or dropping it outright, would erase real cost already spent for
     # no reason.
+    #
+    # A non-zero invocation is added to whatever row is already there, not
+    # substituted for it: page reads are resumable per slide, so a partial
+    # resume (a slide or two left over from an earlier invocation) must not
+    # discard the cost that earlier invocation already paid for the rest.
     stage_usage = list(manifest.stage_usage)
     if usage.calls:
+        previous = next((item for item in stage_usage if item.stage == PAGE_READER_STAGE), None)
+        merged = _add_usage(previous, usage) if previous is not None else usage
         stage_usage = [item for item in stage_usage if item.stage != PAGE_READER_STAGE]
-        stage_usage.append(usage)
+        stage_usage.append(merged)
     manifest = manifest.model_copy(
         update={
             "paths": list(stats_by_path.values()),

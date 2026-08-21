@@ -1,0 +1,19 @@
+{
+  "query": "What is Generative AI?",
+  "normalized_query": "what is generative ai",
+  "asked_at": "2026-08-21T04:10:02Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Generative AI",
+  "answer": "Generative AI is a class of artificial intelligence that produces original content — text, images, audio, video, or code — in response to a user's prompt, rather than only classifying or predicting from existing data. It works through deep learning models (such as large language models and diffusion models) that are trained on very large datasets and learn the statistical patterns and structures within them, then sample from those learned patterns to generate new, plausible outputs. Familiar examples include chatbots and image generators, whose quality depends heavily on the training data and the prompt given, which is also why outputs can be fluent yet factually wrong.",
+  "citations": [
+    {
+      "title": "What is Generative AI? | IBM",
+      "url": "https://www.ibm.com/think/topics/generative-ai"
+    },
+    {
+      "title": "What is Generative AI? - Gen AI Explained - AWS",
+      "url": "https://aws.amazon.com/what-is/generative-ai/"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "page_role": "content",
+  "title": "Variants of vision encoder",
+  "reading": "The slide surveys five families of vision-encoder pretraining, each shown as its original architecture schematic with a label and canonical citation underneath: supervised learning (ViT, Dosovitskiy et al.), masked modeling (MAE, He et al.), auto-encoding (VQVAE, Van den Oord et al.), self-distillation (DINO, Caron et al.), and multimodal learning (CLIP, Radford et al.). An inset bar chart in the upper right compares how often each family is used as the vision encoder in multimodal LLMs.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Five side-by-side architecture schematics: ViT patch embedding + transformer encoder + MLP head; MAE masked patches through encoder/decoder to reconstruct target; VQVAE with CNN encoder, codebook embedding space, quantization and CNN decoder; DINO student/teacher networks with softmax, centering, EMA and stop-gradient; CLIP text and image encoders producing an image-text similarity matrix.",
+      "assertion": "Vision encoders differ mainly in their pretraining objective: label supervision, masked reconstruction, discrete latent reconstruction, self-distillation between student/teacher views, or image-text contrastive alignment.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "chart",
+      "description": "Inset bar chart titled 'Popularity of different vision encoders in Multimodal LLMs' with bars for Masked Modeling/Supervised Learning (negligible), Auto-encoding (e.g., VQ-VAE, small), Self-Distillation (e.g., DINOv2, medium), Multimodal Learning (e.g., CLIP, very tall).",
+      "assertion": "CLIP-style multimodally trained encoders dominate usage in multimodal LLMs, far ahead of DINOv2, VQ-VAE, and masked/supervised encoders.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Supervised ViT",
+      "status": "named_only",
+      "why_it_matters": "Baseline vision encoder trained with classification labels."
+    },
+    {
+      "name": "Masked image modeling (MAE)",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised reconstruction of masked patches."
+    },
+    {
+      "name": "VQ-VAE auto-encoding",
+      "status": "named_only",
+      "why_it_matters": "Learns discrete latent codes via encoder-codebook-decoder."
+    },
+    {
+      "name": "Self-distillation (DINO)",
+      "status": "named_only",
+      "why_it_matters": "Student-teacher training without labels yields strong features."
+    },
+    {
+      "name": "CLIP contrastive multimodal training",
+      "status": "named_only",
+      "why_it_matters": "Aligns image and text embeddings; most popular encoder for MLLMs."
+    }
+  ],
+  "verbatim_spans": [
+    "Variants of vision encoder",
+    "Popularity of different vision encoders in Multimodal LLMs",
+    "CLIP, Radford et al."
+  ],
+  "reader_note": null,
+  "slide_number": 28
+}

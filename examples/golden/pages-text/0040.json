@@ -1,0 +1,34 @@
+{
+  "page_role": "content",
+  "title": "Predictive learning: NLP",
+  "reading": "The slide introduces predictive (self-supervised) learning in natural language processing, using masked language modeling as exemplified by BERT. The stated task is to predict the masked words or tokens within a piece of text, so the supervision signal comes from the text itself rather than external labels.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Masked language modeling",
+      "status": "explained_here",
+      "why_it_matters": "Defines the pretext task—recovering hidden tokens—that lets models learn language representations without labels."
+    },
+    {
+      "name": "BERT",
+      "status": "named_only",
+      "why_it_matters": "Canonical model instantiating masked language modeling."
+    },
+    {
+      "name": "Predictive learning",
+      "status": "assumed_prior",
+      "why_it_matters": "Framing category under which the NLP example is presented."
+    },
+    {
+      "name": "Tokens",
+      "status": "assumed_prior",
+      "why_it_matters": "Units over which masking and prediction operate."
+    }
+  ],
+  "verbatim_spans": [
+    "Masked language modeling (BERT)",
+    "Predict the masked words (tokens) in the text"
+  ],
+  "reader_note": null,
+  "slide_number": 40
+}

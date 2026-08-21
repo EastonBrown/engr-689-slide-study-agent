@@ -1,0 +1,25 @@
+{
+  "page_role": "content",
+  "title": "Agentic object detection",
+  "reading": "The slide introduces agentic object detection, illustrated by two natural-language prompts that ask a system to find objects specified by attributes rather than a fixed class label: unripe strawberries in a picture, and airplanes with two engines. The vendor LandingAI is credited as the source of the example.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Agentic object detection",
+      "status": "named_only",
+      "why_it_matters": "Shifts detection from fixed label sets to open-ended, attribute-conditioned natural-language queries handled by an agentic system."
+    },
+    {
+      "name": "LandingAI",
+      "status": "named_only",
+      "why_it_matters": "Company whose product demonstrates the capability."
+    }
+  ],
+  "verbatim_spans": [
+    "Agentic object detection",
+    "“Detect unripe strawberries in the picture”",
+    "“Detect airplanes with two engines”"
+  ],
+  "reader_note": null,
+  "slide_number": 64
+}

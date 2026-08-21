@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "LLaVA (Large Language and Vision Assistant)",
+  "reading": "The slide introduces LLaVA, a large language and vision assistant that leverages the autoregressive nature of large language models. Its training approach is visual instruction tuning, which relies on a large amount of <visual, question, answer> triples. A citation to Liu et al., Visual Instruction Tuning, NeurIPS 2023 is given as the source.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "LLaVA",
+      "status": "explained_here",
+      "why_it_matters": "A canonical multimodal assistant combining a vision encoder with an LLM."
+    },
+    {
+      "name": "Visual instruction tuning",
+      "status": "named_only",
+      "why_it_matters": "The training recipe that aligns visual inputs with instruction-following LLM behaviour."
+    },
+    {
+      "name": "Autoregressive language modelling",
+      "status": "assumed_prior",
+      "why_it_matters": "The generation mechanism LLaVA inherits from its LLM backbone."
+    }
+  ],
+  "verbatim_spans": [
+    "LLaVA uses the autoregressive nature of LLMs",
+    "<visual, question, answer> data",
+    "Liu et al., Visual Instruction Tuning, NeurIPS 2023"
+  ],
+  "reader_note": null,
+  "slide_number": 26
+}

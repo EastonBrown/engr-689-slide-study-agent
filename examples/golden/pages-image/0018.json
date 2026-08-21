@@ -1,0 +1,38 @@
+{
+  "page_role": "content",
+  "title": "How to let computers recognize objects?",
+  "reading": "The slide poses object recognition as an agent problem: a machine perceives an image and must act by naming the object class. A photo of a tabby cat, a percept/action cycle diagram, and a robot deliberating among candidate labels illustrate the framing.",
+  "visuals": [
+    {
+      "kind": "photo",
+      "description": "Photograph of a tabby cat lying on a floor, used as the input image.",
+      "assertion": null,
+      "relates_to_slides": []
+    },
+    {
+      "kind": "diagram",
+      "description": "Yellow circular two-arrow cycle labelled above 'Percept: See a picture' and below 'Action: Tell the object class: a cat!', beside a robot icon with a thought bubble reading 'A cat? A lion? A car?'",
+      "assertion": "Object recognition is an agent loop: the percept is an image, the action is outputting a class label chosen among candidate categories.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Percept–action agent framing",
+      "status": "explained_here",
+      "why_it_matters": "Casts recognition as an agent mapping sensory input to a decision."
+    },
+    {
+      "name": "Object class / image classification",
+      "status": "named_only",
+      "why_it_matters": "The output space of the recognition task."
+    }
+  ],
+  "verbatim_spans": [
+    "Percept:\nSee a picture",
+    "Action:\nTell the object class:\na cat!",
+    "A cat? A lion? A car?"
+  ],
+  "reader_note": null,
+  "slide_number": 18
+}

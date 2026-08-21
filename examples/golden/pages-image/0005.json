@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Recap: LLMs are General Purpose models",
+  "reading": "A recap slide summarizing three senses in which LLMs are general-purpose, laid out as three icon-labelled columns: generality of architecture, generality of concepts across skills, and generality of learning. Each column pairs an icon with a short italic gloss.",
+  "visuals": [
+    {
+      "kind": "comparison",
+      "description": "Three columns, each with an icon (a node/tree graph; a wrench crossed with a pencil; a teacher at a blackboard with students) above a heading and italic caption.",
+      "assertion": "LLM generality has three facets: the architecture/system supports a wide range of tasks; the model performs tasks of unseen skill-concept combinations; and it learns new tasks efficiently from descriptions and in-context examples.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Generality of architecture",
+      "status": "explained_here",
+      "why_it_matters": "One system handles many tasks without task-specific redesign."
+    },
+    {
+      "name": "Generality of concepts across skills",
+      "status": "explained_here",
+      "why_it_matters": "Compositional generalization to unseen skill-concept pairings."
+    },
+    {
+      "name": "Generality of learning / in-context learning",
+      "status": "explained_here",
+      "why_it_matters": "New tasks acquired from prompts rather than retraining."
+    }
+  ],
+  "verbatim_spans": [
+    "Generality of Concepts across Skills",
+    "Performs tasks of unseen skill-concept combinations",
+    "Learning new tasks efficiently via descriptions and in-context examples"
+  ],
+  "reader_note": null,
+  "slide_number": 5
+}

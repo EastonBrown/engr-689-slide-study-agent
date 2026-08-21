@@ -1,0 +1,4 @@
+How to build an AI model to recognize objects 
+Image Classifier Label (e.g., dog or cat)
+See a picture Tell the object class
+A sequence of “learnable” computation

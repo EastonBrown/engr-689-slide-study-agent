@@ -1,0 +1,29 @@
+{
+  "page_role": "content",
+  "title": "Unifying multimodal understanding and generation",
+  "reading": "The slide presents the idea of unifying multimodal understanding and generation within a single model, describing a unified autoregressive model that can produce both text tokens and visual tokens. It cites MetaMorph (Tong et al., 2024), which achieves this through instruction tuning.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Unified autoregressive multimodal model",
+      "status": "named_only",
+      "why_it_matters": "A single next-token predictor handling text and image tokens removes the need for separate understanding and generation systems."
+    },
+    {
+      "name": "Visual tokens",
+      "status": "assumed_prior",
+      "why_it_matters": "Discretized image representations let images be modeled in the same sequence as text."
+    },
+    {
+      "name": "MetaMorph / instruction tuning",
+      "status": "named_only",
+      "why_it_matters": "Cited example showing multimodal generation can emerge from instruction tuning."
+    }
+  ],
+  "verbatim_spans": [
+    "A unified autoregressive model capable of generating both text and visual tokens",
+    "MetaMorph: Multimodal Understanding and Generation via Instruction Tuning"
+  ],
+  "reader_note": null,
+  "slide_number": 58
+}

@@ -1,0 +1,35 @@
+{
+  "page_role": "content",
+  "title": "CLIP: Contrastive Language-Image Pre-training",
+  "reading": "The slide introduces CLIP, summarising it in two bullets. In training, an image encoder and a text encoder are jointly learned to predict which (image, text) pairs actually belong together within a batch. At test time, the resulting model supports zero-shot, open-vocabulary classification of an image. The slide credits Radford et al., 'Learning Transferable Visual Models From Natural Language Supervision', ICML 2021.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "CLIP",
+      "status": "explained_here",
+      "why_it_matters": "Contrastive image-text pretraining that underpins much of modern multimodal and zero-shot vision."
+    },
+    {
+      "name": "Contrastive learning over batch pairings",
+      "status": "named_only",
+      "why_it_matters": "The training objective: correct (image, text) pairs are matched against in-batch negatives."
+    },
+    {
+      "name": "Zero-shot, open-vocabulary classification",
+      "status": "named_only",
+      "why_it_matters": "Enables classifying into arbitrary label sets described in text, without task-specific training."
+    },
+    {
+      "name": "Image/text encoders",
+      "status": "assumed_prior",
+      "why_it_matters": "CLIP assumes familiarity with separate modality encoders producing embeddings."
+    }
+  ],
+  "verbatim_spans": [
+    "CLIP: Contrastive Language-Image Pre-training",
+    "zero-shot, open-vocabulary classification of an image",
+    "Learning Transferable Visual Models From Natural Language Supervision"
+  ],
+  "reader_note": null,
+  "slide_number": 38
+}

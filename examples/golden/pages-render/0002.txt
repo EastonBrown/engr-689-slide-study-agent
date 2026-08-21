@@ -1,0 +1,7 @@
+Research Interests 
+• Multimodal generative AI with domain-specific knowledge
+o Human, environment, biology, etc.
+• Learning with imperfect data and supervision
+o Noisy, imbalanced, long-tailed data
+• 2D/3D/4D perception and reconstruction
+o Robotics, AR/VR

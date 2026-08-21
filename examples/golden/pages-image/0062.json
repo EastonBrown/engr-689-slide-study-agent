@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "Multimodal LLM agents",
+  "reading": "A single figure carries this slide, sketching the basic agent loop around a central LLM call with a human in the loop, an environment, and a termination path.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Central green 'LLM Call' box. Dashed bidirectional arrow to a 'Human' pill on the left; dashed arrow down to a 'Stop' box; curved arrows to/from an 'Environment' pill on the right labelled 'Action' (outgoing) and 'Feedback' (incoming).",
+      "assertion": "An LLM agent operates as a loop: the LLM issues actions to an environment and receives feedback, optionally exchanging information with a human, and terminates by emitting a stop decision.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "LLM agent loop",
+      "status": "explained_here",
+      "why_it_matters": "Defines the action–feedback cycle that distinguishes agents from single-shot LLM calls."
+    },
+    {
+      "name": "Human-in-the-loop",
+      "status": "named_only",
+      "why_it_matters": "Allows steering or approval during agent execution."
+    },
+    {
+      "name": "Termination / stop condition",
+      "status": "named_only",
+      "why_it_matters": "Agents need an explicit halting criterion."
+    },
+    {
+      "name": "Multimodal LLM",
+      "status": "assumed_prior",
+      "why_it_matters": "Perception of non-text environment observations."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal LLM agents",
+    "Action",
+    "Feedback"
+  ],
+  "reader_note": null,
+  "slide_number": 62
+}

@@ -1,0 +1,19 @@
+{
+  "query": "What is Physical AI?",
+  "normalized_query": "what is physical ai",
+  "asked_at": "2026-08-21T04:10:32Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Physical AI",
+  "answer": "Physical AI refers to AI systems that perceive, understand, reason about, and act in the real world through motor skills, rather than operating only on digital text or images — think robots, humanoids, drones, and self-driving vehicles. It requires models that grasp physical properties like gravity, friction, inertia, and cause-and-effect, increasingly built with world foundation models and vision-language-action (VLA) models. A typical development pipeline uses 3D simulation and digital twins to generate synthetic training data before the trained policy is deployed to real machines.",
+  "citations": [
+    {
+      "title": "What Is Physical AI? | NVIDIA Glossary",
+      "url": "https://www.nvidia.com/en-us/glossary/generative-physical-ai/"
+    },
+    {
+      "title": "What is Physical AI? Definition, Examples, and Uses | Encord",
+      "url": "https://encord.com/blog/physical-ai/"
+    }
+  ]
+}

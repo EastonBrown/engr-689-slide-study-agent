@@ -1,0 +1,21 @@
+How LLMs influence computer vision
+Large Language Models
+Vision Encoder
+Text Prompt: Where is the 
+tower building in the image?
+The tall white cylindrical building in the 
+image is a water tower located on the 
+campus of Texas A&M University in 
+College Station, Texas. The tower 
+prominently features the words 
+"WELCOME TO AGGIELAND", which is a 
+nickname for the Texas A&M community 
+and campus.
+It is situated in the foreground of the 
+image, slightly to the left of center. Behind 
+it, you can see Kyle Field, the university's 
+football stadium, which further confirms 
+this as part of the Texas A&M campus.
+… …
+By OpenAI GPT 4o
+A typical Multimodal LLM:

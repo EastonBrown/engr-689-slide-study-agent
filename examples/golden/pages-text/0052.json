@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "How Do Image/Video Generation Work?",
+  "reading": "The slide explains the mechanism behind image and video generation models. Diffusion models work by gradually adding Gaussian noise to data and then learning to reverse that process. An example caption is given — a description of a golden lab puppy with a blue collar — which is passed through a frozen text encoder to produce a text embedding that conditions generation. Training data consists of paired examples where the input is a caption and the output is the corresponding image.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Implied pipeline sketch: caption text → frozen text encoder → text embedding → diffusion model producing an image.",
+      "assertion": "Text-conditioned diffusion generation routes a caption through a frozen encoder whose embedding guides the denoising process.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Diffusion models",
+      "status": "explained_here",
+      "why_it_matters": "Core generative mechanism: add noise forward, learn the reverse denoising to synthesize images."
+    },
+    {
+      "name": "Frozen text encoder",
+      "status": "named_only",
+      "why_it_matters": "Provides stable text embeddings for conditioning without being retrained."
+    },
+    {
+      "name": "Caption–image training pairs",
+      "status": "named_only",
+      "why_it_matters": "Supervision signal that ties language to visual output."
+    },
+    {
+      "name": "Gaussian noise",
+      "status": "assumed_prior",
+      "why_it_matters": "The noise distribution underpinning the forward diffusion process."
+    }
+  ],
+  "verbatim_spans": [
+    "Diffusion models: Gradually add Gaussian noise and then learn to reverse",
+    "“A golden lab puppy, tongue hanging out, and wearing a blue collar”",
+    "Training data: Pairs of Inputs: caption, outputs: image"
+  ],
+  "reader_note": null,
+  "slide_number": 52
+}

@@ -1,0 +1,19 @@
+{
+  "query": "What is GPT-4o?",
+  "normalized_query": "what is gpt-4o",
+  "asked_at": "2026-08-21T04:07:42Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "GPT-4o",
+  "answer": "GPT-4o (the \"o\" stands for \"omni\") is OpenAI's multimodal large language model, released in May 2024, that accepts and generates text, image, and audio input/output within a single unified network rather than chaining separate specialized models. Because all modalities are handled end-to-end by one model, it responds to speech far faster than earlier pipelines and can preserve cues like tone, background sound, and emotion. For study purposes, think of it as the successor to GPT-4 Turbo that made real-time voice and vision conversation practical at lower cost and latency.",
+  "citations": [
+    {
+      "title": "GPT-4o — Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/GPT-4o"
+    },
+    {
+      "title": "GPT-4o explained: Everything you need to know",
+      "url": "https://www.techtarget.com/whatis/feature/GPT-4o-explained-Everything-you-need-to-know"
+    }
+  ]
+}

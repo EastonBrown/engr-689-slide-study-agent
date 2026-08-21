@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide frames supervised classification as an instance of contrastive learning: the objective is to maximize similarities between positive pairs while minimizing similarities between negative pairs.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "explained_here",
+      "why_it_matters": "Framing learning as pulling positives together and pushing negatives apart unifies supervised and self-supervised objectives."
+    },
+    {
+      "name": "Positive and negative pairs",
+      "status": "named_only",
+      "why_it_matters": "They define what the similarity objective rewards and penalizes."
+    },
+    {
+      "name": "Supervised classification",
+      "status": "assumed_prior",
+      "why_it_matters": "Used as the familiar case reinterpreted contrastively."
+    }
+  ],
+  "verbatim_spans": [
+    "Supervised classification is contrastive learning",
+    "Maximize similarities of positive pairs",
+    "Minimize similarities of negative pairs"
+  ],
+  "reader_note": null,
+  "slide_number": 32
+}

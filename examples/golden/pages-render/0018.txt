@@ -1,0 +1,9 @@
+How to let computers recognize objects?
+A cat? 
+A lion?
+A car?
+Percept:
+See a picture
+Action:
+Tell the object class: 
+a cat!

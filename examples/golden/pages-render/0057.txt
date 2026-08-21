@@ -1,0 +1,7 @@
+• Apply the diffusion model in the latent space instead of pixel space
+• The first large-scale, open-sourced text-to-image generative model
+Stable Diffusion – much faster!
+Rombach et al., High-Resolution Image Synthesis with Latent Diffusion Models, CVPR 2022
+Image to latent
+Diffusion model in 
+the latent space

@@ -1,0 +1,24 @@
+{
+  "page_role": "content",
+  "title": "Agentic AI",
+  "reading": "The slide introduces the notion of Agentic AI, asserting that the definition given applies equally to embodied agents (robots, physical systems) and digital agents (software-only). The text extraction contains only the title and this single qualifying line, so the underlying definition itself is not present in the extracted text.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Agentic AI",
+      "status": "named_only",
+      "why_it_matters": "Frames AI systems as goal-directed actors rather than passive predictors; central organizing term for the section."
+    },
+    {
+      "name": "Embodied vs. digital agents",
+      "status": "named_only",
+      "why_it_matters": "Signals that the definition is substrate-independent, covering both robots and software agents."
+    }
+  ],
+  "verbatim_spans": [
+    "Agentic AI",
+    "This definition holds for embodied and digital agents"
+  ],
+  "reader_note": "Text path provided only a title and one line; the referenced definition is not in the extracted text, so the reading is necessarily thin.",
+  "slide_number": 61
+}

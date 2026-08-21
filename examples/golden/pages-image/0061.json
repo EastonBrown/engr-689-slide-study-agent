@@ -1,0 +1,43 @@
+{
+  "page_role": "content",
+  "title": "Agentic AI",
+  "reading": "The slide introduces the classical definition of an agent, pairing the standard Russell & Norvig agent-environment schematic with the textbook quotation defining an agent as anything that perceives its environment through sensors and acts on it through actuators. A closing line notes that this definition applies equally to embodied (physical robot) and digital (software) agents.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Rounded blue 'Agent' box on the left containing 'Sensors' at top, a '?' box in the middle, and 'Actuators' at bottom; arrows flow from the 'Environment' bar on the right into Sensors labelled 'Percepts', down through the '?' box, and out from Actuators back to the Environment labelled 'Actions'.",
+      "assertion": "An agent forms a closed perception-action loop with its environment; the internal decision function (the '?') maps percepts to actions.",
+      "relates_to_slides": []
+    },
+    {
+      "kind": "comparison",
+      "description": "Quoted textbook definition attributed to Russell & Norvig, AI: A Modern Approach, with 'agent', 'environment', 'sensors', 'actuators' bolded.",
+      "assertion": "An agent is anything that can be viewed as perceiving its environment through sensors and acting upon that environment through actuators.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Agent",
+      "status": "explained_here",
+      "why_it_matters": "Foundational definition underpinning agentic AI systems."
+    },
+    {
+      "name": "Percepts and actions",
+      "status": "explained_here",
+      "why_it_matters": "Define the interface between agent and environment."
+    },
+    {
+      "name": "Embodied vs digital agents",
+      "status": "named_only",
+      "why_it_matters": "Shows the definition generalises beyond robotics to software agents."
+    }
+  ],
+  "verbatim_spans": [
+    "\"An agent is anything that can be viewed as perceiving its environment through sensors and acting upon that environment through actuators\"",
+    "— Russel & Norvig, AI: A Modern Approach",
+    "This definition holds for embodied and digital agents"
+  ],
+  "reader_note": null,
+  "slide_number": 61
+}

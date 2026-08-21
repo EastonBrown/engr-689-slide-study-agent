@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide argues that images carry more redundant information than language, so the masking ratio used in masked prediction pretraining should be chosen per application. A line chart of MAE transfer accuracy versus masking ratio supports the point, with annotations contrasting the optimal masking level in language (BERT) against that in vision.",
+  "visuals": [
+    {
+      "kind": "chart",
+      "description": "Line chart with triangle markers labelled 'MAE': x-axis 'masking ratio %' from 10 to 90, y-axis 'transfer accuracy' from 50 to ~75. Accuracy rises from ~55 at 10% to a peak ~73 near 70–75%, then falls to ~66 at 90%. Red annotations with arrows point to the 15% region and the 75% region.",
+      "assertion": "Transfer accuracy for MAE peaks at a high masking ratio (~75%), unlike language where ~15% masking is optimal for BERT.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Masking ratio",
+      "status": "explained_here",
+      "why_it_matters": "Controls task difficulty in masked prediction; optimal value differs by modality."
+    },
+    {
+      "name": "MAE (masked autoencoder)",
+      "status": "named_only",
+      "why_it_matters": "The vision self-supervised method whose transfer accuracy is plotted."
+    },
+    {
+      "name": "BERT",
+      "status": "named_only",
+      "why_it_matters": "Language baseline with 15% masking, used as contrast."
+    },
+    {
+      "name": "Transfer accuracy",
+      "status": "assumed_prior",
+      "why_it_matters": "Metric for representation quality on downstream tasks."
+    }
+  ],
+  "verbatim_spans": [
+    "Information in images is more redundant than in languages",
+    "In images, masking 75% is optimal for representation learning.",
+    "Select a masking ratio based on the application"
+  ],
+  "reader_note": null,
+  "slide_number": 47
+}

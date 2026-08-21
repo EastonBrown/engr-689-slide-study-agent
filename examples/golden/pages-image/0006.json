@@ -1,0 +1,25 @@
+{
+  "page_role": "content",
+  "title": "GPT-4o (May 2024)",
+  "reading": "A slide headed \"GPT-4o (May 2024)\" whose body is a single screenshot, apparently a still frame from OpenAI's live GPT-4o demo video. There is no body text; the lecturer presumably plays or narrates the demo to illustrate the model's real-time multimodal (voice/vision) interaction capabilities.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "Video still of two men seated at a small round table in a studio-like room with plants and wooden panelling; one laughs while the other looks down at a smartphone held in both hands, with papers on the table.",
+      "assertion": "Illustrates the GPT-4o launch demo in which presenters interact conversationally with the model in real time via a phone.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "GPT-4o",
+      "status": "named_only",
+      "why_it_matters": "OpenAI's May 2024 natively multimodal model, a milestone in real-time speech/vision interaction."
+    }
+  ],
+  "verbatim_spans": [
+    "GPT-4o (May 2024)"
+  ],
+  "reader_note": null,
+  "slide_number": 6
+}

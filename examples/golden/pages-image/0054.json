@@ -1,0 +1,31 @@
+{
+  "page_role": "content",
+  "title": "Reverse diffusion process",
+  "reading": "The slide introduces the reverse (generative) direction of diffusion models: a neural network denoiser is trained to undo the noising process, mapping noise back to data. A filmstrip figure plus a zoomed single-step inset illustrate the idea, and a red annotation frames each denoising step as supervised learning.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Horizontal strip of pixelated images from pure colour noise labelled x_T on the left to a clean sprite-like image x_0 on the right, with an arrow labelled 'Reverse diffusion process'. Below, a zoom shows x_t passed through a block arrow labelled f_theta producing x_{t-1}.",
+      "assertion": "Generation proceeds by repeatedly applying a learned denoiser f_theta that maps x_t to a slightly less noisy x_{t-1}, from x_T down to x_0.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Reverse diffusion / denoiser network",
+      "status": "explained_here",
+      "why_it_matters": "It is the learned generative component of diffusion models."
+    },
+    {
+      "name": "Supervised learning per step",
+      "status": "named_only",
+      "why_it_matters": "Each denoising step has a known target, making training tractable."
+    }
+  ],
+  "verbatim_spans": [
+    "Diffusion models then train a neural network (denoiser) to reverse this process",
+    "Each step is a supervised learning process!"
+  ],
+  "reader_note": null,
+  "slide_number": 54
+}

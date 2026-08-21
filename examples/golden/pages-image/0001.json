@@ -1,0 +1,32 @@
+{
+  "page_role": "title",
+  "title": "Multimodal LLM Agents",
+  "reading": "Title slide for a course lecture on multimodal LLM agents, identifying the course as TAMU ENGR 689, Fall 2026 (Sprint Course), with this session being Day 3 on Large Vision and Language Models. The instructor is listed as Cheng Zhang, co-taught with Prof. Yu Zhang. A Texas A&M University logo sits at the right.",
+  "visuals": [
+    {
+      "kind": "decorative",
+      "description": "Maroon Texas A&M University block logo with wordmark, lower right.",
+      "assertion": null,
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal LLM Agents",
+      "status": "named_only",
+      "why_it_matters": "Overall subject of the course."
+    },
+    {
+      "name": "Large Vision and Language Models",
+      "status": "named_only",
+      "why_it_matters": "Topic of this day's lecture."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal LLM Agents",
+    "TAMU ENGR 689, Fall 2026 (Sprint Course)",
+    "Day 3: Large Vision and Language Models"
+  ],
+  "reader_note": null,
+  "slide_number": 1
+}

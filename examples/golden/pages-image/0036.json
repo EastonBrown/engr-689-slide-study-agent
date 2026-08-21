@@ -1,0 +1,37 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "The slide states the core objective of contrastive learning: pull positive pairs together in embedding space while pushing negative pairs apart. A schematic below shows the standard siamese setup with weight-shared encoders and a similarity matrix used to compute the loss.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Two green trapezoid encoders (top: 'key image', bottom: 'Query image'), both feeding a 5x5 similarity grid with the diagonal cells highlighted in blue, labelled 'loss'. Red arrows flow back from the loss to both encoders. Annotations: 'Share weights for both encoder' above, 'Update both encoders' below.",
+      "assertion": "Key and query images pass through weight-sharing encoders; their embeddings form a similarity matrix whose diagonal entries are the positive pairs, and gradients from the loss update both encoders.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Positive/negative pairs",
+      "status": "explained_here",
+      "why_it_matters": "Defines what the contrastive objective maximizes versus minimizes."
+    },
+    {
+      "name": "Weight sharing (siamese encoders)",
+      "status": "named_only",
+      "why_it_matters": "Ensures both views are embedded in a common space."
+    },
+    {
+      "name": "Similarity matrix",
+      "status": "named_only",
+      "why_it_matters": "Diagonal = positives, off-diagonal = negatives within a batch."
+    }
+  ],
+  "verbatim_spans": [
+    "Maximize similarities of positive pairs",
+    "Share weights for both encoder",
+    "Update both encoders"
+  ],
+  "reader_note": null,
+  "slide_number": 36
+}

@@ -1,0 +1,441 @@
+{
+  "deck_slug": "day3-principle",
+  "path": "image",
+  "topics": [
+    {
+      "name": "Course Introduction and Logistics",
+      "slides": [
+        2,
+        3
+      ],
+      "is_new": true,
+      "created_reason": "Opening slides cover the instructor's research interests and course project requirements rather than technical content.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Foundation Models and the AI Landscape",
+      "slides": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "is_new": true,
+      "created_reason": "Recap slides framing language foundation models, their generality, GPT-4o, and the waves of AI toward agentic/physical AI.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Computer Vision Tasks and Directions",
+      "slides": [
+        9,
+        10,
+        12,
+        13,
+        14,
+        15
+      ],
+      "is_new": true,
+      "created_reason": "Slides survey the scope of computer vision and its representative tasks (recognition, retrieval, reconstruction, generation).",
+      "degraded_slides": []
+    },
+    {
+      "name": "Multimodal LLM Agents",
+      "slides": [
+        16,
+        17,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65
+      ],
+      "is_new": true,
+      "created_reason": "Slides define agents and agentic workflows and show applications such as computer-using agents, robot policy learning, agentic detection, and manipulation.",
+      "degraded_slides": []
+    },
+    {
+      "name": "From Hand-Coded Rules to Learned Recognition",
+      "slides": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "is_new": true,
+      "created_reason": "Slides build the classical pipeline from percept-action framing and rule-based AI to neural classifiers and the ImageNet deep learning era.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Vision Encoders and Multimodal LLM Architecture",
+      "slides": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        48
+      ],
+      "is_new": true,
+      "created_reason": "Slides explain ViT, how images are tokenized for an LLM (LLaVA), and the taxonomy of vision encoder pretraining choices.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Self-Supervised Learning: Contrastive Methods",
+      "slides": [
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "is_new": true,
+      "created_reason": "A contiguous block developing self-supervised learning through query-key contrastive formulations, MoCo, variants, and CLIP.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Self-Supervised Learning: Predictive and Masked Modeling",
+      "slides": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "is_new": true,
+      "created_reason": "A distinct SSL family covered separately: masked language modeling, context encoders, MAE, and masking-ratio analysis.",
+      "degraded_slides": []
+    },
+    {
+      "name": "Visual Generation and Diffusion Models",
+      "slides": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58
+      ],
+      "is_new": true,
+      "created_reason": "Slides cover generative foundation models, forward/reverse diffusion, latent diffusion, compositionality, and unified understanding-generation models.",
+      "degraded_slides": []
+    }
+  ],
+  "skipped": [
+    {
+      "slide_number": 1,
+      "page_role": "title"
+    },
+    {
+      "slide_number": 8,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 11,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 22,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 39,
+      "page_role": "section_break"
+    },
+    {
+      "slide_number": 49,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 59,
+      "page_role": "agenda"
+    },
+    {
+      "slide_number": 66,
+      "page_role": "section_break"
+    }
+  ],
+  "superseded": [
+    23
+  ],
+  "unassigned": [],
+  "bridged_facts": [
+    {
+      "slides": [
+        29,
+        30
+      ],
+      "statement": "Slide 29 defines self-supervised learning as using the data itself as supervision through pretext tasks such as rotation prediction and jigsaw puzzle solving (illustrated by shuffling a 3x3 grid of tiger patches), and slide 30 narrows that broad idea to the two families of modern self-supervised methods that the lecture will develop: contrastive learning and predictive learning.",
+      "from_visuals": [
+        [
+          29,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        30,
+        31
+      ],
+      "statement": "Contrastive learning, named on slide 30 as one of the two modern self-supervised families, is entered on slide 31 through a familiar case: ordinary supervised classification is recast in query-key terms, where features before the last FC layer are queries and the last FC layer's class weights are keys, so the ground-truth label picks the positive pair from a fixed vocabulary of keys.",
+      "from_visuals": [
+        [
+          31,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        31,
+        32
+      ],
+      "statement": "Slide 31 sets up the query-key reading of classification (features as queries, last-FC-layer class weights as keys), and slide 32 states the objective this yields: over the same query-key similarity matrix, maximize similarities of the positive (ground-truth) pairs and minimize similarities of all negative pairs.",
+      "from_visuals": [
+        [
+          31,
+          0
+        ],
+        [
+          32,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        32,
+        33
+      ],
+      "statement": "Slide 32's contrastive objective still depends on a label vocabulary supplying the keys; slide 33 removes that dependency by forming the vocabulary from the data itself, encoding two views into keys and queries so the matched diagonal pairs are the positives and the temperature-scaled InfoNCE loss pushes all other pairs apart.",
+      "from_visuals": [
+        [
+          32,
+          0
+        ],
+        [
+          33,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        35,
+        36
+      ],
+      "statement": "Slides 35 and 36 present the same contrastive objective over a key/query similarity matrix with the diagonal as positives, but differ in how the key encoder is maintained: slide 35 updates encoder k as a momentum moving average of encoder q (theta_k := m*theta_k + (1-m)*theta_q) with gradients only to the query encoder, whereas slide 36 shares weights between the two encoders and updates both from the loss.",
+      "from_visuals": [
+        [
+          35,
+          0
+        ],
+        [
+          36,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    },
+    {
+      "slides": [
+        41,
+        42
+      ],
+      "statement": "Both slides instantiate masked image modeling in vision but with different backbones and eras: slide 41's context encoder predicts a masked-out region with ConvNets (Context Encoders, CVPR 2016), while slide 42's Masked Autoencoder predicts masked patches with Transformers (Masked Autoencoders Are Scalable Vision Learners, CVPR 2022).",
+      "from_visuals": [
+        [
+          41,
+          0
+        ],
+        [
+          42,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    },
+    {
+      "slides": [
+        43,
+        44
+      ],
+      "statement": "Slide 43 supplies the tokenization step MAE needs by cutting the image into a grid of patches treated as visual tokens in the Vision Transformer sense, and slide 44 builds the full pipeline on those tokens: randomly mask most patches, encode only the visible ones with a Transformer, expand with learned mask tokens, decode the missing positions, and train with an L2 loss in pixel space.",
+      "from_visuals": [
+        [
+          43,
+          0
+        ],
+        [
+          44,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title",
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        45,
+        46
+      ],
+      "statement": "Slide 45 argues from masking ratio that hiding only a small region can be solved with local low-level cues while hiding a large portion forces semantic features, and slide 46 shows the payoff of the heavy-masking regime: from a small fraction of visible patches MAE reconstructs the cheetah's global structure correctly, blurry in fine detail.",
+      "from_visuals": [
+        [
+          45,
+          0
+        ],
+        [
+          46,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    },
+    {
+      "slides": [
+        46,
+        47
+      ],
+      "statement": "Slide 46's qualitative reconstruction from heavily masked input is quantified on slide 47, where MAE transfer accuracy peaks near a 75% masking ratio and falls off on either side, so the appropriate masking ratio is modality-dependent: images are more redundant than language, and 75% is optimal for vision against BERT's 15% for text.",
+      "from_visuals": [
+        [
+          46,
+          0
+        ],
+        [
+          47,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    },
+    {
+      "slides": [
+        51,
+        52
+      ],
+      "statement": "Slide 51 establishes the unconditional diffusion mechanism, where the forward process gradually adds Gaussian noise to an image and the learned reverse denoising process generates from noise, and slide 52 makes that same reverse process conditional: trained on caption-image pairs, each denoising step is steered by text embeddings from a frozen text encoder.",
+      "from_visuals": [
+        [
+          51,
+          0
+        ],
+        [
+          52,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "shared_concept"
+      ]
+    },
+    {
+      "slides": [
+        55,
+        56
+      ],
+      "statement": "Slide 55 uses DALL-E 2 to show compositionality, generating a novel 'a cup of cat' from the familiar concepts of a cup, coffee, and a cat, and slide 56 puts that same phrase into Google Images, whose retrieved results are photographs of real kittens sitting in cups rather than the composed concept.",
+      "from_visuals": [
+        [
+          55,
+          0
+        ],
+        [
+          56,
+          0
+        ]
+      ],
+      "candidate_signals": [
+        "adjacent_title"
+      ]
+    }
+  ],
+  "candidates_proposed": 11,
+  "candidate_cap": 30,
+  "unreadable_notes": [],
+  "topic_cap_exceeded": false,
+  "question_budget": [
+    [
+      "bridged_fact",
+      1
+    ],
+    [
+      "Course Introduction and Logistics",
+      0
+    ],
+    [
+      "Foundation Models and the AI Landscape",
+      1
+    ],
+    [
+      "Computer Vision Tasks and Directions",
+      1
+    ],
+    [
+      "Multimodal LLM Agents",
+      1
+    ],
+    [
+      "From Hand-Coded Rules to Learned Recognition",
+      1
+    ],
+    [
+      "Vision Encoders and Multimodal LLM Architecture",
+      1
+    ],
+    [
+      "Self-Supervised Learning: Contrastive Methods",
+      2
+    ],
+    [
+      "Self-Supervised Learning: Predictive and Masked Modeling",
+      1
+    ],
+    [
+      "Visual Generation and Diffusion Models",
+      1
+    ]
+  ],
+  "untested_topics": [
+    "Course Introduction and Logistics"
+  ],
+  "repair_attempted": false
+}

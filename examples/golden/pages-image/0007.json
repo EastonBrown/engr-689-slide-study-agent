@@ -1,0 +1,42 @@
+{
+  "page_role": "content",
+  "title": "NVIDIA at Consumer Electronics Show (CES) 2025",
+  "reading": "A single photo of an NVIDIA CES 2025 keynote fills the slide, showing the presenter on stage in front of a large screen displaying NVIDIA's staged view of AI's evolution. The slide itself carries no body text beyond the title, so the content is carried entirely by the captured keynote graphic.",
+  "visuals": [
+    {
+      "kind": "chart",
+      "description": "Photo of a keynote stage screen with an upward-curving green arrow annotated with four successive stages: '2012 ALEXNET' at the origin, then PERCEPTION AI (speech recognition, medical imaging), GENERATIVE AI (digital marketing, content creation), AGENTIC AI (coding assistant, customer service, patient care), and PHYSICAL AI (self-driving cars, general robotics) at the top right. A speaker stands in silhouette at the lower left.",
+      "assertion": "AI has progressed through exponentially escalating waves — perception, generative, agentic — with physical AI (robotics and autonomous vehicles) as the next frontier.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Perception AI",
+      "status": "named_only",
+      "why_it_matters": "First wave, dating from AlexNet 2012, covering recognition tasks."
+    },
+    {
+      "name": "Generative AI",
+      "status": "named_only",
+      "why_it_matters": "Second wave producing content rather than only classifying."
+    },
+    {
+      "name": "Agentic AI",
+      "status": "named_only",
+      "why_it_matters": "AI systems that act on tasks such as coding or customer service."
+    },
+    {
+      "name": "Physical AI",
+      "status": "named_only",
+      "why_it_matters": "NVIDIA's framing of the next wave: embodied AI in robots and vehicles."
+    }
+  ],
+  "verbatim_spans": [
+    "NVIDIA at Consumer Electronics Show (CES) 2025",
+    "PHYSICAL AI",
+    "2012 ALEXNET"
+  ],
+  "reader_note": null,
+  "slide_number": 7
+}

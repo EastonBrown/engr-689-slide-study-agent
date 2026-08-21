@@ -1,0 +1,24 @@
+{
+  "page_role": "content",
+  "title": "Contrastive learning",
+  "reading": "A sparse content slide introducing contrastive learning. It poses the question of what to do when no predefined vocabulary (label set) is available, and answers that a vocabulary can be formed from the data itself — i.e., instances in the dataset serve as their own classes/targets, which is the core idea behind contrastive/self-supervised objectives. No further detail is given on the page.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Contrastive learning",
+      "status": "named_only",
+      "why_it_matters": "Self-supervised paradigm that learns representations by comparing examples rather than predicting fixed labels."
+    },
+    {
+      "name": "Vocabulary built from data itself",
+      "status": "named_only",
+      "why_it_matters": "Removes dependence on a hand-defined label set; each data instance acts as its own category."
+    }
+  ],
+  "verbatim_spans": [
+    "Contrastive learning",
+    "What if we don’t have vocabulary? From a vocabulary with data itself"
+  ],
+  "reader_note": "Slide text is fragmentary; interpretation of the second bullet is inferred.",
+  "slide_number": 33
+}

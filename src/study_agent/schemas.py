@@ -483,4 +483,15 @@ def _close(node: Any) -> None:
     if node.get("type") == "object" or "properties" in node:
         node["additionalProperties"] = False
         node["required"] = list(node.get("properties", {}).keys())
+    if node.get("type") == "array":
+        # The Messages API's structured-output schema does not support
+        # `prefixItems` (fixed-arity tuples) or `maxItems`, and only accepts
+        # `minItems` of 0 or 1. Pydantic emits all three for `tuple[...]`
+        # fields and for `Field(min_length=N)` with N > 1. Dropping them here
+        # loses nothing at validation time: `response_model.model_validate`
+        # still enforces the real arity and length once the JSON comes back.
+        node.pop("prefixItems", None)
+        node.pop("maxItems", None)
+        if node.get("minItems", 0) not in (0, 1):
+            node.pop("minItems")
     node.pop("default", None)

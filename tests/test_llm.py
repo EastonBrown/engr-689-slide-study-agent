@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
@@ -28,6 +28,29 @@ class Message:
         self.content = [TextBlock(text)]
 
 
+class _FinalMessageStream:
+    """A stand-in for the SDK's stream context manager.
+
+    `structured_call` streams rather than calling `create` directly (see
+    `llm.py`), so every fake `Messages`-like object below routes `.stream()`
+    through its own `.create` — including overrides — instead of duplicating
+    each fake's response/error behaviour a second time.
+    """
+
+    def __init__(self, owner: Any, kwargs: dict) -> None:
+        self._owner = owner
+        self._kwargs = kwargs
+
+    def __enter__(self) -> "_FinalMessageStream":
+        return self
+
+    def __exit__(self, *exc_info: object) -> None:
+        return None
+
+    def get_final_message(self):
+        return self._owner.create(**self._kwargs)
+
+
 class Messages:
     def __init__(self, responses: list[str]) -> None:
         self.responses = responses
@@ -36,6 +59,9 @@ class Messages:
     def create(self, **kwargs):
         self.calls.append(kwargs)
         return Message(self.responses.pop(0))
+
+    def stream(self, **kwargs):
+        return _FinalMessageStream(self, kwargs)
 
 
 class Client:
@@ -161,6 +187,9 @@ class RaisingMessages:
         self.calls += 1
         raise self.errors.pop(0)
 
+    def stream(self, **kwargs):
+        return _FinalMessageStream(self, kwargs)
+
 
 class RaisingClient:
     def __init__(self, errors: list[Exception]) -> None:
@@ -258,6 +287,9 @@ class TestOnlyRetryableFailuresAreRetried:
                 if self.calls == 1:
                     return Message("{ not json")
                 raise anthropic_error("BadRequestError")
+
+            def stream(self, **kwargs):
+                return _FinalMessageStream(self, kwargs)
 
         client = Client([])
         client.messages = Mixed()

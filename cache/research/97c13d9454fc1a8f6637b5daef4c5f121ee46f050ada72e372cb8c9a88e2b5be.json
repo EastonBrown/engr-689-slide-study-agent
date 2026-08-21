@@ -1,0 +1,19 @@
+{
+  "query": "What is Foundation models for language?",
+  "normalized_query": "what is foundation models for language",
+  "asked_at": "2026-08-21T04:07:28Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Foundation models for language",
+  "answer": "A foundation model for language is a large neural network (typically a Transformer) trained with self-supervision on broad, unlabeled text corpora, so it learns general-purpose linguistic and world knowledge rather than a single task. Because that pretrained base is adaptable, it can be transferred to many downstream tasks—classification, translation, summarization, question answering—via fine-tuning, instruction tuning, or prompting, instead of training a separate model per task. Examples include BERT and GPT-style models; the trade-off is that their scale and shared base mean capabilities, biases, and errors are inherited by every application built on top of them.",
+  "citations": [
+    {
+      "title": "On the Opportunities and Risks of Foundation Models (Stanford CRFM)",
+      "url": "https://arxiv.org/abs/2108.07258"
+    },
+    {
+      "title": "Stanford Center for Research on Foundation Models (CRFM)",
+      "url": "https://crfm.stanford.edu/"
+    }
+  ]
+}

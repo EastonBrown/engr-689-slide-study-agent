@@ -1,0 +1,32 @@
+{
+  "page_role": "agenda",
+  "title": "Agenda",
+  "reading": "An agenda slide marking progress through the talk. Three top-level items are listed: background on computer vision and agentic AI (greyed out, already covered), multimodal (vision and language) models (highlighted in black as the current section, with sub-items Understanding and Generation), and multimodal agents (greyed out, still to come). The greying convention signals the current position in the lecture.",
+  "visuals": [
+    {
+      "kind": "decorative",
+      "description": "Bulleted outline with the current section in black and the other sections dimmed grey.",
+      "assertion": null,
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Multimodal (vision and language) models",
+      "status": "named_only",
+      "why_it_matters": "The section now being entered, split into understanding and generation."
+    },
+    {
+      "name": "Multimodal agents",
+      "status": "named_only",
+      "why_it_matters": "Upcoming section of the talk."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal (vision and language) models",
+    "Understanding",
+    "Multimodal agents"
+  ],
+  "reader_note": null,
+  "slide_number": 49
+}

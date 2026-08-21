@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "From Transformer to Vision Transformer (ViT)",
+  "reading": "The slide introduces the Vision Transformer as a building block for vision foundation models. It notes that images are treated as sequences of image patches, over which standard transformers operate, and that this yields a unified architecture spanning language, vision, and further modalities such as audio, 3D, and general sequences. It cites Dosovitskiy et al., 'An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale', ICLR 2021.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Vision Transformer (ViT)",
+      "status": "named_only",
+      "why_it_matters": "Extends transformers from text to images, enabling vision foundation models."
+    },
+    {
+      "name": "Image patches as tokens",
+      "status": "named_only",
+      "why_it_matters": "Converts an image into a sequence so transformer attention applies directly."
+    },
+    {
+      "name": "Unified multimodal architecture",
+      "status": "named_only",
+      "why_it_matters": "One backbone serves language, vision, audio, and 3D data."
+    }
+  ],
+  "verbatim_spans": [
+    "A building block for vision foundation models",
+    "Sequences of image patches",
+    "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
+  ],
+  "reader_note": null,
+  "slide_number": 24
+}

@@ -1,0 +1,29 @@
+{
+  "page_role": "content",
+  "title": "How to learn good representations by prediction?",
+  "reading": "The slide poses the question of how prediction tasks can yield good representations, contrasting two masking/prediction regimes. Predicting a small portion of the input may not require any high-level understanding, whereas predicting a large portion encourages the model to learn semantic features. The implication is that the difficulty or scope of the prediction target determines the quality of the learned representation.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Representation learning by prediction",
+      "status": "explained_here",
+      "why_it_matters": "Framing for self-supervised pretraining objectives."
+    },
+    {
+      "name": "Masking ratio / portion predicted",
+      "status": "explained_here",
+      "why_it_matters": "Controls whether the task forces semantic understanding or trivial interpolation."
+    },
+    {
+      "name": "Semantic features",
+      "status": "named_only",
+      "why_it_matters": "The desired outcome of a well-designed pretext task."
+    }
+  ],
+  "verbatim_spans": [
+    "May not require a high-level understanding",
+    "Encourage to learn semantic features"
+  ],
+  "reader_note": null,
+  "slide_number": 45
+}

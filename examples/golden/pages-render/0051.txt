@@ -1,0 +1,5 @@
+How does image generation work?
+Diffusion process
+Denoising/generation process
+…… ……
+Diffusion models: Gradually add Gaussian noise and then learn to reverse

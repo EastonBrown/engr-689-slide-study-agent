@@ -1,0 +1,23 @@
+{
+  "query": "What is Multimodal agents?",
+  "normalized_query": "what is multimodal agents",
+  "asked_at": "2026-08-21T04:12:36Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Multimodal agents",
+  "answer": "A multimodal agent is an AI system that can perceive and reason over several kinds of input at once — text, images, video, audio, and sensor data — rather than being limited to text prompts like a standard LLM. It combines modality-specific capabilities (natural language understanding, computer vision, speech recognition/synthesis) into a shared representation, then uses that fused understanding to plan and take autonomous actions, such as calling tools or generating responses in whichever modality fits. In practice this lets the agent do things a text-only agent cannot, like inspecting a photo of a broken part, listening to a customer's tone, and then executing a follow-up task.",
+  "citations": [
+    {
+      "title": "What Are Multimodal AI Agents? Top Platforms, Benefits & Use Cases",
+      "url": "https://www.kellton.com/kellton-tech-blog/rise-of-multimodal-ai-agents-next-frontier-of-ai"
+    },
+    {
+      "title": "Multimodal AI Agents: Text, Vision, and Speech in Action",
+      "url": "https://onereach.ai/blog/multimodal-ai-agents-enterprise-guide/"
+    },
+    {
+      "title": "The Rise of Multimodal AI Agents: Redefining Intelligent Systems",
+      "url": "https://www.xenonstack.com/blog/multimodal-ai-agents"
+    }
+  ]
+}

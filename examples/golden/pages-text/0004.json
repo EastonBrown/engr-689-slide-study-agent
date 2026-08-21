@@ -1,0 +1,18 @@
+{
+  "page_role": "content",
+  "title": "Recap: Foundation models for language are omnipresent",
+  "reading": "A recap slide asserting that foundation models for language have become ubiquitous. Only the heading text is available on the text path; any supporting imagery or examples on the page were not captured.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Foundation models",
+      "status": "named_only",
+      "why_it_matters": "Large pretrained models serve as the shared basis for many downstream language applications."
+    }
+  ],
+  "verbatim_spans": [
+    "Recap: Foundation models for language are omnipresent"
+  ],
+  "reader_note": "Text extraction yielded only the title; body content, if any, is unavailable.",
+  "slide_number": 4
+}

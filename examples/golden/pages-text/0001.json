@@ -1,0 +1,20 @@
+{
+  "page_role": "title",
+  "title": "Multimodal LLM Agents — Day 3: Large Vision and Language Models",
+  "reading": "Title slide for a session of the course 'Multimodal LLM Agents', TAMU ENGR 689, Fall 2026, offered as a sprint course. This is Day 3, focused on large vision and language models. The instructor listed is Cheng Zhang, co-teaching with Prof. Yu Zhang.",
+  "visuals": [],
+  "concepts": [
+    {
+      "name": "Large Vision and Language Models",
+      "status": "named_only",
+      "why_it_matters": "The topic of the day's lecture, bridging visual and textual modalities in LLM agents."
+    }
+  ],
+  "verbatim_spans": [
+    "Multimodal LLM Agents",
+    "Day 3: Large Vision and Language Models",
+    "Instructor: Cheng Zhang (co-taught with Prof. Yu Zhang)"
+  ],
+  "reader_note": null,
+  "slide_number": 1
+}

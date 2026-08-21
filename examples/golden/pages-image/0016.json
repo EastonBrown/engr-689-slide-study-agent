@@ -1,0 +1,32 @@
+{
+  "page_role": "content",
+  "title": "Computer-using agents (CUA)",
+  "reading": "A single-title slide introducing computer-using agents, illustrated entirely by a 2x2 grid of desktop screenshots showing a recording tool (\"DuckTrack\") open across several everyday applications on Linux and Windows desktops. No body text is present; the visual carries the point.",
+  "visuals": [
+    {
+      "kind": "screenshot",
+      "description": "Four screenshots arranged in a grid: (top-left) GIMP image editor on a Linux desktop with a small DuckTrack control window offering Stop/Pause Recording, Show Recordings, Play Latest/Custom Recording, Replay Recording, Quit, Natural Scrolling; (top-right) Chrome new-tab page with Google search and shortcut tiles, same DuckTrack panel; (bottom-left) Windows desktop with Microsoft Word open on a document titled 'Please modify my picture as follows:' plus the DuckTrack panel; (bottom-right) LibreOffice Writer on Linux showing 'Top 10 Linux Commands for Newbies' docx, again with DuckTrack.",
+      "assertion": "Computer-using agents operate across ordinary GUI applications and operating systems, and human demonstrations of such GUI tasks can be captured by a screen/action recording tool.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Computer-using agent (CUA)",
+      "status": "named_only",
+      "why_it_matters": "Agents that act through a computer's GUI rather than a specialised API."
+    },
+    {
+      "name": "GUI demonstration recording (DuckTrack)",
+      "status": "named_only",
+      "why_it_matters": "Recording user actions supplies training/evaluation data for CUAs."
+    }
+  ],
+  "verbatim_spans": [
+    "Computer-using agents (CUA)",
+    "DuckTrack",
+    "Please modify my picture as follows:"
+  ],
+  "reader_note": null,
+  "slide_number": 16
+}

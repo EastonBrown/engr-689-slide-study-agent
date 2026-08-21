@@ -1,0 +1,30 @@
+{
+  "page_role": "content",
+  "title": "Depth estimation and 3D reconstruction",
+  "reading": "A visual-only slide illustrating the pipeline from a single street-scene photograph, through a predicted depth map, to a 3D point cloud of the scene. No body text appears beyond the title; yellow arrows carry the flow.",
+  "visuals": [
+    {
+      "kind": "diagram",
+      "description": "Top-left: RGB photo of a suburban street with parked cars (KITTI-style). A downward yellow arrow leads to a colour-coded depth map of the same scene (warm tones, near/far shading). A rightward yellow arrow leads to a large dark panel showing a white 3D point cloud of the street with scan-line structure.",
+      "assertion": "Depth estimated from a single image can be back-projected into a 3D point-cloud reconstruction of the scene.",
+      "relates_to_slides": []
+    }
+  ],
+  "concepts": [
+    {
+      "name": "Depth estimation",
+      "status": "named_only",
+      "why_it_matters": "Produces per-pixel distance from an image, the input to 3D reconstruction."
+    },
+    {
+      "name": "3D reconstruction / point cloud",
+      "status": "named_only",
+      "why_it_matters": "Geometric scene representation used in robotics and autonomous driving."
+    }
+  ],
+  "verbatim_spans": [
+    "Depth estimation and 3D reconstruction"
+  ],
+  "reader_note": null,
+  "slide_number": 14
+}

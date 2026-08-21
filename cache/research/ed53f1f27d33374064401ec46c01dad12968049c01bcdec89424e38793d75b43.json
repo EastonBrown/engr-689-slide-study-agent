@@ -1,0 +1,19 @@
+{
+  "query": "What is Multimodal generative AI?",
+  "normalized_query": "what is multimodal generative ai",
+  "asked_at": "2026-08-21T04:06:15Z",
+  "model": "claude-opus-5",
+  "prompt_version": "2026-08-20.1",
+  "concept": "Multimodal generative AI",
+  "answer": "Multimodal generative AI refers to AI systems that can take in and produce more than one type of data \"modality\" \\u2014 such as text, images, audio, and video \\u2014 rather than being limited to a single format like text-only chat. These models encode different inputs into a shared representation space so information from one modality can inform outputs in another, for example describing an uploaded photo in words or generating an image from a written prompt. For your slide deck, the key contrast is: a unimodal model handles one channel, while a multimodal one fuses several channels to gain richer context and more flexible generation.",
+  "citations": [
+    {
+      "title": "What Is Multimodal AI? | Built In",
+      "url": "https://builtin.com/articles/multimodal-ai"
+    },
+    {
+      "title": "What is Multimodal Generative Artificial Intelligence? \\u2013 Dr Leon Furze",
+      "url": "https://leonfurze.com/2024/01/15/what-is-multimodal-generative-artificial-intelligence/"
+    }
+  ]
+}

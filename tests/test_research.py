@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from study_agent import paths, schemas
 from study_agent.stages import research
 
@@ -23,12 +25,18 @@ def note(slide: int, *concepts: tuple[str, schemas.ConceptStatus]) -> schemas.Sl
 
 
 class Researcher:
-    def __init__(self) -> None:
+    def __init__(self, *, cost_per_call: float = 0.0) -> None:
         self.queries: list[str] = []
         self.usage = schemas.StageUsage(stage="research")
+        self._cost_per_call = cost_per_call
 
     def lookup(self, concept: str) -> schemas.CacheEntry:
         self.queries.append(concept)
+        self.usage = schemas.StageUsage(
+            stage="research",
+            calls=self.usage.calls + 1,
+            cost_usd=self.usage.cost_usd + self._cost_per_call,
+        )
         return schemas.CacheEntry(
             query=f"What is {concept}?",
             normalized_query=paths.normalize_query(f"What is {concept}?"),
@@ -130,3 +138,84 @@ def test_cap_is_recorded_in_the_manifest(tmp_path, monkeypatch):
     manifest = schemas.Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
     assert manifest.paths[0].research_lookups == 1
     assert manifest.paths[0].research_cap_exceeded is True
+
+
+def _seed_research_cost(run_dir, *, calls: int, cost_usd: float) -> None:
+    """Overwrite the manifest's research row as if an earlier invocation paid it."""
+
+    manifest = schemas.Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+    manifest = manifest.model_copy(
+        update={
+            "stage_usage": [
+                schemas.StageUsage(stage="research", calls=calls, cost_usd=cost_usd)
+            ],
+            "total_cost_usd": cost_usd,
+        }
+    )
+    paths.write_model(paths.manifest_file(run_dir), manifest)
+
+
+def test_a_resume_that_hits_cache_for_everything_does_not_erase_the_earlier_cost(
+    tmp_path,
+):
+    """Sibling bug to the page-reader fix (issue #31): a resume that makes zero
+
+    new lookups (every concept this time is already cached) must not replace
+    the manifest's `research` row with a zero-cost one and silently erase real
+    money an earlier invocation already spent.
+    """
+
+    layout = paths.Layout(tmp_path)
+    run_dir = tmp_path / "run"
+    write_manifest(run_dir)
+    paths.write_model(
+        layout.research_cache_file("What is RAG?"),
+        Researcher().lookup("RAG"),
+    )
+    _seed_research_cost(run_dir, calls=3, cost_usd=0.50)
+    reader = Researcher(cost_per_call=0.05)
+
+    research.research_run(
+        run_dir,
+        layout=layout,
+        notes_by_path={schemas.PathKind.image: [note(1, ("RAG", schemas.ConceptStatus.named_only))]},
+        researcher=reader,
+    )
+
+    assert reader.queries == []  # cache hit, no new spend this invocation
+    updated = schemas.Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+    rows = [item for item in updated.stage_usage if item.stage == "research"]
+    assert len(rows) == 1
+    assert rows[0].cost_usd == pytest.approx(0.50)
+    assert updated.total_cost_usd == pytest.approx(0.50)
+
+
+def test_a_resume_with_new_lookups_adds_to_the_earlier_invocations_cost(tmp_path):
+    """A resume that researches one new concept must not drop the rest.
+
+    The non-zero counterpart of the test above: an earlier invocation already
+    paid to research some concepts, a later resume pays for one more, and the
+    manifest must report the sum rather than only the newest invocation.
+    """
+
+    layout = paths.Layout(tmp_path)
+    run_dir = tmp_path / "run"
+    write_manifest(run_dir)
+    _seed_research_cost(run_dir, calls=3, cost_usd=0.50)
+    reader = Researcher(cost_per_call=0.05)
+
+    research.research_run(
+        run_dir,
+        layout=layout,
+        notes_by_path={
+            schemas.PathKind.image: [note(1, ("new-concept", schemas.ConceptStatus.named_only))]
+        },
+        researcher=reader,
+    )
+
+    assert reader.queries == ["new-concept"]
+    updated = schemas.Manifest.model_validate(paths.read_json(paths.manifest_file(run_dir)))
+    rows = [item for item in updated.stage_usage if item.stage == "research"]
+    assert len(rows) == 1
+    assert rows[0].cost_usd == pytest.approx(0.55)
+    assert updated.total_cost_usd == pytest.approx(0.55)
