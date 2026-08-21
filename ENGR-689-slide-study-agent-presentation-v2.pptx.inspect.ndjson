@@ -1,0 +1,155 @@
+{"kind":"deck","id":"pr/inutvr","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"simple-light-2","type":"master","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"TITLE","type":"title","placeholders":[{"name":"title","type":"title"},{"name":"subtitle","type":"subtitle"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout2.xml","name":"SECTION_HEADER","type":"secHead","placeholders":[{"name":"title","type":"title"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout3.xml","name":"TITLE_AND_BODY","type":"tx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout4.xml","name":"TITLE_AND_TWO_COLUMNS","type":"twoColTx","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout5.xml","name":"TITLE_ONLY","type":"titleOnly","placeholders":[{"name":"title","type":"title"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout6.xml","name":"ONE_COLUMN_TEXT","placeholders":[{"name":"title","type":"title"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout7.xml","name":"MAIN_POINT","placeholders":[{"name":"title","type":"title"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout8.xml","name":"SECTION_TITLE_AND_DESCRIPTION","placeholders":[{"name":"title","type":"title"},{"name":"subtitle","type":"subtitle"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout9.xml","name":"CAPTION_ONLY","placeholders":[{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout10.xml","name":"BIG_NUMBER","placeholders":[{"name":"title","type":"title","textPreview":"xx%"},{"name":"body","type":"body"},{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout11.xml","name":"BLANK","type":"blank","placeholders":[{"name":"slideNumber","type":"slideNumber","textPreview":"‹#›"}]}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"Slide Deck to","textShapes":4}
+{"kind":"textbox","id":"sh/kvqx0vqd","slide":1,"name":"Google Shape;54;p13","placeholder":"title","text":"Slide Deck to\nStudy Guide Agent","textPreview":"Slide Deck to | Study Guide Agent","textChars":31,"textLines":2,"bbox":[58,120,500,130]}
+{"kind":"textbox","id":"sh/lwzy90ry","slide":1,"name":"Google Shape;55;p13","placeholder":"subtitle","text":"A multimodal ENGR 689 project that turns visual lecture decks into cited review, quiz practice, and retake memory.","textPreview":"A multimodal ENGR 689 project that turns visual lecture decks into cited review, quiz practice, and retake memory.","textChars":114,"textLines":1,"bbox":[62,282,510,92]}
+{"kind":"shape","id":"sh/yt8fyl87","slide":1,"name":"hero-accent-top","bbox":[0,0,960,10]}
+{"kind":"shape","id":"sh/juhg7q9s","slide":1,"name":"hero-accent-bottom","bbox":[0,530,960,10]}
+{"kind":"textbox","id":"sh/cby5k3yt","slide":1,"name":"hero-course-tag","text":"ENGR 689 · Fall 2026","textPreview":"ENGR 689 · Fall 2026","textChars":20,"textLines":1,"bbox":[64,390,180,32]}
+{"kind":"textbox","id":"sh/ra54bix8","slide":1,"name":"hero-thesis-tag","text":"image path vs text baseline","textPreview":"image path vs text baseline","textChars":27,"textLines":1,"bbox":[260,390,210,32]}
+{"kind":"image","id":"im/za9wvypo","slide":1,"name":"","geometry":"roundRect","alt":"Agent definition slide thumbnail","bbox":[624,116,242,136]}
+{"kind":"image","id":"im/y90f2t83","slide":1,"name":"","geometry":"roundRect","alt":"Vision encoder chart thumbnail","bbox":[678,222,220,124]}
+{"kind":"image","id":"im/2poza1sb","slide":1,"name":"","geometry":"roundRect","alt":"Retrieval comparison thumbnail","bbox":[606,330,242,136]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"Open with the central claim: lecture slides are visual artifacts, so a study agent should read rendered pages, not only extracted text.\n[Sources]\n- README.md\n- CONTEXT.md\n- data/course/slides/Day3 Principle.pdf"}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"Project promise","textShapes":11}
+{"kind":"textbox","id":"sh/wf6hcnyd","slide":2,"name":"Google Shape;65;p15","placeholder":"title","text":"Project promise","textPreview":"Project promise","textChars":15,"textLines":1,"bbox":[40,82,220,94]}
+{"kind":"textbox","id":"sh/ved0jihs","slide":2,"name":"Google Shape;66;p15","placeholder":"subtitle","text":"Prepared by: [Your Name]\nMini-project presentation","textPreview":"Prepared by: [Your Name] | Mini-project presentation","textChars":50,"textLines":2,"bbox":[42,392,210,64]}
+{"kind":"shape","id":"sh/ad4zadg7","slide":2,"name":"s2-left-band","bbox":[0,0,275,540]}
+{"kind":"textbox","id":"sh/9svih8zm","slide":2,"name":"s2-claim","text":"The application produces learning artifacts that stay traceable to the original slide numbers.","textPreview":"The application produces learning artifacts that stay traceable to the original slide numbers.","textChars":94,"textLines":1,"bbox":[326,72,560,60]}
+{"kind":"shape","id":"sh/8rmh83y1","slide":2,"name":"s2-m1-box","bbox":[326,172,160,112]}
+{"kind":"textbox","id":"sh/yxkfi9wz","slide":2,"name":"s2-m1-value","text":"286","textPreview":"286","textChars":3,"textLines":1,"bbox":[342,184,128,38]}
+{"kind":"textbox","id":"sh/zytgbexk","slide":2,"name":"s2-m1-label","text":"course slides across five lecture decks","textPreview":"course slides across five lecture decks","textChars":39,"textLines":1,"bbox":[340,226,132,44]}
+{"kind":"shape","id":"sh/0j2xkje5","slide":2,"name":"s2-m2-box","bbox":[512,172,160,112]}
+{"kind":"textbox","id":"sh/lkbyd4fq","slide":2,"name":"s2-m2-value","text":"138","textPreview":"138","textChars":3,"textLines":1,"bbox":[528,184,128,38]}
+{"kind":"textbox","id":"sh/qt0fepw3","slide":2,"name":"s2-m2-label","text":"embedded images in the Day 3 eval deck","textPreview":"embedded images in the Day 3 eval deck","textChars":38,"textLines":1,"bbox":[526,226,132,44]}
+{"kind":"shape","id":"sh/bu9w7uxo","slide":2,"name":"s2-m3-box","bbox":[698,172,160,112]}
+{"kind":"textbox","id":"sh/cv2xgzet","slide":2,"name":"s2-m3-value","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[714,184,128,38]}
+{"kind":"textbox","id":"sh/dwbe94fe","slide":2,"name":"s2-m3-label","text":"hand-labeled figure-only facts","textPreview":"hand-labeled figure-only facts","textChars":30,"textLines":1,"bbox":[712,226,132,44]}
+{"kind":"shape","id":"sh/2p0fapwr","slide":2,"name":"s2-output","bbox":[326,330,532,116]}
+{"kind":"textbox","id":"sh/3q9w3uxc","slide":2,"name":"s2-output-title","text":"Student output","textPreview":"Student output","textChars":14,"textLines":1,"bbox":[352,350,150,26]}
+{"kind":"textbox","id":"sh/ret8r2dk","slide":2,"name":"s2-output-body","text":"1. Lesson review with slide-number citations\n2. Ten-question knowledge check with explanations\n3. Retake generation from topic history","textPreview":"1. Lesson review with slide-number citations | 2. Ten-question knowledge check with explanations | 3. Retake generation from topic history","textChars":134,"textLines":3,"bbox":[352,384,470,58]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"Replace [Your Name] with the presenter name. The numbers come from the course data README and eval label file.\n[Sources]\n- data/course/README.md\n- README.md\n- eval/figure-only-facts.json"}
+{"kind":"slide","id":"sl/ofy9wn61","slide":3,"title":"Project description and goal","textShapes":14}
+{"kind":"textbox","id":"sh/8bahkrmt","slide":3,"name":"Google Shape;71;p16","placeholder":"title","text":"Project description and goal","textPreview":"Project description and goal","textChars":28,"textLines":1,"bbox":[42,34,720,52]}
+{"kind":"textbox","id":"sh/na10bm58","slide":3,"name":"Google Shape;72;p16","placeholder":"body","text":"Goal: transform a lecture PDF into learning artifacts a student can trust, inspect, and revisit.","textPreview":"Goal: transform a lecture PDF into learning artifacts a student can trust, inspect, and revisit.","textChars":96,"textLines":1,"bbox":[46,94,760,38]}
+{"kind":"textbox","id":"sh/xg3ihwna","slide":3,"name":"s3-input-label","text":"Lecture PDF page","textPreview":"Lecture PDF page","textChars":16,"textLines":1,"bbox":[74,310,210,28]}
+{"kind":"textbox","id":"sh/wfahormp","slide":3,"name":"s3-arrow1","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[326,220,48,34]}
+{"kind":"shape","id":"sh/ve10fm54","slide":3,"name":"s3-contract","bbox":[386,146,210,176]}
+{"kind":"textbox","id":"sh/adszm14j","slide":3,"name":"s3-contract-title","text":"SlideNote","textPreview":"SlideNote","textChars":9,"textLines":1,"bbox":[412,168,160,30]}
+{"kind":"textbox","id":"sh/dkzy5cn6","slide":3,"name":"s3-contract-body","text":"reading\nvisuals[].assertion\nconcepts\nverbatim_spans\nreader_note","textPreview":"reading | visuals[].assertion | concepts | verbatim_spans | reader_note","textChars":63,"textLines":5,"bbox":[426,210,130,90]}
+{"kind":"textbox","id":"sh/cjqhc7ml","slide":3,"name":"s3-arrow2","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[620,220,48,34]}
+{"kind":"shape","id":"sh/436lcve1","slide":3,"name":"step-1","bbox":[684,150,172,54]}
+{"kind":"textbox","id":"sh/54fm50vm","slide":3,"name":"step-1-n","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[696,160,28,28]}
+{"kind":"textbox","id":"sh/ih43alwv","slide":3,"name":"step-1-label","text":"cited review","textPreview":"cited review","textChars":12,"textLines":1,"bbox":[728,164,118,36]}
+{"kind":"shape","id":"sh/3id43qdg","slide":3,"name":"step-2","bbox":[684,226,172,54]}
+{"kind":"textbox","id":"sh/gfml8ve5","slide":3,"name":"step-2-n","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[696,236,28,28]}
+{"kind":"textbox","id":"sh/hgvm1gvq","slide":3,"name":"step-2-label","text":"quiz + answer key","textPreview":"quiz + answer key","textChars":17,"textLines":1,"bbox":[728,240,118,36]}
+{"kind":"shape","id":"sh/ud436lwz","slide":3,"name":"step-3","bbox":[684,302,172,54]}
+{"kind":"textbox","id":"sh/ved4zqdk","slide":3,"name":"step-3-n","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[696,312,28,28]}
+{"kind":"textbox","id":"sh/0bq5kfu9","slide":3,"name":"step-3-label","text":"topic retake","textPreview":"topic retake","textChars":12,"textLines":1,"bbox":[728,316,118,36]}
+{"kind":"textbox","id":"sh/1czmdkvu","slide":3,"name":"s3-bottom","text":"Design principle: every important claim must either cite a slide, cite research, or admit uncertainty.","textPreview":"Design principle: every important claim must either cite a slide, cite research, or admit uncertainty.","textChars":102,"textLines":1,"bbox":[100,412,760,44]}
+{"kind":"image","id":"im/tsvax4n6","slide":3,"name":"","geometry":"roundRect","alt":"Generation slide input example","bbox":[54,156,250,141]}
+{"kind":"notes","id":"nt/ofy9wn61","slide":3,"text":"The SlideNote schema is the load-bearing interface. It separates page reading from visual assertions, concepts, and failure notes.\n[Sources]\n- README.md\n- CONTEXT.md\n- docs/adr/0002-per-slide-note-schema.md\n- src/study_agent/schemas.py"}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":4,"title":"Why this project matters: slides hide meaning in visuals","textShapes":9}
+{"kind":"textbox","id":"sh/hg3et07q","slide":4,"name":"Google Shape;77;p17","placeholder":"title","text":"Why this project matters: slides hide meaning in visuals","textPreview":"Why this project matters: slides hide meaning in visuals","textChars":56,"textLines":1,"bbox":[38,32,860,46]}
+{"kind":"textbox","id":"sh/ihcvml8b","slide":4,"name":"Google Shape;78;p17","placeholder":"body","text":"The text layer is real, but it often omits the reason a slide was shown.","textPreview":"The text layer is real, but it often omits the reason a slide was shown.","textChars":72,"textLines":1,"bbox":[42,88,760,36]}
+{"kind":"shape","id":"sh/3ilwvqpw","slide":4,"name":"s4-card-0","bbox":[48,148,264,260]}
+{"kind":"textbox","id":"sh/29srixcr","slide":4,"name":"s4-tag-0-tag","text":"Figure definition","textPreview":"Figure definition","textChars":17,"textLines":1,"bbox":[78,310,204,28]}
+{"kind":"textbox","id":"sh/pcjadsb2","slide":4,"name":"s4-body-0","text":"sensors + actuators vanish from extracted text","textPreview":"sensors + actuators vanish from extracted text","textChars":46,"textLines":1,"bbox":[76,350,208,38]}
+{"kind":"shape","id":"sh/oba9k7uh","slide":4,"name":"s4-card-1","bbox":[348,148,264,260]}
+{"kind":"textbox","id":"sh/axsrmxcn","slide":4,"name":"s4-tag-1-tag","text":"Chart ranking","textPreview":"Chart ranking","textChars":13,"textLines":1,"bbox":[378,310,204,28]}
+{"kind":"textbox","id":"sh/x03ahcbe","slide":4,"name":"s4-body-1","text":"the CLIP dominance lives in bar height","textPreview":"the CLIP dominance lives in bar height","textChars":38,"textLines":1,"bbox":[376,350,208,38]}
+{"kind":"shape","id":"sh/czu9o7ut","slide":4,"name":"s4-card-2","bbox":[648,148,264,260]}
+{"kind":"textbox","id":"sh/y1crqhcz","slide":4,"name":"s4-tag-2-tag","text":"Retrieval comparison","textPreview":"Retrieval comparison","textChars":20,"textLines":1,"bbox":[678,310,204,28]}
+{"kind":"textbox","id":"sh/w7e9grqx","slide":4,"name":"s4-body-2","text":"slide 56 extracts to zero characters","textPreview":"slide 56 extracts to zero characters","textChars":36,"textLines":1,"bbox":[676,350,208,38]}
+{"kind":"textbox","id":"sh/h8nq9wri","slide":4,"name":"s4-note","text":"The evaluation is deliberately small but sharp: three strong figure-only facts plus one known weak case.","textPreview":"The evaluation is deliberately small but sharp: three strong figure-only facts plus one known weak case.","textChars":104,"textLines":1,"bbox":[130,438,700,34]}
+{"kind":"image","id":"im/c3ex8bi5","slide":4,"name":"","geometry":"roundRect","alt":"Figure definition","bbox":[64,164,232,130]}
+{"kind":"image","id":"im/k7yxcbi1","slide":4,"name":"","geometry":"roundRect","alt":"Chart ranking","bbox":[364,164,232,130]}
+{"kind":"image","id":"im/gbud0rix","slide":4,"name":"","geometry":"roundRect","alt":"Retrieval comparison","bbox":[664,164,232,130]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":4,"text":"The deck uses the strongest figure-only examples on the slide itself and notes that slide 10 is reported separately as the weak case.\n[Sources]\n- data/course/README.md\n- eval/figure-only-facts.json\n- data/course/slides/Day3 Principle.pdf"}
+{"kind":"slide","id":"sl/i107q5of","slide":5,"title":"How we build it: one run, two paths, written artifacts","textShapes":14}
+{"kind":"textbox","id":"sh/sv6l8n2l","slide":5,"name":"Google Shape;83;p18","placeholder":"title","text":"How we build it: one run, two paths, written artifacts","textPreview":"How we build it: one run, two paths, written artifacts","textChars":54,"textLines":1,"bbox":[38,32,880,46]}
+{"kind":"textbox","id":"sh/3qxkvilo","slide":5,"name":"Google Shape;84;p18","placeholder":"body","text":"The image path is the system. The text path is a baseline that shares the same model, prompt, and schema.","textPreview":"The image path is the system. The text path is a baseline that shares the same model, prompt, and schema.","textChars":105,"textLines":1,"bbox":[42,86,840,36]}
+{"kind":"shape","id":"sh/ipo32dk3","slide":5,"name":"s5-spine","bbox":[72,158,814,3]}
+{"kind":"shape","id":"sh/5sf2xs3u","slide":5,"name":"s5-stage-0","bbox":[42,132,98,60]}
+{"kind":"textbox","id":"sh/4r6l4n29","slide":5,"name":"s5-stage-text-0","text":"render","textPreview":"render","textChars":6,"textLines":1,"bbox":[50,146,82,30]}
+{"kind":"shape","id":"sh/v2dkrils","slide":5,"name":"s5-stage-1","bbox":[172,132,98,60]}
+{"kind":"textbox","id":"sh/u14jydk7","slide":5,"name":"s5-stage-text-1","text":"page\nreader","textPreview":"page | reader","textChars":11,"textLines":2,"bbox":[180,146,82,30]}
+{"kind":"shape","id":"sh/0vi9cfet","slide":5,"name":"s5-stage-2","bbox":[302,132,98,60]}
+{"kind":"textbox","id":"sh/lwrqlkfe","slide":5,"name":"s5-stage-text-2","text":"outline","textPreview":"outline","textChars":7,"textLines":1,"bbox":[310,146,82,30]}
+{"kind":"shape","id":"sh/yt0ra5wn","slide":5,"name":"s5-stage-3","bbox":[432,132,98,60]}
+{"kind":"textbox","id":"sh/zu98jax8","slide":5,"name":"s5-stage-text-3","text":"research","textPreview":"research","textChars":8,"textLines":1,"bbox":[440,146,82,30]}
+{"kind":"shape","id":"sh/8z29gfep","slide":5,"name":"s5-stage-4","bbox":[562,132,98,60]}
+{"kind":"textbox","id":"sh/9kbqpkfa","slide":5,"name":"s5-stage-text-4","text":"review","textPreview":"review","textChars":6,"textLines":1,"bbox":[570,146,82,30]}
+{"kind":"shape","id":"sh/mx0repwz","slide":5,"name":"s5-stage-5","bbox":[692,132,98,60]}
+{"kind":"textbox","id":"sh/ny98nuxk","slide":5,"name":"s5-stage-text-5","text":"quiz","textPreview":"quiz","textChars":4,"textLines":1,"bbox":[700,146,82,30]}
+{"kind":"shape","id":"sh/o3yp4vel","slide":5,"name":"s5-stage-6","bbox":[822,132,98,60]}
+{"kind":"textbox","id":"sh/po7qd0f6","slide":5,"name":"s5-stage-text-6","text":"memory","textPreview":"memory","textChars":6,"textLines":1,"bbox":[830,146,82,30]}
+{"kind":"shape","id":"sh/e1w7y5w7","slide":5,"name":"s5-image-lane","bbox":[76,238,370,156]}
+{"kind":"textbox","id":"sh/f25oraxs","slide":5,"name":"s5-image-title","text":"IMAGE PATH","textPreview":"IMAGE PATH","textChars":10,"textLines":1,"bbox":[100,258,130,24]}
+{"kind":"textbox","id":"sh/g3ep0fed","slide":5,"name":"s5-image-body","text":"Produces review-image.md, quiz.json, and the deck contribution to memory.","textPreview":"Produces review-image.md, quiz.json, and the deck contribution to memory.","textChars":73,"textLines":1,"bbox":[100,300,304,58]}
+{"kind":"shape","id":"sh/14n6tkfy","slide":5,"name":"s5-text-lane","bbox":[514,238,370,156]}
+{"kind":"textbox","id":"sh/25w725wj","slide":5,"name":"s5-text-title","text":"TEXT BASELINE","textPreview":"TEXT BASELINE","textChars":13,"textLines":1,"bbox":[538,258,160,24]}
+{"kind":"textbox","id":"sh/36povax4","slide":5,"name":"s5-text-body","text":"Stops after review-text.md, so the comparison isolates input modality without double-counting exposure.","textPreview":"Stops after review-text.md, so the comparison isolates input modality without double-counting exposure.","textChars":103,"textLines":1,"bbox":[538,300,310,64]}
+{"kind":"textbox","id":"sh/o7yp4fe9","slide":5,"name":"s5-status-tag","text":"implemented now: schemas · render/preflight · paths · config · tests","textPreview":"implemented now: schemas · render/preflight · paths · config · tests","textChars":68,"textLines":1,"bbox":[164,430,632,34]}
+{"kind":"notes","id":"nt/i107q5of","slide":5,"text":"Mention current status clearly: the pipeline is specified, and the landed code covers strict schemas, render/preflight, path helpers, config, and tests.\n[Sources]\n- docs/spec.md\n- CONTEXT.md\n- src/study_agent/schemas.py\n- src/study_agent/render.py\n- src/study_agent/paths.py\n- src/study_agent/config.py\n- tests/test_schemas.py"}
+{"kind":"slide","id":"sl/x8f69ofe","slide":6,"title":"Demo and evaluation: prove the modality claim","textShapes":21}
+{"kind":"textbox","id":"sh/rihg7m1s","slide":6,"name":"Google Shape;89;p19","placeholder":"title","text":"Demo and evaluation: prove the modality claim","textPreview":"Demo and evaluation: prove the modality claim","textChars":45,"textLines":1,"bbox":[38,34,840,46]}
+{"kind":"textbox","id":"sh/tcn2dk3a","slide":6,"name":"Google Shape;90;p19","placeholder":"body","text":"The demo can replay saved artifacts; the evaluation checks whether visual facts survive into notes and citations.","textPreview":"The demo can replay saved artifacts; the evaluation checks whether visual facts survive into notes and citations.","textChars":113,"textLines":1,"bbox":[42,88,820,36]}
+{"kind":"shape","id":"sh/sbe1kf2p","slide":6,"name":"s6-demo","bbox":[50,146,260,288]}
+{"kind":"textbox","id":"sh/7a50bal4","slide":6,"name":"s6-demo-title","text":"Filmable\nDemo Flow","textPreview":"Filmable | Demo Flow","textChars":18,"textLines":2,"bbox":[78,168,204,58]}
+{"kind":"shape","id":"sh/69wji54z","slide":6,"name":"s6-demo-step-0","bbox":[78,238,204,28]}
+{"kind":"textbox","id":"sh/h072hk3m","slide":6,"name":"s6-demo-num-0","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[92,243,24,18]}
+{"kind":"textbox","id":"sh/gzy1oz21","slide":6,"name":"s6-demo-label-0","text":"Subject + PDF upload","textPreview":"Subject + PDF upload","textChars":20,"textLines":1,"bbox":[126,244,130,16]}
+{"kind":"shape","id":"sh/fy5kfulg","slide":6,"name":"s6-demo-step-1","bbox":[78,272,204,28]}
+{"kind":"textbox","id":"sh/udwjmpkv","slide":6,"name":"s6-demo-num-1","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[92,277,24,18]}
+{"kind":"textbox","id":"sh/x43i5032","slide":6,"name":"s6-demo-label-1","text":"7 status boxes","textPreview":"7 status boxes","textChars":14,"textLines":1,"bbox":[126,278,130,16]}
+{"kind":"shape","id":"sh/w3u1cvmh","slide":6,"name":"s6-demo-step-2","bbox":[78,306,204,28]}
+{"kind":"textbox","id":"sh/5s721cfe","slide":6,"name":"s6-demo-num-2","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[92,311,24,18]}
+{"kind":"textbox","id":"sh/4ry187et","slide":6,"name":"s6-demo-label-2","text":"cited review inspector","textPreview":"cited review inspector","textChars":22,"textLines":1,"bbox":[126,312,130,16]}
+{"kind":"shape","id":"sh/j65kz2x8","slide":6,"name":"s6-demo-step-3","bbox":[78,340,204,28]}
+{"kind":"textbox","id":"sh/i5wj6xwn","slide":6,"name":"s6-demo-num-3","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[92,345,24,18]}
+{"kind":"textbox","id":"sh/tw725cfa","slide":6,"name":"s6-demo-label-3","text":"image/text comparison","textPreview":"image/text comparison","textChars":21,"textLines":1,"bbox":[126,346,130,16]}
+{"kind":"shape","id":"sh/svylc7ep","slide":6,"name":"s6-demo-step-4","bbox":[78,374,204,28]}
+{"kind":"textbox","id":"sh/rupk3mxk","slide":6,"name":"s6-demo-num-4","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[92,379,24,18]}
+{"kind":"textbox","id":"sh/6tg3ahwz","slide":6,"name":"s6-demo-label-4","text":"quiz, grade, retake","textPreview":"quiz, grade, retake","textChars":19,"textLines":1,"bbox":[126,380,130,16]}
+{"kind":"shape","id":"sh/90n2tsf6","slide":6,"name":"s6-eval","bbox":[352,146,556,288]}
+{"kind":"textbox","id":"sh/8zu10nel","slide":6,"name":"s6-eval-title","text":"Evaluation scoreboard","textPreview":"Evaluation scoreboard","textChars":21,"textLines":1,"bbox":[382,174,260,28]}
+{"kind":"shape","id":"sh/y5szatcj","slide":6,"name":"s6-m1-box","bbox":[382,220,142,98]}
+{"kind":"textbox","id":"sh/z6103yd4","slide":6,"name":"s6-m1-value","text":"/3","textPreview":"/3","textChars":2,"textLines":1,"bbox":[398,232,110,38]}
+{"kind":"textbox","id":"sh/k7ahc3u9","slide":6,"name":"s6-m1-label","text":"headline figure-only fact recovery","textPreview":"headline figure-only fact recovery","textChars":34,"textLines":1,"bbox":[396,274,114,44]}
+{"kind":"shape","id":"sh/l83i5ovu","slide":6,"name":"s6-m2-box","bbox":[558,220,142,98]}
+{"kind":"textbox","id":"sh/m9czetcf","slide":6,"name":"s6-m2-value","text":"/5","textPreview":"/5","textChars":2,"textLines":1,"bbox":[574,232,110,38]}
+{"kind":"textbox","id":"sh/7al07yd0","slide":6,"name":"s6-m2-label","text":"repeatability per labeled slide","textPreview":"repeatability per labeled slide","textChars":31,"textLines":1,"bbox":[572,274,114,44]}
+{"kind":"shape","id":"sh/8buhg3ul","slide":6,"name":"s6-m3-box","bbox":[734,220,142,98]}
+{"kind":"textbox","id":"sh/9c3i98v6","slide":6,"name":"s6-m3-value","text":"/10","textPreview":"/10","textChars":3,"textLines":1,"bbox":[750,232,110,38]}
+{"kind":"textbox","id":"sh/2d8z29cb","slide":6,"name":"s6-m3-label","text":"quiz citation support by hand","textPreview":"quiz citation support by hand","textChars":29,"textLines":1,"bbox":[748,274,114,44]}
+{"kind":"textbox","id":"sh/rixw3ato","slide":6,"name":"s6-bridge","text":"bridged fact","textPreview":"bridged fact","textChars":12,"textLines":1,"bbox":[604,372,110,26]}
+{"kind":"image","id":"im/u5czu1kz","slide":6,"name":"","geometry":"roundRect","alt":"Generation comparison half","bbox":[426,344,162,91]}
+{"kind":"image","id":"im/zm94bu58","slide":6,"name":"","geometry":"roundRect","alt":"Retrieval comparison half","bbox":[728,344,162,91]}
+{"kind":"notes","id":"nt/x8f69ofe","slide":6,"text":"The scoreboard is intentionally shown as denominators because the repo has the protocol and labels, while results are still to be filled after the golden run.\n[Sources]\n- docs/spec.md\n- eval/results.md\n- eval/figure-only-facts.json\n- docs/adr/0006-eval-protocol-and-results-table.md"}
+{"kind":"slide","id":"sl/gnmp4jqx","slide":7,"title":"Conclusion: the value is faithful learning artifacts","textShapes":9}
+{"kind":"textbox","id":"sh/ehofyxgf","slide":7,"name":"Google Shape;95;p20","placeholder":"title","text":"Conclusion: the value is faithful learning artifacts","textPreview":"Conclusion: the value is faithful learning artifacts","textChars":52,"textLines":1,"bbox":[42,34,850,48]}
+{"kind":"textbox","id":"sh/14zytsfq","slide":7,"name":"Google Shape;96;p20","placeholder":"body","text":"The project turns a slide deck into an auditable chain: visual facts -> structured notes -> cited review -> quiz -> topic memory.","textPreview":"The project turns a slide deck into an auditable chain: visual facts -> structured notes -> cited review -> quiz -> topic memory.","textChars":129,"textLines":1,"bbox":[46,92,830,42]}
+{"kind":"shape","id":"sh/0jqx0ne5","slide":7,"name":"s7-col-0","bbox":[52,174,252,200]}
+{"kind":"textbox","id":"sh/je1g3mx4","slide":7,"name":"s7-title-0","text":"What we learned","textPreview":"What we learned","textChars":15,"textLines":1,"bbox":[72,202,212,28]}
+{"kind":"textbox","id":"sh/ydszahwj","slide":7,"name":"s7-body-0","text":"Schemas are the contract.\nVisual assertions need their own field.\nFailure notes must stay inspectable.","textPreview":"Schemas are the contract. | Visual assertions need their own field. | Failure notes must stay inspectable.","textChars":102,"textLines":3,"bbox":[72,250,212,106]}
+{"kind":"shape","id":"sh/v258jm1o","slide":7,"name":"s7-col-1","bbox":[350,174,252,200]}
+{"kind":"textbox","id":"sh/u1wrqh03","slide":7,"name":"s7-title-1","text":"What remains","textPreview":"What remains","textChars":12,"textLines":1,"bbox":[370,202,212,28]}
+{"kind":"textbox","id":"sh/h4nqlwju","slide":7,"name":"s7-body-1","text":"Finish page reader through memory.\nCommit the golden Day 3 run.\nBuild Streamlit replay and retake UI.","textPreview":"Finish page reader through memory. | Commit the golden Day 3 run. | Build Streamlit replay and retake UI.","textChars":101,"textLines":3,"bbox":[370,250,212,106]}
+{"kind":"shape","id":"sh/w3e9sri9","slide":7,"name":"s7-col-2","bbox":[648,174,252,200]}
+{"kind":"textbox","id":"sh/j6p8nm1k","slide":7,"name":"s7-title-2","text":"What to discuss","textPreview":"What to discuss","textChars":15,"textLines":1,"bbox":[668,202,212,28]}
+{"kind":"textbox","id":"sh/i5wruh0f","slide":7,"name":"s7-body-2","text":"How many labeled facts are enough?\nWhere should topic matching become human-reviewed?\nWhat is a fair text baseline?","textPreview":"How many labeled facts are enough? | Where should topic matching become human-reviewed? | What is a fair text baseline?","textChars":115,"textLines":3,"bbox":[668,250,212,106]}
+{"kind":"textbox","id":"sh/587apwjq","slide":7,"name":"s7-next-tag","text":"next milestone: end-to-end Day 3 run with image/text comparison ready to replay","textPreview":"next milestone: end-to-end Day 3 run with image/text comparison ready to replay","textChars":79,"textLines":1,"bbox":[138,428,684,38]}
+{"kind":"notes","id":"nt/gnmp4jqx","slide":7,"text":"Close by positioning the project as both a useful study tool and a controlled modality experiment for the course.\n[Sources]\n- README.md\n- CONTEXT.md\n- docs/spec.md\n- docs/adr/0001-model-provider-and-vision-model.md\n- docs/adr/0003-cross-deck-topic-taxonomy.md\n- docs/adr/0005-quiz-answer-key-and-retake-schema.md"}
