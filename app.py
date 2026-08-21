@@ -239,21 +239,21 @@ def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None
     for number, question in enumerate(quiz.questions):
         answer = st.radio(question.stem, question.options, index=None, key=f"answer-{quiz.quiz_id}-{number}")
         answers.append(question.options.index(answer) if answer is not None else None)
-    result_payload: Any = None
+    # The grade belongs to the attempt this session submitted. An earlier
+    # version rebuilt it from the newest matching attempt in memory, which
+    # meant a quiz opened with its answer key already showing to anyone who had
+    # ever taken it, including on the first screen of a demo. Session state
+    # holds it across the reruns Streamlit fires on every click, and a page
+    # reload starts the quiz unanswered again, which is what a reload means.
+    graded_key = f"grade-{quiz.quiz_id}"
     if st.button("Submit quiz", key=f"submit-{quiz.quiz_id}"):
         try:
             result = grade.grade_run(run_dir, answers, layout=layout)
         except (grade.GradeError, memory.UnknownSubject) as error:
             st.error(str(error))
         else:
-            result_payload = result.model_dump()
-    if result_payload is None:
-        quiz_hash = paths.sha256_file(paths.quiz_file(run_dir))
-        for attempt in reversed(memory.read_attempts(subject_slug, layout).attempts):
-            if attempt.quiz_sha256 == quiz_hash:
-                chosen = [response.chosen_index if response.chosen_index >= 0 else None for response in attempt.responses]
-                result_payload = grade.grade_quiz(quiz, chosen, quiz_sha256=quiz_hash).model_dump()
-                break
+            st.session_state[graded_key] = result.model_dump()
+    result_payload: Any = st.session_state.get(graded_key)
     if isinstance(result_payload, dict):
         _render_grade(result_payload)
     attempts = memory.read_attempts(subject_slug, layout).attempts
@@ -391,6 +391,48 @@ def _replay(source: Path, layout: paths.Layout) -> Path:
     return run_dir
 
 
+_OPEN_RUN = "open-run"
+
+
+def _opened_run() -> Path | None:
+    """The run this session has opened, if any. Empty on a fresh page load.
+
+    Only a path is held. Everything shown under it is still read from the run
+    directory on every rerun, so this does not reintroduce the run state the
+    module docstring rules out: it records which run the user asked for, not
+    what that run contains.
+    """
+
+    opened = st.session_state.get(_OPEN_RUN)
+    if not isinstance(opened, str):
+        return None
+    candidate = Path(opened)
+    return candidate if candidate.is_dir() else None
+
+
+def _open_run(run_dir: Path) -> None:
+    st.session_state[_OPEN_RUN] = str(run_dir)
+
+
+def _offer_latest_run(layout: paths.Layout, subject_slug: str) -> None:
+    """Let a finished run be reopened, by asking rather than by appearing.
+
+    ADR 0004 writes at every stage boundary so a run survives the interface
+    dying, and this is how that is cashed in after a reload. It is a button
+    because opening a previous run unprompted is indistinguishable, on screen,
+    from having just produced it.
+    """
+
+    latest = run_view.latest_run(layout, subject_slug)
+    if latest is None:
+        return
+    summary = run_view.run_summary(latest)
+    described = summary.run_timestamp if summary else latest.name
+    if st.button(f"Open the last run for this subject ({described})"):
+        _open_run(latest)
+        st.rerun()
+
+
 def _replay_source(uploaded: Any, layout: paths.Layout) -> Path | None:
     """The committed run this upload is a replay of, matched by content hash."""
 
@@ -458,7 +500,16 @@ def main() -> None:
                 st.success(f"Cleared {removed} attempt(s) for {manifest_subject}.")
 
     selected_slug = lookup.get(selected_name or "")
-    run_dir = run_view.latest_run(layout, selected_slug) if selected_slug else None
+    # What is on screen is the run this session has opened, not whatever is
+    # newest on disk. Choosing a subject used to load its latest run
+    # immediately, which meant the screen opened mid-demo, already showing
+    # slide numbers and a quiz for a run nobody had asked for. Only the run
+    # button and the explicit reopen below put a run here.
+    #
+    # The pointer is the only thing session state holds. Every number under it
+    # is still read from the run directory on each rerun, so a reload with
+    # nothing opened is the empty screen and nothing is remembered across one.
+    run_dir = _opened_run()
     replaying = bool(run and source is not None)
     ran_this_request = replaying or bool(run and uploaded and selected_slug)
     if replaying and source is not None:
@@ -467,20 +518,7 @@ def main() -> None:
         except replay.ReplayError as error:
             st.error(str(error))
         else:
-            # The run names its own subject. Honour it, so the quiz and the
-            # attempt history below belong to the run that is on screen.
-            summary = run_view.run_summary(run_dir)
-            if summary is not None:
-                selected_slug = summary.subject_slug
-    elif source is not None:
-        # A rerun after the animation has already played: show the same run
-        # again without replaying it, and without needing a subject chosen.
-        installed = replay.installed_run(source, layout)
-        if installed is not None:
-            run_dir = installed
-            summary = run_view.run_summary(installed)
-            if summary is not None and not selected_slug:
-                selected_slug = summary.subject_slug
+            _open_run(run_dir)
     if ran_this_request and not replaying and selected_slug:
         try:
             run_dir = _run(uploaded, selected_slug)
@@ -488,15 +526,24 @@ def main() -> None:
             st.error(str(error))
         except Exception as error:  # Streamlit should preserve and surface any artifacts already written.
             st.exception(error)
+        else:
+            _open_run(run_dir)
+
+    if run_dir is None and selected_slug:
+        _offer_latest_run(layout, selected_slug)
 
     if not ran_this_request:
         _render_stage_views(run_dir)
     if run_dir is not None:
+        # The run names its own subject, and that is the one whose attempts and
+        # retakes belong under it, whatever the dropdown happens to say.
+        summary = run_view.run_summary(run_dir)
+        subject_slug = summary.subject_slug if summary else selected_slug
         _render_summary(run_dir)
         _render_failures(run_dir)
         _render_comparison(run_dir)
-        if selected_slug:
-            _render_quiz(run_dir, selected_slug, layout)
+        if subject_slug:
+            _render_quiz(run_dir, subject_slug, layout)
 
 
 if __name__ == "__main__":
