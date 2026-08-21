@@ -154,19 +154,36 @@ def _render_review(run_dir: Path, path_kind: PathKind, *, title: str) -> None:
             st.json(note.model_dump())
 
 
-def _fact_score(run_dir: Path, path_kind: PathKind, deck_slug: str) -> tuple[int, int, bool]:
+def _fact_score(path_kind: PathKind, deck_slug: str) -> tuple[int, int] | None:
+    """Figure-only fact recovery for one path, or None when it is not scored.
+
+    ADR 0006 makes this a hand judgement: a hit is the fact appearing anywhere
+    in that slide's `SlideNote`, in any field, which is not a string match. An
+    earlier version of this function tried to decide it by searching for the
+    label's English sentence inside the note, which can never match and so
+    reported every path as zero. A zero the reader takes for a measurement is
+    worse than an absence, so a fact that has not been scored by hand is
+    reported as unscored instead.
+
+    Scores are read from the label file: a fact carries `scored`, mapping a
+    path name to whether that path recovered it. The score is shown only when
+    every labelled fact carries one for this path, so a partial hand pass is
+    never presented as a total.
+    """
+
     payload = paths.read_json(paths.Layout().figure_only_facts_file())
     if not isinstance(payload, dict) or payload.get("deck_slug") != deck_slug:
-        return 0, 0, False
+        return None
     facts = payload.get("facts", [])
-    notes = _notes(run_dir, path_kind)
+    if not facts:
+        return None
     hits = 0
     for fact in facts:
-        fields = [notes[slide].model_dump() for slide in fact.get("slides", []) if slide in notes]
-        text = " ".join(str(value) for field in fields for value in field.values()).lower()
-        if str(fact.get("fact", "")).lower() in text:
-            hits += 1
-    return hits, len(facts), True
+        scored = fact.get("scored")
+        if not isinstance(scored, dict) or path_kind.value not in scored:
+            return None
+        hits += bool(scored[path_kind.value])
+    return hits, len(facts)
 
 
 def _render_comparison(run_dir: Path) -> None:
@@ -178,15 +195,20 @@ def _render_comparison(run_dir: Path) -> None:
     text_notes = _notes(run_dir, PathKind.text)
     image_visuals = sum(len(note.visuals) for note in image_notes.values())
     text_visuals = sum(len(note.visuals) for note in text_notes.values())
-    image_hit, fact_total, labeled = _fact_score(run_dir, PathKind.image, summary.deck_slug)
-    text_hit, _, _ = _fact_score(run_dir, PathKind.text, summary.deck_slug)
+    image_score = _fact_score(PathKind.image, summary.deck_slug)
+    text_score = _fact_score(PathKind.text, summary.deck_slug)
     columns = st.columns(3)
     columns[0].metric("Slides read", f"{summary.slides_read} / {summary.slides_total}", f"baseline {summary.text_slides_read} / {summary.text_slides_total}")
     columns[1].metric("Visuals found", f"{image_visuals}", f"baseline {text_visuals}")
-    if labeled:
-        columns[2].metric("Figure-only recovery", f"{image_hit} / {fact_total}", f"baseline {text_hit} / {fact_total}")
+    if image_score is not None and text_score is not None:
+        columns[2].metric(
+            "Figure-only recovery",
+            f"{image_score[0]} / {image_score[1]}",
+            f"baseline {text_score[0]} / {text_score[1]}",
+        )
     else:
-        columns[2].metric("Figure-only recovery", "not labeled for this deck")
+        columns[2].metric("Figure-only recovery", "scored by hand")
+        columns[2].caption("See eval/results.md. ADR 0006 makes this a judgement, not a string match.")
     if summary.image_only:
         st.info("Text path not applicable, this deck is image-only.")
     st.caption("Slide 10 is partial on both sides: its labels extract, but the spatial relation does not.")
