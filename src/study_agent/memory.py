@@ -275,6 +275,8 @@ def topic_performance(
     correct: Counter[str] = Counter()
     for attempt in load_attempts(subject_slug, layout):
         for response in attempt.responses:
+            if response.chosen_index < 0:
+                continue
             seen[response.topic] += 1
             if response.correct:
                 correct[response.topic] += 1
