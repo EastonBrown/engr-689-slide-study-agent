@@ -9,11 +9,12 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+import sys
 from typing import Any
 
 import streamlit as st
 
-from study_agent import memory, paths, pipeline, run_view
+from study_agent import memory, paths, pipeline, replay, run_view
 from study_agent.schemas import PathKind, Quiz, SlideNote
 from study_agent.stages import grade, outline, page_reader, retake
 
@@ -55,6 +56,46 @@ def _render_stage_views(run_dir: Path | None) -> None:
                 st.code("\n".join(view.detail), language=None)
             elif view.state is run_view.StageState.pending:
                 st.caption("Pending — this stage has not written artifacts yet.")
+
+
+def _replay_stage_views(run_dir: Path) -> None:
+    """Animate the shared disk-backed views for a camera-friendly replay."""
+
+    boxes: dict[str, tuple[Any, Any]] = {}
+    lines: dict[str, list[str]] = {}
+
+    def start(view: run_view.StageView) -> None:
+        status = st.status(view.label, expanded=True, state="running")
+        boxes[view.key] = (status, st.empty())
+        lines[view.key] = []
+
+    def write_line(view: run_view.StageView, line: str) -> None:
+        _, output = boxes[view.key]
+        lines[view.key].append(line)
+        output.code("\n".join(lines[view.key]), language=None)
+
+    def finish(view: run_view.StageView) -> None:
+        status, output = boxes[view.key]
+        if view.state is run_view.StageState.pending:
+            output.caption("Absent — this stage has not written artifacts yet.")
+            status.update(
+                label=f"{view.label}: absent — {view.summary}",
+                state="complete",
+                expanded=False,
+            )
+            return
+        status.update(
+            label=f"{view.label}: {view.summary}",
+            state=_status_state(view.state),
+            expanded=False,
+        )
+
+    replay.replay_run(
+        run_dir,
+        on_stage=start,
+        on_line=write_line,
+        on_stage_complete=finish,
+    )
 
 
 def _render_summary(run_dir: Path) -> None:
@@ -206,7 +247,9 @@ def _load_quiz(target: Path) -> Quiz | None:
         return None
 
 
-def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None:
+def _render_quiz(
+    run_dir: Path, subject_slug: str, layout: paths.Layout, *, replaying: bool = False
+) -> None:
     quiz = _load_quiz(paths.quiz_file(run_dir))
     if quiz is None:
         return
@@ -217,7 +260,7 @@ def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None
         answer = st.radio(question.stem, question.options, index=None, key=f"answer-{quiz.quiz_id}-{number}")
         answers.append(question.options.index(answer) if answer is not None else None)
     result_payload: Any = None
-    if st.button("Submit quiz", key=f"submit-{quiz.quiz_id}"):
+    if not replaying and st.button("Submit quiz", key=f"submit-{quiz.quiz_id}"):
         try:
             result = grade.grade_run(run_dir, answers, layout=layout)
         except (grade.GradeError, memory.UnknownSubject) as error:
@@ -234,7 +277,9 @@ def _render_quiz(run_dir: Path, subject_slug: str, layout: paths.Layout) -> None
     if isinstance(result_payload, dict):
         _render_grade(result_payload)
     attempts = memory.read_attempts(subject_slug, layout).attempts
-    if attempts and st.button("Generate retake", key=f"retake-{subject_slug}"):
+    if replaying:
+        st.caption("Replay is read-only; quiz submission and retakes are unavailable.")
+    elif attempts and st.button("Generate retake", key=f"retake-{subject_slug}"):
         try:
             retake.retake_run(subject_slug, layout=layout)
         except retake.RetakeError as error:
@@ -333,33 +378,38 @@ def main() -> None:
     st.caption("Image-path study guide with a text-path baseline")
 
     layout = paths.Layout()
-    subjects = memory.list_subjects(layout)
-    names = [subject.display_name for subject in subjects]
-    lookup = {subject.display_name: subject.slug for subject in subjects}
-
-    controls = st.columns([2, 2, 1])
-    with controls[0]:
-        selected_name = st.selectbox("Subject", names, index=None, placeholder="Choose a subject")
-    with controls[1]:
-        uploaded = st.file_uploader("Deck (PDF)", type="pdf")
-    with controls[2]:
-        st.write("")
-        run = st.button("Run pipeline", type="primary", disabled=not (selected_name and uploaded))
-
-    with st.expander("Create a subject"):
-        display_name = st.text_input("New subject name")
-        if st.button("Create subject"):
-            try:
-                created = memory.create_subject(display_name, layout)
-            except (ValueError, memory.SubjectExists) as error:
-                st.error(str(error))
-            else:
-                st.success(f"Created {created.display_name}. Choose it above.")
-
-    selected_slug = lookup.get(selected_name or "")
-    run_dir = run_view.latest_run(layout, selected_slug) if selected_slug else None
+    replay_dir = replay.replay_directory(sys.argv)
+    selected_slug: str | None = None
+    uploaded = None
+    run = False
+    if replay_dir is None:
+        subjects = memory.list_subjects(layout)
+        names = [subject.display_name for subject in subjects]
+        lookup = {subject.display_name: subject.slug for subject in subjects}
+        controls = st.columns([2, 2, 1])
+        with controls[0]:
+            selected_name = st.selectbox("Subject", names, index=None, placeholder="Choose a subject")
+        with controls[1]:
+            uploaded = st.file_uploader("Deck (PDF)", type="pdf")
+        with controls[2]:
+            st.write("")
+            run = st.button("Run pipeline", type="primary", disabled=not (selected_name and uploaded))
+        with st.expander("Create a subject"):
+            display_name = st.text_input("New subject name")
+            if st.button("Create subject"):
+                try:
+                    created = memory.create_subject(display_name, layout)
+                except (ValueError, memory.SubjectExists) as error:
+                    st.error(str(error))
+                else:
+                    st.success(f"Created {created.display_name}. Choose it above.")
+        selected_slug = lookup.get(selected_name or "")
+        run_dir = run_view.latest_run(layout, selected_slug) if selected_slug else None
+    else:
+        run_dir = replay_dir
+        st.info(f"Replay mode: reading artifacts from {run_dir}")
     ran_this_request = bool(run and uploaded and selected_slug)
-    if ran_this_request:
+    if ran_this_request and uploaded is not None and selected_slug is not None:
         try:
             run_dir = _run(uploaded, selected_slug)
         except (pipeline.PipelineError, page_reader.PageReadFailed) as error:
@@ -367,14 +417,18 @@ def main() -> None:
         except Exception as error:  # Streamlit should preserve and surface any artifacts already written.
             st.exception(error)
 
-    if not ran_this_request:
+    if replay_dir is not None:
+        _replay_stage_views(run_dir)
+    elif not ran_this_request:
         _render_stage_views(run_dir)
     if run_dir is not None:
         _render_summary(run_dir)
         _render_failures(run_dir)
         _render_comparison(run_dir)
-        if selected_slug:
-            _render_quiz(run_dir, selected_slug, layout)
+        summary = run_view.run_summary(run_dir)
+        quiz_subject_slug = selected_slug or (summary.subject_slug if summary is not None else None)
+        if quiz_subject_slug:
+            _render_quiz(run_dir, quiz_subject_slug, layout, replaying=replay_dir is not None)
 
 
 if __name__ == "__main__":
